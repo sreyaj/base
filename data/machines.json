@@ -1,0 +1,24 @@
+[
+  {
+    "group": "core",
+    "ip" : "1.101.1.1",
+    "name": "db box",
+    "login": "root",
+    "consistent": "false",
+    "dataMount": "/data",
+    "cores": 2,
+    "memory": 4096,
+    "arch": "x86"
+  },
+  {
+    "group": "services",
+    "ip" : "1.101.1.2",
+    "name": "services box",
+    "login": "root",
+    "consistent": "false",
+    "dataMount": "/data",
+    "cores": 2,
+    "memory": 4096,
+    "arch": "x86"
+  }
+]

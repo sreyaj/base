@@ -1,0 +1,8 @@
+{
+  "installerVersion": "4.0.0",
+  "shippableCustomerId" : "1234",
+  "licenseKey": "secureLicenseKey",
+  "masterIntegrations": [],
+  "services": [],
+  "systemConfig": {}
+}

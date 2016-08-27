@@ -1,0 +1,19 @@
+[
+  {
+    "group": "core",
+    "name": "postgresql",
+    "version": "9.6.1",
+    "files": [{}],
+    "preCmd": [],
+    "postCmd": []
+  },
+  {
+    "group": "core",
+    "name": "vault",
+    "version": "0.6.0",
+    "files": [{}],
+    "preCmd": [],
+    "postCmd": []
+
+  }
+]
