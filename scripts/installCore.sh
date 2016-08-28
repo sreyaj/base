@@ -36,31 +36,36 @@ install_database() {
 install_vault() {
   #TODO: get the machine that db was installed on, and install vault on it
   # save vault creds into state.json (for now)
-  exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"
+  #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"
+  true
 }
 
 install_rabbitmq() {
   #TODO: get the machine that db was installed on, and install rabbitmq on it
   # save rabbitmq creds into state.json (for now)
-  exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install rabbitmq"
+  #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install rabbitmq"
+  true
 }
 
 install_gitlab() {
   #TODO: get another machine from core group, and install gitlab
   # make sure this is the same machine running this installer
   # save gitlab creds in state.json (for now)
-  exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"
+  #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"
+  true
 }
 
 install_swarm() {
   #TODO: get machine where gitlab was installed, and install swarm on it
   # make sure this is the same machine that is running this installer
-  exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install swarm"
+  #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install swarm"
+  true
 }
 
 install_redis() {
   #TODO: get machine where gitlab was installed and install redis on it
-  exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install redis"
+  #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install redis"
+  true
 }
 
 update_state() {
