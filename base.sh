@@ -16,7 +16,17 @@ readonly ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
 readonly DATA_DIR="$ROOT_DIR/data"
 readonly STATE_FILE="$DATA_DIR/state.json"
-source "$SCRIPTS_DIR/execRemoteCmd.sh"
+readonly SSH_USER="root"
+readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
+readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
+source "$SCRIPTS_DIR/_execScriptRemote.sh"
+source "$SCRIPTS_DIR/_copyScriptRemote.sh"
+
+###########################################################
+
+#TODO: this should be set from statefile
+export RUN_NUMBER=1
+readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RUN_NUMBER"
 
 ###########################################################
 
@@ -38,6 +48,8 @@ __check_dependencies() {
   }
 
   ##TODO: check ssh and install if not present
+  ##TODO: check ssh-keygen command
+  ##TODO: check rsync
 }
 
 

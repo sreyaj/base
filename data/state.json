@@ -1,4 +1,18 @@
 {
-  "state": [],
+  "runNumber: 1,
+  "machines": [
+    {
+      "name": "db box",
+      "keysUpdated": "true",
+      "sshSuccessful": "true",
+    },
+    {
+      "name": "services box",
+      "keysUpdated": "true",
+      "sshSuccessful": "false",
+    },
+
+  ],
+  "core": [],
   "services": []
 }

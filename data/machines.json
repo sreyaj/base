@@ -1,10 +1,9 @@
 [
   {
     "group": "core",
-    "ip" : "1.101.1.1",
+    "ip" : "45.55.49.134",
     "name": "db box",
     "login": "root",
-    "consistent": "false",
     "dataMount": "/data",
     "cores": 2,
     "memory": 4096,
@@ -12,10 +11,9 @@
   },
   {
     "group": "services",
-    "ip" : "1.101.1.2",
+    "ip" : "45.55.49.134",
     "name": "services box",
     "login": "root",
-    "consistent": "false",
     "dataMount": "/data",
     "cores": 2,
     "memory": 4096,
