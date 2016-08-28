@@ -115,11 +115,14 @@ update_state() {
 }
 
 bootstrap() {
-  # TODO: bootstrap each machine to
-  # run apt-get update
-  # install jq
-
   echo "Installing core components on machines"
+  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
+  for i in $(seq 1 $machine_count); do
+    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
+    local host=$(echo $machine | jq '.ip')
+    _copy_script_remote $host "installBase.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh"
+  done
 }
 
 main() {
