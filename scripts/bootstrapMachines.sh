@@ -105,9 +105,7 @@ check_requirements() {
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
     _copy_script_remote $host "checkRequirements.sh" "$SCRIPT_DIR_REMOTE"
-
-    #echo "################# script copied remotely at: $host"
-    #_exec_remote_cmd "$host" "checkRequirements.sh"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/checkRequirements.sh"
   done
 
   exit 0
