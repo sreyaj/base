@@ -107,8 +107,6 @@ check_requirements() {
     _copy_script_remote $host "checkRequirements.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/checkRequirements.sh"
   done
-
-  exit 0
 }
 
 update_state() {

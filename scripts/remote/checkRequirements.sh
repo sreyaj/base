@@ -1,4 +1,6 @@
 #!/bin/bash -e 
+
+##TODO: read these values from config
 readonly MIN_MEM=2048
 readonly MIN_HDD=30
 readonly KERNEL_ARCH=64
