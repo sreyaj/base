@@ -2,7 +2,17 @@
   {
     "group": "core",
     "ip" : "45.55.49.134",
-    "name": "db box",
+    "name": "db",
+    "login": "root",
+    "dataMount": "/data",
+    "cores": 2,
+    "memory": 4096,
+    "arch": "x86"
+  },
+  {
+    "group": "core",
+    "ip" : "45.55.49.134",
+    "name": "swarm",
     "login": "root",
     "dataMount": "/data",
     "cores": 2,
@@ -12,7 +22,7 @@
   {
     "group": "services",
     "ip" : "45.55.49.134",
-    "name": "services box",
+    "name": "services1",
     "login": "root",
     "dataMount": "/data",
     "cores": 2,

@@ -5,24 +5,32 @@ readonly CORE_COMPONENTS="postgresql \
   swarm \
   rabbitmq"
 
+###########################################################
+export CORE_COMPONENTS_LIST=""
+export CORE_MACHINES_LIST=""
+
 validate_core_config() {
   #TODO: check if components.json has all the require components 
   echo "validating core config"
-}
+  CORE_COMPONENTS_LIST=$(cat $CORE_CONFIG | jq '.')
+  local component_count=$(echo $CORE_COMPONENTS_LIST | jq '. | length')
+  if [[ $component_count -lt 1 ]]; then
+    echo "5 components required to set up shippable, $component_count provided"
+    exit 1
+  else
+    echo "Component count : $component_count"
+  fi
 
-get_machine_list() {
-  #TODO: get machines list from state.json. these will the machines
-  #that are currently running and in consistent state
-  echo "getting provisioned machines list"
 }
 
 install_database() {
-  #TODO: get one core machine, and install database on it
-  # use ssh keys to log into the database box
-  # run the script to install postgres
-  # save the db username/password into state.json (for now)
-  echo "installing postgres"
-  exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install pgsql"
+  echo "getting provisioned machines list"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq '.ip')
+  _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
+
+  #TODO: update state
 }
 
 install_vault() {
@@ -62,7 +70,6 @@ update_state() {
 
 main() {
   validate_core_config
-  get_machine_list
   install_database
   install_vault
   install_rabbitmq

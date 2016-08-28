@@ -1,17 +1,27 @@
 {
-  "runNumber: 1,
+  "runNumber": "1",
   "machines": [
     {
-      "name": "db box",
+      "name": "db",
+      "group": "core",
+      "ip" : "45.55.49.134",
       "keysUpdated": "true",
-      "sshSuccessful": "true",
+      "sshSuccessful": "true"
     },
     {
-      "name": "services box",
+      "name": "swarm",
+      "group": "core",
+      "ip" : "45.55.49.134",
       "keysUpdated": "true",
-      "sshSuccessful": "false",
+      "sshSuccessful": "true"
     },
-
+    {
+      "name": "services1",
+      "group": "services",
+      "ip" : "45.55.49.134",
+      "keysUpdated": "true",
+      "sshSuccessful": "true"
+    }
   ],
   "core": [],
   "services": []

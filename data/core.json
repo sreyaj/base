@@ -2,10 +2,10 @@
   {
     "group": "core",
     "name": "postgresql",
-    "version": "9.6.1",
-    "files": [{}],
+    "version": "9.5",
+    "files": [],
     "preCmd": [],
-    "postCmd": []
+    "postCmd": ["sleep 10", "sudo service postgresql restart"]
   },
   {
     "group": "core",

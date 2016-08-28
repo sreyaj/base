@@ -1,9 +1,5 @@
 #!/bin/bash -e
 readonly MACHINES_CONFIG="$DATA_DIR/machines.json"
-readonly MIN_MEM=2048
-readonly MIN_HDD=30
-readonly KERNEL_ARCH=64
-
 ###########################################################
 export MACHINES_LIST=""
 
@@ -20,7 +16,11 @@ validate_machines_config() {
   ##TODO: check if there is at least one machine "core" group and "services" group
   echo "Validated machines config"
 
+  ##TODO: if all machines are in consistent state, then skip this
   ##TODO: add machines to list in state
+
+
+
   ## Trying to update file using jq :-/
 
   ##echo $MACHINES_LIST | \
