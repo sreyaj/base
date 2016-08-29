@@ -7,13 +7,15 @@
       "ip" : "45.55.49.134",
       "keysUpdated": "true",
       "sshSuccessful": "true"
+      "components": ["db"]
     },
     {
       "name": "swarm",
       "group": "core",
       "ip" : "45.55.49.134",
       "keysUpdated": "true",
-      "sshSuccessful": "true"
+      "sshSuccessful": "true",
+      "components": ["swarm", "gitlab"]
     },
     {
       "name": "services1",

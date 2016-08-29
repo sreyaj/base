@@ -57,7 +57,7 @@ install() {
   __check_dependencies
   source "$SCRIPTS_DIR/getConfigs.sh"
   #source "$SCRIPTS_DIR/bootstrapMachines.sh"
-  source "$SCRIPTS_DIR/installCore.sh"
+  #source "$SCRIPTS_DIR/installCore.sh"
   source "$SCRIPTS_DIR/bootstrapApp.sh"
   source "$SCRIPTS_DIR/provisionServices.sh"
 }
