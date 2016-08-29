@@ -1,7 +1,7 @@
 [
   {
     "group": "core",
-    "ip" : "139.59.17.37",
+    "ip" : "45.55.49.134",
     "name": "db",
     "login": "root",
     "dataMount": "/data",
@@ -11,7 +11,7 @@
   },
   {
     "group": "core",
-    "ip" : "139.59.17.37",
+    "ip" : "45.55.49.134",
     "name": "swarm",
     "login": "root",
     "dataMount": "/data",
@@ -21,7 +21,7 @@
   },
   {
     "group": "services",
-    "ip" : "139.59.17.37",
+    "ip" : "45.55.49.134",
     "name": "services1",
     "login": "root",
     "dataMount": "/data",
