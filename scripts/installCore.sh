@@ -43,7 +43,6 @@ install_vault() {
   #TODO: save vault creds into state.json (for now)
   #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"
 
-  true
 }
 
 install_rabbitmq() {
@@ -63,7 +62,6 @@ install_gitlab() {
   #TODO: make sure this is the same machine running this installer
   # save gitlab creds in state.json (for now)
   #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"
-  true
 }
 
 install_swarm() {
