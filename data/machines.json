@@ -1,10 +1,19 @@
 [
   {
     "group": "core",
-    "ip" : "1.101.1.1",
-    "name": "db box",
+    "ip" : "45.55.49.134",
+    "name": "db",
     "login": "root",
-    "consistent": "false",
+    "dataMount": "/data",
+    "cores": 2,
+    "memory": 4096,
+    "arch": "x86"
+  },
+  {
+    "group": "core",
+    "ip" : "45.55.49.134",
+    "name": "swarm",
+    "login": "root",
     "dataMount": "/data",
     "cores": 2,
     "memory": 4096,
@@ -12,10 +21,9 @@
   },
   {
     "group": "services",
-    "ip" : "1.101.1.2",
-    "name": "services box",
+    "ip" : "45.55.49.134",
+    "name": "services1",
     "login": "root",
-    "consistent": "false",
     "dataMount": "/data",
     "cores": 2,
     "memory": 4096,

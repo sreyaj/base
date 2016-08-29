@@ -5,54 +5,67 @@ readonly CORE_COMPONENTS="postgresql \
   swarm \
   rabbitmq"
 
+###########################################################
+export CORE_COMPONENTS_LIST=""
+export CORE_MACHINES_LIST=""
+
 validate_core_config() {
   #TODO: check if components.json has all the require components 
   echo "validating core config"
-}
+  CORE_COMPONENTS_LIST=$(cat $CORE_CONFIG | jq '.')
+  local component_count=$(echo $CORE_COMPONENTS_LIST | jq '. | length')
+  if [[ $component_count -lt 1 ]]; then
+    echo "5 components required to set up shippable, $component_count provided"
+    exit 1
+  else
+    echo "Component count : $component_count"
+  fi
 
-get_machine_list() {
-  #TODO: get machines list from state.json. these will the machines
-  #that are currently running and in consistent state
-  echo "getting provisioned machines list"
 }
 
 install_database() {
-  #TODO: get one core machine, and install database on it
-  # use ssh keys to log into the database box
-  # run the script to install postgres
-  # save the db username/password into state.json (for now)
-  echo "installing postgres"
-  exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install pgsql"
+  echo "getting provisioned machines list"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq '.ip')
+  _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
+
+  #TODO: update state
 }
 
 install_vault() {
   #TODO: get the machine that db was installed on, and install vault on it
   # save vault creds into state.json (for now)
-  exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"
+  #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"
+  true
 }
 
 install_rabbitmq() {
   #TODO: get the machine that db was installed on, and install rabbitmq on it
   # save rabbitmq creds into state.json (for now)
-  exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install rabbitmq"
+  #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install rabbitmq"
+  true
 }
 
 install_gitlab() {
   #TODO: get another machine from core group, and install gitlab
   # make sure this is the same machine running this installer
   # save gitlab creds in state.json (for now)
-  exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"
+  #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"
+  true
 }
 
 install_swarm() {
   #TODO: get machine where gitlab was installed, and install swarm on it
   # make sure this is the same machine that is running this installer
-  exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install swarm"
+  #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install swarm"
+  true
 }
 
 install_redis() {
   #TODO: get machine where gitlab was installed and install redis on it
-  exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install redis"
+  #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install redis"
+  true
 }
 
 update_state() {
@@ -62,7 +75,6 @@ update_state() {
 
 main() {
   validate_core_config
-  get_machine_list
   install_database
   install_vault
   install_rabbitmq

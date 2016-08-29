@@ -2,16 +2,25 @@
   {
     "group": "core",
     "name": "postgresql",
-    "version": "9.6.1",
-    "files": [{}],
+    "version": "9.5",
+    "files": [],
     "preCmd": [],
-    "postCmd": []
+    "postCmd": ["sleep 10", "sudo service postgresql restart"]
   },
   {
     "group": "core",
     "name": "vault",
     "version": "0.6.0",
-    "files": [{}],
+    "files": [{
+      "local": "vault.conf",
+      "remote": "/etc/init/vault.conf"
+    },{
+      "local": "policy.hcl",
+      "remote": "/etc/vault.d/policy.hcl"
+    },{
+      "local": "vault.hcl",
+      "remote": "/etc/vault.d/vault.hcl"
+    }],
     "preCmd": [],
     "postCmd": []
 
