@@ -65,12 +65,23 @@ install_gitlab() {
   #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"
 }
 
+install_docker() {
+  __process_msg "Installing Docker"
+  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local host=$(echo $gitlab_host | jq '.ip')
+  _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
+}
+
 install_swarm() {
   __process_msg "Installing Swarm"
+  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local host=$(echo $gitlab_host | jq '.ip')
+  _copy_script_remote $host "installSwarm.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
   #TODO: get machine where gitlab was installed, and install swarm on it
   # make sure this is the same machine that is running this installer
   #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install swarm"
-  true
 }
 
 install_redis() {
@@ -94,6 +105,7 @@ main() {
   install_vault
   install_rabbitmq
   install_gitlab
+  install_docker
   install_swarm
   install_redis
   update_state

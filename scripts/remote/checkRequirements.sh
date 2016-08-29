@@ -1,4 +1,4 @@
-#!/bin/bash -e 
+#!/bin/bash -e
 
 ##TODO: read these values from config
 readonly MIN_MEM=2048
@@ -16,7 +16,7 @@ check_64_bit() {
   else
     echo "ERROR: kernel must be ${KERNEL_ARCH}-bit to run docker"
     exit 1
-  fi  
+  fi
   ## this has to be added because apt-get update was throwing this error
   ## http://askubuntu.com/questions/104160/method-driver-usr-lib-apt-methods-https-could-not-be-found-update-error
   sudo apt-get -y install apt-transport-https
@@ -35,8 +35,8 @@ check_ram() {
     if [ $mem -lt $MIN_MEM ]; then
       echo "ERROR: insufficient RAM"
       exit 1
-    fi  
-  fi  
+    fi
+  fi
 }
 
 check_hdd_space() {
@@ -54,8 +54,8 @@ check_hdd_space() {
     if [ $space_in_gb -lt $MIN_HDD ]; then
       echo "ERROR: hard drive is too small to run builds. Please allow a minimum of ${MIN_HDD}GB"
       exit 1
-    fi  
-  fi  
+    fi
+  fi
 }
 
 main() {
