@@ -175,6 +175,11 @@ bootstrap_db() {
 }
 
 main() {
+  if [ ! -z "sudo service --status-all 2>&1 | grep postgres" ]; then
+    echo "Postgres already installed, skipping."
+    return
+  fi
+
   install_postgres
   configure_data_dirs
   update_ownership

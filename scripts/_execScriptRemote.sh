@@ -31,5 +31,3 @@ _exec_remote_cmd() {
     echo "$remote_cmd_exec"
   fi
 }
-
-

@@ -1,10 +1,14 @@
 #!/bin/bash -e
 
-cd /tmp
-
 VAULTVERSION=0.6.0
 VAULTDOWNLOAD=https://releases.hashicorp.com/vault/${VAULTVERSION}/vault_${VAULTVERSION}_linux_amd64.zip
 VAULTCONFIGDIR=/etc/vault.d
+
+check_vault() {
+  {
+    type vault &> /dev/null && echo "Vault already installed, skipping" && exit 0
+  }
+}
 
 download_vault() {
   sudo apt-get install -y zip
@@ -27,9 +31,15 @@ create_config_dirs() {
 }
 
 main() {
+  {
+    type vault &> /dev/null && echo "Vault already installed, skipping" && return
+  }
+  pushd /tmp
+  check_vault
   download_vault
   install_vault
   create_config_dirs
+  popd
 }
 
 main

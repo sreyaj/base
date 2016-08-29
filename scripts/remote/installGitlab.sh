@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-
 install_deps() {
   echo "installing dependencies"
   sudo apt-get -y install curl openssh-server ca-certificates
@@ -18,6 +17,10 @@ configure_and_start() {
 }
 
 main() {
+  {
+    type gitlab-ctl &> /dev/null && echo "Gitlab already installed, skipping" && return
+  }
+
   install_deps
   install_gitlab
   configure_and_start
