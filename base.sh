@@ -3,7 +3,7 @@
 ###########################################################
 #
 # Shippable Enterprise Installer
-# 
+#
 # supported OS: ubuntu 14.04
 # supported bash: 4.3.11
 ###########################################################
@@ -32,39 +32,53 @@ readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RUN_NUMBER"
 
 __process_marker() {
   local prompt="$@"
-  echo "##################################################"
-  echo "Running $prompt"
-  echo "##################################################"
   echo ""
+  echo "##################################################"
+  echo "# $prompt"
+  echo "##################################################"
+}
+
+__process_msg() {
+  local message="$@"
+  echo "|___ $@"
 }
 
 __check_dependencies() {
   __process_marker "Installing dependencies"
+
   {
-    type jq >/dev/null 2>&1 
-    echo "'jq' already installed, skipping"
-  }|| {
+    type jq &> /dev/null && __process_msg "'jq' already installed, skipping"
+  } || {
+    __process_msg "Installing 'jq'"
     sudo apt-get install -y jq
   }
 
-  ##TODO: check ssh and install if not present
-  ##TODO: check ssh-keygen command
-  ##TODO: check rsync
-}
+  {
+    type rsync &> /dev/null && __process_msg "'rsync' already installed, skipping"
+  } || {
+    __process_msg "Installing 'rsync'"
+    sudo apt-get install -y rsync
+  }
 
+  {
+    type ssh &> /dev/null && __process_msg "'ssh' already installed, skipping"
+  } || {
+    __process_msg "Installing 'ssh'"
+    sudo apt-get install -y ssh-client
+  }
+}
 
 install() {
   __check_dependencies
   source "$SCRIPTS_DIR/getConfigs.sh"
-  #source "$SCRIPTS_DIR/bootstrapMachines.sh"
-  #source "$SCRIPTS_DIR/installCore.sh"
+  source "$SCRIPTS_DIR/bootstrapMachines.sh"
+  source "$SCRIPTS_DIR/installCore.sh"
   source "$SCRIPTS_DIR/bootstrapApp.sh"
   source "$SCRIPTS_DIR/provisionServices.sh"
 }
 
 upgrade() {
   echo "Starting upgrades"
-
 }
 
 __print_help() {
@@ -74,15 +88,13 @@ __print_help() {
     -s | --status     Print status of current installation
     -i | --install    Print status of current installation
     -u | --upgrade    Print status of current installation
-    -v | --version    Print version of this script 
+    -v | --version    Print version of this script
     -h | --help       Print this message
   "
 }
 
-
 __show_status() {
   echo "All services operational"
-  echo $ROOT_DIR
 }
 
 __show_version() {
