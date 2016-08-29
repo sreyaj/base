@@ -34,10 +34,15 @@ install_database() {
 }
 
 install_vault() {
-  #TODO: get the machine that db was installed on, and install vault on it
-  # save vault creds into state.json (for now)
+  echo "|___ installing vault"
+  local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $vault_host | jq '.ip')
+  _copy_script_remote $host "installVault.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
+
+  #TODO: save vault creds into state.json (for now)
   #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"
-  true
+
 }
 
 install_rabbitmq() {
@@ -48,11 +53,15 @@ install_rabbitmq() {
 }
 
 install_gitlab() {
-  #TODO: get another machine from core group, and install gitlab
-  # make sure this is the same machine running this installer
+  echo "|___ installing gitlab"
+  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local host=$(echo $gitlab_host | jq '.ip')
+  _copy_script_remote $host "installGitlab.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installGitlab.sh"
+
+  #TODO: make sure this is the same machine running this installer
   # save gitlab creds in state.json (for now)
   #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"
-  true
 }
 
 install_swarm() {
