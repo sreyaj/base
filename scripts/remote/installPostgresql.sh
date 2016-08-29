@@ -175,7 +175,12 @@ bootstrap_db() {
 }
 
 main() {
-  if [ ! -z "sudo service --status-all 2>&1 | grep postgres" ]; then
+  {
+    check_postgres=$(sudo service --status-all 2>&1 | grep postgres)
+  } || {
+    true
+  }
+  if [ ! -z "$check_postgres" ]; then
     echo "Postgres already installed, skipping."
     return
   fi

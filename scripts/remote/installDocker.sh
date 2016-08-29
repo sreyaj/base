@@ -66,10 +66,16 @@ restart_docker_service() {
 }
 
 main() {
-  if [ ! -z "sudo service --status-all 2>&1 | grep docker" ]; then
-    echo "docker already installed, skipping."
+  {
+    check_docker=$(sudo service --status-all 2>&1 | grep docker)
+  } || {
+    true
+  }
+  if [ ! -z "$check_docker" ]; then
+    echo "Docker already installed, skipping."
     return
   fi
+
   upgrade_kernel
   docker_install
   check_docker_opts

@@ -6,10 +6,16 @@ install_redis() {
 }
 
 main() {
-  if [ ! -z "sudo service --status-all 2>&1 | grep redis-server" ]; then
+  {
+    check_redis=$(sudo service --status-all 2>&1 | grep redis-server)
+  } || {
+    true
+  }
+  if [ ! -z "$check_redis" ]; then
     echo "Redis already installed, skipping."
     return
   fi
+
   install_redis
 }
 
