@@ -75,9 +75,11 @@ install_swarm() {
 
 install_redis() {
   __process_msg "Installing Redis"
-  #TODO: get machine where gitlab was installed and install redis on it
-  #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install redis"
-  true
+  local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local host=$(echo $redis_host | jq '.ip')
+  _copy_remote $host "$DATA_DIR/redis.conf" "/etc/redis/redis.conf"
+  _copy_remote $host "$SCRIPTS_DIR/remote/installRedis.sh" "$REMOTE_DIR"
+  _exec_remote_cmd "$host" "$REMOTE_DIR/installRedis.sh"
 }
 
 update_state() {
