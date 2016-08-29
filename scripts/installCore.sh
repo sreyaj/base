@@ -10,7 +10,7 @@ export CORE_COMPONENTS_LIST=""
 export CORE_MACHINES_LIST=""
 
 validate_core_config() {
-  #TODO: check if components.json has all the require components 
+  #TODO: check if components.json has all the require components
   echo "validating core config"
   CORE_COMPONENTS_LIST=$(cat $CORE_CONFIG | jq '.')
   local component_count=$(echo $CORE_COMPONENTS_LIST | jq '. | length')
@@ -46,10 +46,10 @@ install_vault() {
 }
 
 install_rabbitmq() {
-  #TODO: get the machine that db was installed on, and install rabbitmq on it
-  # save rabbitmq creds into state.json (for now)
-  #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install rabbitmq"
-  true
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq '.ip')
+  _copy_script_remote $host "installRabbit.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
 }
 
 install_gitlab() {
