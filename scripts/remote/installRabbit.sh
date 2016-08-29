@@ -31,8 +31,13 @@ start_rabbitmq() {
 }
 
 main() {
-  if [ ! -z "sudo service --status-all 2>&1 | grep rabbitmq-server" ]; then
-    echo "RabbitMQ Server already installed, skipping."
+  {
+    check_rabbitmq=$(sudo service --status-all 2>&1 | grep rabbitmq-server)
+  } || {
+    true
+  }
+  if [ ! -z "$check_rabbitmq" ]; then
+    echo "RabbitMQ already installed, skipping."
     return
   fi
 
