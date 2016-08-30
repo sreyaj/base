@@ -2,6 +2,7 @@
 
 # Indicates if docker service should be restarted
 export docker_restart=false
+readonly DOCKER_VERSION=1.12.1-0~trusty
 
 _run_update() {
   sudo apt-get update
@@ -22,7 +23,7 @@ docker_install() {
 
   _run_update
 
-  sudo apt-get install -y docker-engine
+  sudo apt-get install -y docker-engine=$DOCKER_VERSION
 
 }
 
