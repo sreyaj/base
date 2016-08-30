@@ -20,14 +20,12 @@ readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
 readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RUN_NUMBER"
-readonly REMOTE_DIR="/tmp/shippable/$RUN_NUMBER"
 
 # TODO: This should be set from statefile
 export RUN_NUMBER=1
 
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
-source "$SCRIPTS_DIR/_copyRemote.sh"
 
 # Helper methods ##########################################
 ###########################################################

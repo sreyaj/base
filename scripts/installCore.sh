@@ -56,7 +56,7 @@ install_vault() {
   _copy_script_remote $host "vault.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
 
-  _copy_remote $host "$SCRIPTS_DIR/remote/pgpass.conf" "/root/.pgpass"
+  _copy_script_remote $host "pgpass.conf" "/root/.pgpass"
 
   _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
@@ -139,9 +139,9 @@ install_redis() {
   __process_msg "Installing Redis"
   local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local host=$(echo $redis_host | jq '.ip')
-  _copy_remote $host "$DATA_DIR/redis.conf" "/etc/redis/redis.conf"
-  _copy_remote $host "$SCRIPTS_DIR/remote/installRedis.sh" "$REMOTE_DIR"
-  _exec_remote_cmd "$host" "$REMOTE_DIR/installRedis.sh"
+  _copy_script_remote $host "redis.conf" "/etc/redis/redis.conf"
+  _copy_script_remote $host "installRedis.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRedis.sh"
 }
 
 update_state() {
