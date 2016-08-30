@@ -12,14 +12,14 @@ _copy_script_remote() {
   local script_dir_remote="$1"
   local script_path_remote="$script_dir_remote/$script_name"
 
-  __process_msg "Copying $script_path_local to remote host: $script_path_remote"
-  remove_key_cmd="ssh-keygen -q -f '$HOME/.ssh/known_hosts' -R $host"
+  remove_key_cmd="ssh-keygen -q -f '$HOME/.ssh/known_hosts' -R $host > /dev/null 2>&1"
   {
     eval $remove_key_cmd
   } || {
     true
   }
 
+  __process_msg "Copying $script_path_local to remote host: $script_path_remote"
   _exec_remote_cmd $host "mkdir -p $script_dir_remote"
   copy_cmd="rsync -q -avz -e \
     'ssh -q \
@@ -31,5 +31,4 @@ _copy_script_remote() {
       $script_path_local $user@$host:$script_path_remote"
 
   copy_cmd_out=$(eval $copy_cmd)
-  echo "$script_path_remote"
 }

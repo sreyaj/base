@@ -30,7 +30,7 @@ check_ram() {
   if [ -z "$mem" ]; then
     echo "Unable to determine RAM"
   else
-    echo "total RAM: $mem"
+    echo "Total RAM: $mem"
 
     if [ $mem -lt $MIN_MEM ]; then
       echo "ERROR: insufficient RAM"
