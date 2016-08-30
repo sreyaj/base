@@ -3,6 +3,15 @@
   "shippableCustomerId" : "1234",
   "licenseKey": "secureLicenseKey",
   "masterIntegrations": [],
-  "services": [],
-  "systemConfig": {}
+  "systemConfig": {},
+  "services": [{
+    "name": "api",
+    "image": "shipimg/api:server.1234"
+  },{
+    "name": "www",
+    "image": "shipimg/www:server.1234"
+  },{
+    "name": "sync",
+    "image": "shipimg/www:micro.1234"
+  }]
 }

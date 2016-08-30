@@ -14,6 +14,8 @@ readonly ROOT_CONFIG_PATH="$ROOT_MOUNT_PATH"/config
 readonly DATA_MOUNT_PATH=/ship
 readonly DATA_DB_PATH="$DATA_MOUNT_PATH"/db
 
+##TODO: read all these variables from the statefile
+##and pass them as script args
 readonly DB_NAME=shipdb
 readonly DB_ROLE=dbo
 readonly DB_USER=apiuser
