@@ -1,19 +1,10 @@
 #!/bin/bash -e
 
-readonly DOCKER_VERSION=1.11.1-0~trusty
-
 # Indicates if docker service should be restarted
 export docker_restart=false
 
 _run_update() {
   sudo apt-get update
-}
-
-upgrade_kernel() {
-  echo 'deb http://archive.ubuntu.com/ubuntu/ trusty-proposed restricted main multiverse universe' | sudo tee -a /etc/apt/sources.list
-  echo -e 'Package: *\nPin: release a=trusty-proposed\nPin-Priority: 400' | sudo tee -a  /etc/apt/preferences.d/proposed-updates
-  _run_update
-  sudo apt-get -y  install linux-image-3.19.0-51-generic linux-image-extra-3.19.0-51-generic
 }
 
 docker_install() {
@@ -23,7 +14,7 @@ docker_install() {
 
   sudo apt-get install -y apt-transport-https ca-certificates
 
-  sudo apt-get install -y linux-image-extra-`uname -r`
+  sudo apt-get install -y linux-image-extra-`uname -r` linux-image-extra-virtual
 
   sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
@@ -31,7 +22,7 @@ docker_install() {
 
   _run_update
 
-  sudo apt-get install -y docker-engine=$DOCKER_VERSION
+  sudo apt-get install -y docker-engine
 
 }
 
@@ -76,7 +67,6 @@ main() {
     return
   fi
 
-  upgrade_kernel
   docker_install
   check_docker_opts
   restart_docker_service
