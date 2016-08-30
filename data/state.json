@@ -25,6 +25,21 @@
       "sshSuccessful": "true"
     }
   ],
-  "core": [],
+  "core": [
+    {
+      "name": "postgresql",
+      "secure": {
+        "username": "apiuser",
+        "password": "testing1234"
+      }
+    },
+    {
+      "name": "rabbitmq",
+      "secure": {
+        "username": "apiuser",
+        "password": "testing1234"
+      }
+    }
+  ],
   "services": []
 }

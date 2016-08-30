@@ -23,6 +23,21 @@
     }],
     "preCmd": [],
     "postCmd": []
-
+  },
+  {
+    "group": "core",
+    "name": "rabbitmq",
+    "version": "3.6.5"
+    "files": [],
+    "preCmd": [],
+    "postCmd": ["sudo service rabbitmq-server restart"]
+  },
+  {
+    "group": "core",
+    "name": "docker",
+    "version": "1.12.1",
+    "files": [],
+    "preCmd": [],
+    "postCmd": ["sudo service docker restart"]
   }
 ]
