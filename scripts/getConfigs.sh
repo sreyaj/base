@@ -13,18 +13,17 @@ readonly CONFIG_FOLDER="test"
 
 get_system_config() {
   #TODO: curl into s3 using the keys to get the config
-  echo "Fetched config from s3 and wrote it to config.json"
+  __process_msg "Fetched config from s3 and wrote it to config.json"
 }
 
 validate_config() {
   #TODO: validate if the config has all the fields
   # like  version, customer id, license key, integrations etc
-  echo "validating config"
+  __process_msg "Validating config"
 }
 
 main() {
-  echo "starting installation"
-
+  __process_marker "Getting config"
   get_system_config
   validate_config
 }

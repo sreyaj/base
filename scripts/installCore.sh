@@ -44,23 +44,22 @@ install_vault() {
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local db_ip=$(echo $db_host | jq '.ip')
   local db_port=5432
-
   local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
   local db_password=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.password')
 
-  _copy_script_remote $host "config.hcl" "/etc/vault.d/"
+  _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
   _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
   _copy_script_remote $host "vault.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
 
-  _exec_remote_cmd $host sed -i "s/{{DB_USERNAME}}/$db_username/g" /etc/vault.d/vault.hcl
-  _exec_remote_cmd $host sed -i "s/{{DB_PASSWORD}}/$db_password/g" /etc/vault.d/vault.hcl
-  _exec_remote_cmd $host sed -i "s/{{DB_ADDRESS}}/$db_host:$db_port/g" /etc/vault.d/vault.hcl
+  _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
+  _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
+  _exec_remote_cmd $host "sed -i \"s/{{DB_ADDRESS}}/$db_ip:$db_port/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sudo service vault start"
 
-  _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh"
-  _exec_remote_cmd "$host" "psql -h localhost $SCRIPT_DIR_REMOTE/bootstrapVault.sh"
+  # _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
+  # _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh"
+  # _exec_remote_cmd "$host" "psql -h localhost $SCRIPT_DIR_REMOTE/bootstrapVault.sh"
 
   #TODO: save vault creds into state.json (for now)
   #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"
@@ -101,13 +100,12 @@ install_docker() {
   __process_msg "Installing Docker on service machines"
   local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
   local service_machines_count=$(echo $service_machines_list | jq '. | length')
-  for i in (seq 1 $service_machines_count); do
+  for i in $(seq 1 $service_machines_count); do
     local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
     _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
   done
-
 }
 
 install_swarm() {
