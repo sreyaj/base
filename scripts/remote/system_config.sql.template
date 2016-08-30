@@ -1,0 +1,7 @@
+do $$
+  begin
+    if exists (select 1 from "systemConfigs" where "id" = 1) then
+      update "systemConfigs" set "vaultToken"='INSERTTOKENHERE' where id=1;
+    end if;
+  end
+$$;

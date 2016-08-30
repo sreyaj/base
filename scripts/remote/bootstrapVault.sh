@@ -20,6 +20,7 @@ unseal() {
   vault unseal $KEY_3
 
   VAULT_TOKEN=$(grep 'Initial Root Token:' $VAULT_KEYFILE | awk '{print substr($NF, 1, length($NF))}')
+  sed -e "s/INSERTTOKENHERE/$VAULT_TOKEN/g" /vault/config/scripts/system_config.sql.template >  /vault/config/scripts/system_config.sql
 }
 
 auth() {
@@ -34,8 +35,11 @@ write_policy() {
   vault policy-write shippable /etc/vault.d/policy.hcl
 }
 
-create_shippable_token() {
-  vault token-create -orphan -policy="shippable" > $VAULT_KEYFILE
+insert_system_integrations() {
+  cd /vault/config/scripts
+  ##TODO: read these values from state.json
+  #vault write shippable/systemIntegrations/574ee745d49b091400b76273 @gitlab.json
+  #vault write shippable/systemIntegrations/574ee745d49b091400b76274 @github.json
 }
 
 main() {
@@ -50,7 +54,7 @@ main() {
     auth
     mount_shippable
     write_policy
-    create_shippable_token
+    insert_system_integrations
   # 2 - Sealed
   else
     unseal
