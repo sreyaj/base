@@ -55,7 +55,7 @@ install_vault() {
   _copy_script_remote $host "vault.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
 
-  _copy_remote $host "$DATA_DIR/pgpass.conf" "/root/.pgpass"
+  _copy_remote $host "$SCRIPTS_DIR/remote/pgpass.conf" "/root/.pgpass"
 
   _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
@@ -68,7 +68,6 @@ install_vault() {
 
   _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
 
-  _exec_remote_cmd $host "export PGPASSWORD=$db_password"
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault.sql"
 
   _exec_remote_cmd $host "sudo service vault start"
