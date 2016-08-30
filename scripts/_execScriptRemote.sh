@@ -20,14 +20,11 @@ _exec_remote_cmd() {
     -i $key \
     $user@$host \
     $cmd"
-  eval "$remote_cmd"
-  local ret_code=$?
-  if [ $ret_code -ne 0 ]; then
-    echo "ERROR: remote command failed on host: $host"
-    echo $remote_cmd_exec
+
+  {
+    __process_msg "Executing $cmd on host: $host" && eval "$remote_cmd"
+  } || {
+    __process_msg "ERROR: Remote command $cmd failed on host: $host"
     exit 1
-  else
-    echo "Remote command successful on host: $host"
-    echo "$remote_cmd_exec"
-  fi
+  }
 }
