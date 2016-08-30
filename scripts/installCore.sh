@@ -71,8 +71,6 @@ install_vault() {
 
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault.sql"
 
-  _exec_remote_cmd $host "sudo service vault start"
-
   _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh"
 

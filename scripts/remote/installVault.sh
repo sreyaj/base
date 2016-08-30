@@ -23,6 +23,10 @@ create_config_dirs() {
   sudo chmod 755 $VAULTCONFIGDIR
 }
 
+start_vault() {
+  sudo service vault start
+}
+
 main() {
   {
     type vault &> /dev/null && echo "Vault already installed, skipping" && return
@@ -31,6 +35,7 @@ main() {
   download_vault
   install_vault
   create_config_dirs
+  start_vault
   popd
 }
 
