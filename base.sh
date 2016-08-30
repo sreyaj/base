@@ -27,7 +27,6 @@ export RUN_NUMBER=1
 
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
-source "$SCRIPTS_DIR/_copyRemote.sh"
 
 # Helper methods ##########################################
 ###########################################################
