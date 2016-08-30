@@ -12,7 +12,7 @@ _copy_script_remote() {
   local script_dir_remote="$1"
   local script_path_remote="$script_dir_remote/$script_name"
 
-  echo "copying $script_path_local to remote host: $script_path_remote"
+  __process_msg "Copying $script_path_local to remote host: $script_path_remote"
   remove_key_cmd="ssh-keygen -q -f '$HOME/.ssh/known_hosts' -R $host"
   {
     eval $remove_key_cmd

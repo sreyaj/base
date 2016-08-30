@@ -7,14 +7,14 @@ validate_machines_config() {
   MACHINES_LIST=$(cat $MACHINES_CONFIG | jq '.')
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
   if [[ $machine_count -lt 2 ]]; then
-    echo "At least 2 machines required to set up shippable, $machine_count provided"
+    __process_msg "At least 2 machines required to set up shippable, $machine_count provided"
     exit 1
   else
-    echo "Machine count : $machine_count"
+    __process_msg "Machine count: $machine_count"
   fi
 
   ##TODO: check if there is at least one machine "core" group and "services" group
-  echo "Validated machines config"
+  __process_msg "Validated machines config"
 
   ##TODO: if all machines are in consistent state, then skip this
   ##TODO: add machines to list in state
@@ -40,7 +40,7 @@ validate_machines_config() {
 }
 
 update_state() {
-  # group can be machines, core or services 
+  # group can be machines, core or services
   local group=$1
   local name=$2
   local data=$3
@@ -54,30 +54,30 @@ update_state() {
 }
 
 create_ssh_keys() {
-  echo "Creating ssh keys"
+  __process_msg "Creating SSH keys"
   if [ -f "$SSH_PRIVATE_KEY" ] && [ -f $SSH_PUBLIC_KEY ]; then
-    echo "ssh keys already present, skipping"
+    __process_msg "SSH keys already present, skipping"
   else
-    echo "ssh keys not available, generating"
+    __process_msg "SSH keys not available, generating"
     local keygen_exec=$(ssh-keygen -t rsa -P "" -f $SSH_PRIVATE_KEY)
-    echo "ssh keys successfully generated"
+    __process_msg "SSH keys successfully generated"
   fi
   #TODO: update state
 }
 
 update_ssh_key() {
   ##TODO: ask user to update ssh keys in machines
-  echo "Please run the following command on all the machines (including this one), type (y) when done"
+  __process_msg "Please run the following command on all the machines (including this one), type (y) when done"
   echo ""
   echo "echo `cat $SSH_PUBLIC_KEY` | sudo tee -a /root/.ssh/authorized_keys"
   echo ""
 
-  echo "Done? (y/n)"
+  __process_msg "Done? (y/n)"
   read response
   if [[ "$response" =~ "y" ]]; then
-    echo "Proceeding with steps to set up the machine"
+    __process_msg "Proceeding with steps to set up the machines"
   else
-    echo "ssh keys are required to bootstrap the machine"
+    __process_msg "SSH keys are required to bootstrap the machines"
     update_ssh_key
   fi
 
@@ -86,7 +86,7 @@ update_ssh_key() {
 
 check_connection() {
   # TODO: check if ssh into each machine works or not
-  echo "checking machine connection"
+  __process_msg "Checking machine connection"
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
   for i in $(seq 1 $machine_count); do
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
@@ -94,12 +94,12 @@ check_connection() {
     _exec_remote_cmd "$host" "ls"
   done
 
-  echo "All hosts reachable"
+  __process_msg "All hosts reachable"
 }
 
 check_requirements() {
   # TODO: check machine config: memory, cpu disk, arch os type
-  echo "validating machine requirements"
+  __process_msg "Validating machine requirements"
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
   for i in $(seq 1 $machine_count); do
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
@@ -111,11 +111,11 @@ check_requirements() {
 
 update_state() {
   # TODO: update state.json with the results
-  echo "updating state file with machine status"
+  __process_msg "updating state file with machine status"
 }
 
 bootstrap() {
-  echo "Installing core components on machines"
+  __process_msg "Installing core components on machines"
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
   for i in $(seq 1 $machine_count); do
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
@@ -126,6 +126,7 @@ bootstrap() {
 }
 
 main() {
+  __process_marker "Bootstrapping machines"
   validate_machines_config
   create_ssh_keys
   update_ssh_key

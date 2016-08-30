@@ -4,11 +4,11 @@
 #
 # Shippable Enterprise Installer
 #
-# supported OS: ubuntu 14.04
-# supported bash: 4.3.11
+# Supported OS: Ubuntu 14.04
+# Supported bash: 4.3.11
 ###########################################################
 
-############ Global variables #############################
+# Global variables ########################################
 ###########################################################
 readonly INSTALLER_VERSION=4.0.0
 readonly IFS=$'\n\t'
@@ -19,19 +19,18 @@ readonly STATE_FILE="$DATA_DIR/state.json"
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
+readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RUN_NUMBER"
+readonly REMOTE_DIR="/tmp/shippable/$RUN_NUMBER"
+
+# TODO: This should be set from statefile
+export RUN_NUMBER=1
+
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyRemote.sh"
 
+# Helper methods ##########################################
 ###########################################################
-
-#TODO: this should be set from statefile
-export RUN_NUMBER=1
-readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RUN_NUMBER"
-readonly REMOTE_DIR="/tmp/shippable/$RUN_NUMBER"
-
-###########################################################
-
 __process_marker() {
   local prompt="$@"
   echo ""
@@ -72,8 +71,8 @@ __check_dependencies() {
 
 install() {
   __check_dependencies
-  source "$SCRIPTS_DIR/getConfigs.sh"
-  source "$SCRIPTS_DIR/bootstrapMachines.sh"
+  # source "$SCRIPTS_DIR/getConfigs.sh"
+  # source "$SCRIPTS_DIR/bootstrapMachines.sh"
   source "$SCRIPTS_DIR/installCore.sh"
   source "$SCRIPTS_DIR/bootstrapApp.sh"
   source "$SCRIPTS_DIR/provisionServices.sh"
@@ -84,12 +83,13 @@ upgrade() {
 }
 
 __print_help() {
-  echo "usage: $0 options
+  echo "
+  usage: $0 options
   This script installs Shippable enterprise
   OPTIONS:
     -s | --status     Print status of current installation
-    -i | --install    Print status of current installation
-    -u | --upgrade    Print status of current installation
+    -i | --install    Start a new Shippable installation
+    -u | --upgrade    Upgrade existing Shippable installation
     -v | --version    Print version of this script
     -h | --help       Print this message
   "
@@ -109,7 +109,7 @@ __show_version() {
 # some arguments don't have a corresponding value to go with it such
 # as in the --default example).
 
-## if size is not two at least, quit
+## If size is not two at least, quit
 if [[ $# -gt 0 ]]; then
   while [[ $# -gt 0 ]]; do
     key="$1"
