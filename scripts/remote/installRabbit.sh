@@ -26,8 +26,7 @@ start_rabbitmq() {
   sudo chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/mnesia
   sudo chown -R rabbitmq:rabbitmq /var/log/rabbitmq
   ulimit -n 65536
-  sudo rabbitmqctl stop || true
-  sudo /usr/sbin/rabbitmq-server &
+  sudo service rabbitmq-server restart
 }
 
 main() {
@@ -41,10 +40,12 @@ main() {
     return
   fi
 
+  pushd /tmp
   install_log_rotate
   install_rabbitmq
   configure_rabbitmq
   start_rabbitmq
+  popd
 }
 
 main
