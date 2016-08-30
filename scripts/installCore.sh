@@ -46,20 +46,35 @@ install_vault() {
   local db_port=5432
   local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
   local db_password=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.password')
+  local db_address=$db_ip:$db_port
+
+  local db_name="shipdb"
 
   _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
   _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
   _copy_script_remote $host "vault.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
 
+  _copy_remote $host "$DATA_DIR/pgpass.conf" "/root/.pgpass"
+
   _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
-  _exec_remote_cmd $host "sed -i \"s/{{DB_ADDRESS}}/$db_ip:$db_port/g\" /etc/vault.d/vault.hcl"
+  _exec_remote_cmd $host "sed -i \"s/{{DB_ADDRESS}}/$db_address/g\" /etc/vault.d/vault.hcl"
+
+  _exec_remote_cmd $host "sed -i \"s/{{address}}/$db_address/g\" /root/.pgpass"
+  _exec_remote_cmd $host "sed -i \"s/{{database}}/$db_name/g\" /root/.pgpass"
+  _exec_remote_cmd $host "sed -i \"s/{{username}}/$db_username/g\" /root/.pgpass"
+  _exec_remote_cmd $host "sed -i \"s/{{password}}/$db_password/g\" /root/.pgpass"
+
+  _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
+
+  _exec_remote_cmd $host "export PGPASSWORD=$db_password"
+  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault.sql"
+
   _exec_remote_cmd $host "sudo service vault start"
 
-  # _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
-  # _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh"
-  # _exec_remote_cmd "$host" "psql -h localhost $SCRIPT_DIR_REMOTE/bootstrapVault.sh"
+  _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh"
 
   #TODO: save vault creds into state.json (for now)
   #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"

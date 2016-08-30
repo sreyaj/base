@@ -12,11 +12,13 @@ init() {
 
 unseal() {
   KEY_1=$(grep 'Key 1:' $VAULT_KEYFILE | awk '{print $NF}')
-  vault unseal $KEY_1
   KEY_2=$(grep 'Key 2:' $VAULT_KEYFILE | awk '{print $NF}')
-  vault unseal $KEY_2
   KEY_3=$(grep 'Key 3:' $VAULT_KEYFILE | awk '{print $NF}')
+
+  vault unseal $KEY_1
+  vault unseal $KEY_2
   vault unseal $KEY_3
+
   VAULT_TOKEN=$(grep 'Initial Root Token:' $VAULT_KEYFILE | awk '{print substr($NF, 1, length($NF))}')
 }
 
@@ -29,7 +31,7 @@ mount_shippable() {
 }
 
 write_policy() {
-  vault policy-write shippable /vault/config/scripts/policy.hcl
+  vault policy-write shippable /etc/vault.d/policy.hcl
 }
 
 create_shippable_token() {
