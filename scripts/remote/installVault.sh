@@ -21,7 +21,6 @@ create_config_dirs() {
   echo "Creating Vault configuration..."
   sudo mkdir -p $VAULTCONFIGDIR
   sudo chmod 755 $VAULTCONFIGDIR
-
 }
 
 main() {
