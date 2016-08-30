@@ -48,6 +48,7 @@ install_vault() {
   local db_password=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.password')
   local db_address=$db_ip:$db_port
 
+  #TODO: fetch db_name from state.json
   local db_name="shipdb"
 
   _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
