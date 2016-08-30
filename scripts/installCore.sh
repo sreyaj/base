@@ -140,8 +140,8 @@ install_redis() {
   local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local host=$(echo $redis_host | jq '.ip')
   _copy_script_remote $host "redis.conf" "/etc/redis/redis.conf"
-  _copy_script_remote $host "installRedis.sh" "$REMOTE_DIR"
-  _exec_remote_cmd "$host" "$REMOTE_DIR/installRedis.sh"
+  _copy_script_remote $host "installRedis.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRedis.sh"
 }
 
 update_state() {
