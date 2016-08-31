@@ -65,15 +65,20 @@ create_system_config_table() {
 
   _copy_script_remote $host "system_configs.sql" "/tmp"
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs.sql"
+  #TODO: update state
+}
+
+run_migrations() {
   __process_msg "Please copy migrations.sql onto machine which runs database, type (y) when done"
   __process_msg "Done? (y/n)"
   read response
   if [[ "$response" =~ "y" ]]; then
     __process_msg "Proceeding with steps to run migrations"
+    #TODO: Run migrations on db
   else
-    __process_msg "Skipping migrations"
+    __process_msg "Migrations are required to install core"
+    run_migrations
   fi
-  #TODO: update state
 }
 
 insert_system_config() {
@@ -204,6 +209,7 @@ main() {
   save_db_credentials
   create_system_config_table
   insert_system_config
+  run_migrations
   install_vault
   install_rabbitmq
   install_gitlab
