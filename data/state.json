@@ -18,6 +18,13 @@
       "components": ["swarm", "gitlab"]
     },
     {
+      "name": "services2",
+      "group": "services",
+      "ip" : "45.55.49.134",
+      "keysUpdated": "true",
+      "sshSuccessful": "true"
+    },
+    {
       "name": "services1",
       "group": "services",
       "ip" : "45.55.49.134",

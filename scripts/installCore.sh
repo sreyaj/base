@@ -69,6 +69,7 @@ install_vault() {
 
   _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
 
+  #TODO: ask for prompt here
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault.sql"
 
   _exec_remote_cmd $host "sudo service vault start"

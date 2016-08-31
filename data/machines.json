@@ -28,5 +28,15 @@
     "cores": 2,
     "memory": 4096,
     "arch": "x86"
+  },
+  {
+    "group": "services",
+    "ip" : "45.55.49.134",
+    "name": "services2",
+    "login": "root",
+    "dataMount": "/data",
+    "cores": 2,
+    "memory": 4096,
+    "arch": "x86"
   }
 ]
