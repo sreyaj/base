@@ -1,0 +1,20 @@
+{
+    "masterIntegrationId": "574ee696d49b091400b75f19",
+    "name": "gitlab",
+    "systemIntegrationId": 2,
+    "masterType": "scm",
+    "isEnabled": true,
+    "updatedAt": "2016-06-01T00:00:00+00:00",
+    "masterName": "Git store",
+    "createdBy": "54188262bc4d591ba438d62a",
+    "updatedBy": "54188262bc4d591ba438d62a",
+    "masterDisplayName": "Internal Gitlab Server",
+    "data": {
+        "username": "root",
+        "subscriptionProjectLimit": "100",
+        "password": "shippable1234",
+        "url": "http://localhost/api/v3"
+    },
+    "id": "574ee745d49b091400b76273",
+    "createdAt": "2016-06-01T00:00:00+00:00"
+}

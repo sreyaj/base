@@ -1,0 +1,22 @@
+{
+    "masterIntegrationId": "577de63321333398d11a35ac",
+    "name": "github.com",
+    "systemIntegrationId": 4,
+    "masterType": "auth",
+    "isEnabled": true,
+    "updatedAt": "2016-06-01T00:00:00+00:00",
+    "masterName": "github",
+    "createdBy": "54188262bc4d591ba438d62a",
+    "updatedBy": "54188262bc4d591ba438d62a",
+    "masterDisplayName": "github auth",
+    "data": {
+        "clientSecret": "",//client secret needs to be replaced
+        "protocol": "http",
+        "hostname": "localhost",
+        "clientId": "c479fea8bffd9a805025",
+        "providerId": "562dbd9710c5980d003b0451",
+        "port": "50001"
+    },
+    "id": "574ee745d49b091400b76274",
+    "createdAt": "2016-06-01T00:00:00+00:00"
+}
