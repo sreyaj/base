@@ -27,14 +27,41 @@ install_database() {
   __process_msg "Installing Database"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq '.ip')
+  _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
+}
+
+save_db_credentials() {
+  __process_msg "Saving database credentials"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq '.ip')
+  local db_ip=$(echo $db_host | jq '.ip')
+  local db_port=5432
+  local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
+  local db_password=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.password')
+  local db_address=$db_ip:$db_port
+
+  #TODO: fetch db_name from state.json
+  local db_name="shipdb"
+
+  _copy_script_remote $host ".pgpass" "/root/"
+  _exec_remote_cmd $host "sed -i \"s/{{address}}/$db_address/g\" /root/.pgpass"
+  _exec_remote_cmd $host "sed -i \"s/{{database}}/$db_name/g\" /root/.pgpass"
+  _exec_remote_cmd $host "sed -i \"s/{{username}}/$db_username/g\" /root/.pgpass"
+  _exec_remote_cmd $host "sed -i \"s/{{password}}/$db_password/g\" /root/.pgpass"
+
+  _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
+}
+
+create_system_config_table() {
+  __process_msg "Creating systemConfigs Table"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq '.ip')
   local db_ip=$(echo $db_host | jq '.ip')
   local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
 
   #TODO: fetch db_name from state.json
   local db_name="shipdb"
-
-  _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
 
   _copy_script_remote $host "system_configs.sql" "/tmp"
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs.sql"
@@ -62,18 +89,9 @@ install_vault() {
   _copy_script_remote $host "vault.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
 
-  _copy_script_remote $host ".pgpass" "/root/"
-
   _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_ADDRESS}}/$db_address/g\" /etc/vault.d/vault.hcl"
-
-  _exec_remote_cmd $host "sed -i \"s/{{address}}/$db_address/g\" /root/.pgpass"
-  _exec_remote_cmd $host "sed -i \"s/{{database}}/$db_name/g\" /root/.pgpass"
-  _exec_remote_cmd $host "sed -i \"s/{{username}}/$db_username/g\" /root/.pgpass"
-  _exec_remote_cmd $host "sed -i \"s/{{password}}/$db_password/g\" /root/.pgpass"
-
-  _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
 
   #TODO: ask for prompt here
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault.sql"
@@ -160,6 +178,8 @@ main() {
   __process_marker "Installing core"
   validate_core_config
   install_database
+  save_db_credentials
+  create_system_config_table
   install_vault
   install_rabbitmq
   install_gitlab
