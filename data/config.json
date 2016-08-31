@@ -2,16 +2,77 @@
   "installerVersion": "4.0.0",
   "shippableCustomerId" : "1234",
   "licenseKey": "secureLicenseKey",
-  "masterIntegrations": [],
-  "systemConfig": {},
+  "masterIntegrations": [{
+
+  }],
+  "systemConfig": {
+    "defaultMinionCount": 1,
+    "defaultPipelineCount": 1,
+    "braintreeEnabled": false,
+    "cachingEnabled": false,
+    "hubspotEnabled": false,
+    "buildTimeoutMS": 3600000,
+    "defaultPrivateJobQuota": 150,
+    "serviceUserToken": "sometoken",
+    "vaultUrl": "",
+    "vaultToken": "",
+    "vaultRefreshTimeInSec": 900
+  },
   "services": [{
     "name": "api",
-    "image": "shipimg/api:server.1234"
+    "image": "shipimg/api:server.1234",
+    "envs": {
+      "SHIPPABLE_VORTEX_URL": "",
+      "SHIPPABLE_AMQP_URL": "",
+      "SHIPPABLE_AMQP_MANAGEMENT_URL": "",
+      "SHIPPABLE_API_URL": "",
+      "API_PORT": 50000,
+      "RUN_MODE": "dev",
+      "IRC_BOT_NICK": "shippable-beta",
+      "LOG_LEVEL": "debug",
+      "EMAIL_CONFIG": "",
+      "ROOT_QUEUE_LIST": "micro.vortex|micro.nf|core.nf|core.iscan|iscan.isync|iscan.esync|micro.cu|micro.ini|cluster.init|micro.su|formation.deploy|nf.email|isync.autod|www.sockets|core.hubspotSync|nf.slack|micro.ecs|nf.irc|core.marshaller|marshaller.ec2|micro.gke|marshaller.truck|job.trigger|nf.hipchat|micro.ebs|micro.dcl|nf.webhook|micro.ddc|micro.acs|barge.acs|barge.dcl|barge.ddc|barge.ebs|barge.ecs|barge.gke|barge.triton|job.request|core.certgen|core.sync|versions.trigger|steps.manifestSteps|steps.runCISteps|steps.runShSteps|steps.releaseSteps|steps.rSyncSteps|steps.deploySteps|core.charon",
+      "ACCESS_TOKEN": "",
+      "SHIPPABLE_API_TOKEN": "",
+      "DB_URL": "",
+      "DBNAME": "",
+      "DBUSERNAME": "",
+      "DBPASSWORD": "",
+      "DBHOST": "",
+      "DBPORT": 5432,
+      "DBDIALECT": "postgres"
+    }
   },{
     "name": "www",
-    "image": "shipimg/www:server.1234"
+    "image": "shipimg/www:server.1234",
+    "envs": {
+      "SHIPPABLE_API_TOKEN": "",
+      "SHIPPABLE_VORTEX_URL": "",
+      "SHIPPABLE_API_URL": "",
+      "SHIPPABLE_WWW_PORT": 50001,
+      "SHIPPABLE_WWW_URL": "",
+      "SHIPPABLE_FE_URL": "",
+      "LOG_LEVEL": "debug",
+      "SHIPPABLE_RDS_URL": "",
+      "SHIPPABLE_ROOT_AMQP_URL": "",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE": "shippableEx",
+      "RUN_MODE": "dev",
+      "SHIPPABLE_AWS_ACCOUNT_ID": "",
+      "GITHUB_LINK_SYSINT_ID": "",
+      "BITBUCKET_LINK_SYSINT_ID": ""
+    }
   },{
     "name": "sync",
-    "image": "shipimg/www:micro.1234"
+    "image": "shipimg/www:micro.1234",
+    "envs": {
+      "BITBUCKET_CLIENT_ID": "",
+      "BITBUCKET_CLIENT_SECRET": "",
+      "SHIPPABLE_ROOT_AMQP_URL": "",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE": "shippableEx",
+      "SHIPPABLE_API_URL": "",
+      "SHIPPABLE_API_TOKEN": "",
+      "RUN_MODE": "dev",
+      "COMPONENT": "sync"
+    }
   }]
 }
