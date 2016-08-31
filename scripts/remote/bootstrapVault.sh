@@ -36,10 +36,10 @@ write_policy() {
 }
 
 insert_system_integrations() {
-  cd /vault/config/scripts
   ##TODO: read these values from state.json
   #vault write shippable/systemIntegrations/574ee745d49b091400b76273 @gitlab.json
   #vault write shippable/systemIntegrations/574ee745d49b091400b76274 @github.json
+  true
 }
 
 main() {
