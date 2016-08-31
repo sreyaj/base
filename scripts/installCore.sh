@@ -63,8 +63,18 @@ create_system_config_table() {
   #TODO: fetch db_name from state.json
   local db_name="shipdb"
 
+
   _copy_script_remote $host "system_configs.sql" "/tmp"
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs.sql"
+  __process_msg "Please copy migrations.sql onto machine which runs database, type (y) when done"
+  __process_msg "Done? (y/n)"
+  read response
+  if [[ "$response" =~ "y" ]]; then
+    __process_msg "Proceeding with steps to run migrations"
+  else
+    __process_msg "Proceeding with steps to run migrations"
+  fi
+  #TODO: update state
 }
 
 insert_system_config() {
