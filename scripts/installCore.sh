@@ -67,6 +67,20 @@ create_system_config_table() {
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs.sql"
 }
 
+insert_system_config() {
+  __process_msg "Inserting data into systemConfigs Table"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq '.ip')
+  local db_ip=$(echo $db_host | jq '.ip')
+  local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
+
+  #TODO: fetch db_name from state.json
+  local db_name="shipdb"
+
+  _copy_script_remote $host "system_configs_data.sql" "/tmp"
+  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs_data.sql"
+}
+
 install_vault() {
   __process_msg "Installing Vault"
   local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -180,6 +194,7 @@ main() {
   install_database
   save_db_credentials
   create_system_config_table
+  insert_system_config
   install_vault
   install_rabbitmq
   install_gitlab
