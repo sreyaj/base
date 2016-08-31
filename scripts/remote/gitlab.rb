@@ -8,7 +8,7 @@
 ## Url on which GitLab will be reachable.
 ## For more details on configuring external_url see:
 ## https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/settings/configuration.md#configuring-the-external-url-for-gitlab
-# external_url 'http://{{gitlab_machine_url}}' # default: http://hostname
+external_url 'http://{{gitlab_machine_url}}' # default: http://hostname
 
 
 ## Note: configuration settings below are optional.
@@ -250,13 +250,13 @@
 ###############################
 
 # gitlab_rails['uploads_directory'] = "/var/opt/gitlab/gitlab-rails/uploads"
-# gitlab_rails['rate_limit_requests_per_period'] = 10000
-# gitlab_rails['rate_limit_period'] = 60
+gitlab_rails['rate_limit_requests_per_period'] = 10000
+gitlab_rails['rate_limit_period'] = 60
 
 # Change the initial default admin password.
 # Only applicable on inital setup, changing this setting after database is created and seeded
 # won't yield any change.
-# gitlab_rails['initial_root_password'] = "{{gitlab_password}}"
+gitlab_rails['initial_root_password'] = "{{gitlab_password}}"
 
 ############################
 # GitLab database settings #
