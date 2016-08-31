@@ -153,6 +153,17 @@ install_gitlab() {
   _copy_script_remote $host "installGitlab.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installGitlab.sh"
 
+  local gitlab_root_password=$(cat $STATE_FILE | jq '.core[] | select (.name=="gitlab") | .secure.password' | tr -d "\"")
+  local gitlab_external_url=$(echo $host | tr -d "\"")
+  echo $gitlab_external_url
+  echo $gitlab_root_password
+  _copy_script_remote $host "gitlab.rb" "/etc/gitlab/"
+  _exec_remote_cmd $host "sed -i \"s/{{gitlab_machine_url}}/$gitlab_external_url/g\" /etc/gitlab/gitlab.rb"
+  _exec_remote_cmd $host "sed -i \"s/{{gitlab_password}}/$gitlab_root_password/g\" /etc/gitlab/gitlab.rb"
+  _exec_remote_cmd $host "sudo gitlab-ctl reconfigure"
+  _exec_remote_cmd $host "sudo gitlab-ctl restart"
+  _exec_remote_cmd $host "sudo gitlab-ctl status"
+
   #TODO: make sure this is the same machine running this installer
   # save gitlab creds in state.json (for now)
   #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"

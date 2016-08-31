@@ -4,7 +4,7 @@
     {
       "name": "db",
       "group": "core",
-      "ip" : "45.55.49.134",
+      "ip" : "192.241.137.250",
       "keysUpdated": "true",
       "sshSuccessful": "true",
       "components": ["db"]
@@ -12,7 +12,7 @@
     {
       "name": "swarm",
       "group": "core",
-      "ip" : "45.55.49.134",
+      "ip" : "192.241.137.250",
       "keysUpdated": "true",
       "sshSuccessful": "true",
       "components": ["swarm", "gitlab"]
@@ -20,14 +20,14 @@
     {
       "name": "services2",
       "group": "services",
-      "ip" : "45.55.49.134",
+      "ip" : "192.241.137.250",
       "keysUpdated": "true",
       "sshSuccessful": "true"
     },
     {
       "name": "services1",
       "group": "services",
-      "ip" : "45.55.49.134",
+      "ip" : "192.241.137.250",
       "keysUpdated": "true",
       "sshSuccessful": "true"
     }
@@ -44,6 +44,13 @@
       "name": "rabbitmq",
       "secure": {
         "username": "apiuser",
+        "password": "testing1234"
+      }
+    },
+    {
+      "name": "gitlab",
+      "secure": {
+        "username": "root",
         "password": "testing1234"
       }
     }
