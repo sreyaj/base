@@ -27,11 +27,17 @@ install_database() {
   __process_msg "Installing Database"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq '.ip')
+  local db_ip=$(echo $db_host | jq '.ip')
+  local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
+
+  #TODO: fetch db_name from state.json
+  local db_name="shipdb"
+
   _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
 
-  #TODO: read migrations file from config and run it on database
-  #TODO: update state
+  _copy_script_remote $host "system_configs.sql" "/tmp"
+  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs.sql"
 }
 
 install_vault() {
