@@ -46,6 +46,13 @@
         "username": "apiuser",
         "password": "testing1234"
       }
+    },
+    {
+      "name": "gitlab",
+      "secure": {
+        "username": "root",
+        "password": "testing1234"
+      }
     }
   ],
   "services": []
