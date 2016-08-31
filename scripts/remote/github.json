@@ -10,7 +10,7 @@
     "updatedBy": "54188262bc4d591ba438d62a",
     "masterDisplayName": "github auth",
     "data": {
-        "clientSecret": "",//client secret needs to be replaced
+        "clientSecret": "{{CLIENT_SECRET}}",
         "protocol": "http",
         "hostname": "localhost",
         "clientId": "c479fea8bffd9a805025",
