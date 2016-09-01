@@ -166,14 +166,20 @@ install_vault() {
 install_rabbitmq() {
   __process_msg "Installing RabbitMQ"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $db_host | jq '.ip')
+  local host=$(echo $db_host | jq -r '.ip')
   _copy_script_remote $host "installRabbit.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
 
   _copy_script_remote $host "rabbitmqadmin" "$SCRIPT_DIR_REMOTE"
 
+  # TODO: The user should be prompted to enter a username and password, which should be
+  # used by the bootstrapRabbit.sh
   _copy_script_remote $host "bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
+
+  amqpUrl="amqp://SHIPPABLETESTUSER:SHIPPABLETESTPASS@$host:15672/shippableRoot"
+  result=$(cat $STATE_FILE | jq ".systemSettings.amqpUrl = \"$amqpUrl\"")
+  echo $result | jq '.' > $STATE_FILE
 }
 
 save_gitlab_state() {
