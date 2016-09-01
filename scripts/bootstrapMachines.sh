@@ -14,43 +14,27 @@ validate_machines_config() {
   fi
 
   ##TODO: check if there is at least one machine "core" group and "services" group
+  ##TODO: if all machines are in consistent state, then skip this
   __process_msg "Validated machines config"
 
-  ##TODO: if all machines are in consistent state, then skip this
-  ##TODO: add machines to list in state
+  __process_msg "Recreating machine config in state"
+  cat $STATE_FILE | jq '.machines = []' | tee $STATE_FILE
 
+  for i in $(seq 1 $machine_count); do
+    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
+    local host=$(echo $machine | jq '.ip')
+    local name=$(echo $machine | jq '.name')
 
-
-  ## Trying to update file using jq :-/
-
-  ##echo $MACHINES_LIST | \
-
-  #local state=$(cat $STATE_FILE | jq '.')
-
-  ## use select to filter only required elments
-
-  #echo $state | jq '.machines[] |= .+ ["foo": "bar"]' | tee -a something
-  #echo $state | jq '. | .machines + [{"foo": "bar"}]'
-
-  #cat $STATE_FILE | \
-  # echo $state | \
-  #  jq '.machines | map(
-  #          . + {"state":"inconsistent"}
-  #      )'
-}
-
-update_state() {
-  # group can be machines, core or services
-  local group=$1
-  local name=$2
-  local data=$3
-
-  ## read from statefile
-  ## manipulate data
-  ## save
-
-  local state=$(cat $STATE_FILE | jq '.')
-
+    local machines_state=$(cat $STATE_FILE | jq '
+      .machines |= . + [{
+        "name" : '"$name"',
+        "ip": '"$host"',
+        "keysUpdated": "false",
+        "sshSuccessful": "false",
+        "isConsistent": "false"
+      }]')
+    echo $machines_state > $STATE_FILE
+  done
 }
 
 create_ssh_keys() {
@@ -109,11 +93,6 @@ check_requirements() {
   done
 }
 
-update_state() {
-  # TODO: update state.json with the results
-  __process_msg "updating state file with machine status"
-}
-
 bootstrap() {
   __process_msg "Installing core components on machines"
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
@@ -125,15 +104,33 @@ bootstrap() {
   done
 }
 
+update_state() {
+  # TODO: update state.json with the results
+  __process_msg "updating state file with machine status"
+  ## for all the machines in the list, update ip address 
+  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
+  for i in $(seq 1 $machine_count); do
+    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
+    local host=$(echo $machine | jq '.ip')
+    cat $STATE_FILE | jq \
+      '.machines |=
+      map(if .name == "github.com" then
+        .name = "asdfasfasdfa"
+      else .  
+        end)'
+  done
+}
+
 main() {
   __process_marker "Bootstrapping machines"
   validate_machines_config
+  exit 0
   create_ssh_keys
   update_ssh_key
   check_connection
   check_requirements
   bootstrap
-  update_state
+  #update_state
 }
 
 main
