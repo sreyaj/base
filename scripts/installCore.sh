@@ -131,7 +131,7 @@ install_vault() {
   _copy_script_remote $host "installVault.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
 
-  local vault_url=$host+":8200"
+  local vault_url=$host
 
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local db_ip=$(echo $db_host | jq '.ip')
@@ -141,6 +141,7 @@ install_vault() {
 
   #TODO: fetch db_name from state.json
   local db_name="shipdb"
+  local VAULT_JSON_FILE="/tmp/shippable/vault.json"
 
   _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
   _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
@@ -159,8 +160,20 @@ install_vault() {
   _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
 
-  #TODO: save vault creds into state.json (for now)
-  #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"
+  _copy_script_local $host $VAULT_JSON_FILE
+}
+
+save_vault_credentials() {
+  local VAULT_FILE="$LOCAL_DIR/vault.json"
+
+  local vault_url=$(cat $VAULT_FILE | jq '.vaultUrl')
+  local vault_token=$(cat $VAULT_FILE | jq '.vaultToken')
+
+  result=$(cat $STATE_FILE | jq ".systemSettings.vaultUrl = $vault_url")
+  echo $result | jq '.' > $STATE_FILE
+
+  result=$(cat $STATE_FILE | jq ".systemSettings.vaultToken = $vault_token")
+  echo $result | jq '.' > $STATE_FILE
 }
 
 install_rabbitmq() {
@@ -285,6 +298,7 @@ main() {
   # insert_system_config
   # run_migrations
   install_vault
+  save_vault_credentials
   install_rabbitmq
   save_gitlab_state
   install_gitlab

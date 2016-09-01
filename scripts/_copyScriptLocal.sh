@@ -8,7 +8,7 @@ _copy_script_local() {
   shift
   local script_path_remote="$@"
 
-  local script_dir_local="/tmp/shippable"
+  local script_dir_local=$LOCAL_DIR
 
   echo "copying from $script_path_remote to localhost: /tmp/shippable/"
   remove_key_cmd="ssh-keygen -q -f '$HOME/.ssh/known_hosts' -R $host"
@@ -18,7 +18,7 @@ _copy_script_local() {
     true
   }
 
-  _exec_remote_cmd $host "mkdir -p $script_dir_remote"
+  mkdir -p $script_dir_local
   copy_cmd="rsync -q -avz -e \
     'ssh -q \
       -o StrictHostKeyChecking=no \
