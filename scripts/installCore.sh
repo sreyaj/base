@@ -36,14 +36,38 @@ install_database() {
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
 }
 
+
+save_db_credentials_in_statefile() {
+  __process_msg "Saving database credentials in state file"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq '.ip')
+  local db_ip=$(echo $db_host | jq -r '.ip')
+  local db_port=5432
+  local db_address=$db_ip":"$db_port
+
+  db_username="apiuser"
+  db_password="testing1234"
+
+  result=$(cat $STATE_FILE | jq ".systemSettings.dbUsername = \"$db_username\"")
+  echo $result > $STATE_FILE
+
+  result=$(cat $STATE_FILE | jq ".systemSettings.dbPassword = \"$db_password\"")
+  echo $result > $STATE_FILE
+
+  # We will need to wrap user constructed variables around "".
+  # The values extracted from json are already in string format.
+  result=$(cat $STATE_FILE | jq ".systemSettings.dbUrl = \"$db_address\"")
+  echo $result > $STATE_FILE
+}
+
 save_db_credentials() {
   __process_msg "Saving database credentials"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq '.ip')
   local db_ip=$(echo $db_host | jq '.ip')
   local db_port=5432
-  local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
-  local db_password=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.password')
+  local db_username=$(cat $STATE_FILE | jq '.systemSettings.dbUsername')
+  local db_password=$(cat $STATE_FILE | jq '.systemSettings.dbPassword')
   local db_address=$db_ip:$db_port
 
   #TODO: fetch db_name from state.json
@@ -56,29 +80,6 @@ save_db_credentials() {
   _exec_remote_cmd $host "sed -i \"s/{{password}}/$db_password/g\" /root/.pgpass"
 
   _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
-}
-
-save_db_credentials_in_statefile() {
-  __process_msg "Saving database credentials in state file"
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $db_host | jq '.ip')
-  local db_ip=$(echo $db_host | jq '.ip')
-  local db_port=5432
-  local db_address=$db_ip":"$db_port
-
-  db_username="apiuser"
-  db_password="testing1234"
-
-  result=$(cat $STATE_FILE | jq ".systemSettings.dbUsername = $db_username")
-  echo $result > $STATE_FILE
-
-  result=$(cat $STATE_FILE | jq ".systemSettings.dbPassword = $db_password")
-  echo $result > $STATE_FILE
-
-  # We will need to wrap user constructed variables around "".
-  # The values extracted from json are already in string format.
-  result=$(cat $STATE_FILE | jq ".systemSettings.dbUrl = \"$db_address\"")
-  echo $result > $STATE_FILE
 }
 
 create_system_config_table() {
@@ -130,11 +131,12 @@ install_vault() {
   _copy_script_remote $host "installVault.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
 
+  local vault_url=$host+":8200"
+
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local db_ip=$(echo $db_host | jq '.ip')
   local db_port=5432
-  local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
-  local db_password=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.password')
+  local db_username=$(cat $STATE_FILE | jq '.systemSettings.dbUsername')
   local db_address=$db_ip:$db_port
 
   #TODO: fetch db_name from state.json
@@ -144,18 +146,18 @@ install_vault() {
   _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
   _copy_script_remote $host "vault.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
+  _copy_script_remote $host "system_config.sql.template" "/vault/config/scripts/"
 
   _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_ADDRESS}}/$db_address/g\" /etc/vault.d/vault.hcl"
 
-  #TODO: ask for prompt here
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault.sql"
 
-  _exec_remote_cmd $host "sudo service vault start"
+  _exec_remote_cmd $host "sudo service vault start || true"
 
   _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
 
   #TODO: save vault creds into state.json (for now)
   #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"
@@ -271,11 +273,11 @@ main() {
   __process_marker "Installing core"
   validate_core_config
   install_database
-  save_db_credentials
   save_db_credentials_in_statefile
-  create_system_config_table
-  insert_system_config
-  run_migrations
+  save_db_credentials
+  # create_system_config_table
+  # insert_system_config
+  # run_migrations
   install_vault
   install_rabbitmq
   save_gitlab_state
