@@ -24,10 +24,12 @@ validate_machines_config() {
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
     local name=$(echo $machine | jq '.name')
+    local group=$(echo $machine | jq '.group')
 
     local machines_state=$(cat $STATE_FILE | jq '
       .machines |= . + [{
-        "name" : '"$name"',
+        "name": '"$name"',
+        "group": '"$group"',
         "ip": '"$host"',
         "keysUpdated": "false",
         "sshSuccessful": "false",
@@ -108,7 +110,7 @@ bootstrap() {
 update_state() {
   # TODO: update state.json with the results
   __process_msg "updating state file with machine status"
-  ## for all the machines in the list, update ip address 
+  ## for all the machines in the list, update ip address
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
   for i in $(seq 1 $machine_count); do
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
@@ -117,7 +119,7 @@ update_state() {
       '.machines |=
       map(if .name == "github.com" then
         .name = "asdfasfasdfa"
-      else .  
+      else .
         end)'
   done
 }
