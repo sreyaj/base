@@ -3,17 +3,6 @@
 readonly SERVICE_CONFIG="$DATA_DIR/config.json"
 readonly WAIT_TIME_SECS=20
 
-initialize_swarm() {
-  __process_msg "Initializing docker swarm master"
-  local swarm_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local host=$(echo $swarm_host | jq '.ip')
-  local swarm_init_cmd="sudo docker swarm init --advertise-addr"
-
-  _exec_remote_cmd "$swarm_init_cmd > /tmp/swarm_worker_init.cmd"
-
-  ##TODO: copy the swarm_worker_init.cmd file from remote to local and run that command on all the service machines
-}
-
 load_services() {
   # TODO: load service configuration from `config.json`
   local service_count=$(cat $SERVICE_CONFIG | jq '.services | length')
@@ -78,7 +67,6 @@ provision_sync() {
 }
 
 main() {
-  initialize_swarm
   provision_api
   wait_for_api_boot
   insert_system_config

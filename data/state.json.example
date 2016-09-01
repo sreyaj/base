@@ -41,7 +41,8 @@
     "defaultMinionCount": 1,
     "dbPassword": "testing1234",
     "dbUsername": "apiuser",
-    "dbUrl": ""
+    "dbUrl": "",
+    "workerJoinCommand": ""
   },
   "machines": [
     {
