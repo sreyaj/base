@@ -58,6 +58,29 @@ save_db_credentials() {
   _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
 }
 
+save_db_credentials_in_statefile() {
+  __process_msg "Saving database credentials in state file"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq '.ip')
+  local db_ip=$(echo $db_host | jq '.ip')
+  local db_port=5432
+  local db_address=$db_ip":"$db_port
+
+  db_username="apiuser"
+  db_password="testing1234"
+
+  result=$(cat $STATE_FILE | jq ".systemSettings.dbUsername = $db_username")
+  echo $result > $STATE_FILE
+
+  result=$(cat $STATE_FILE | jq ".systemSettings.dbPassword = $db_password")
+  echo $result > $STATE_FILE
+
+  # We will need to wrap user constructed variables around "".
+  # The values extracted from json are already in string format.
+  result=$(cat $STATE_FILE | jq ".systemSettings.dbUrl = \"$db_address\"")
+  echo $result > $STATE_FILE
+}
+
 create_system_config_table() {
   __process_msg "Creating systemConfigs Table"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -219,6 +242,7 @@ main() {
   validate_core_config
   install_database
   save_db_credentials
+  save_db_credentials_in_statefile
   create_system_config_table
   insert_system_config
   run_migrations
