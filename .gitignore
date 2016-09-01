@@ -1,3 +1,7 @@
 data/machinekey*
+data/config.json
+data/core.json
+data/machines.json
+data/state.json
 *.swp
 *.swo
