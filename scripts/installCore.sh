@@ -174,22 +174,52 @@ install_rabbitmq() {
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
 }
 
+save_gitlab_state() {
+  #TODO: Get gitlab root username, password from user input
+  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local host=$(echo $gitlab_host | jq '.ip')
+  local gitlab_root_username="root"
+  local gitlab_root_password="shippable"
+  local gitlab_external_url=$(echo $host | tr -d "\"")
+
+  __process_msg "Please add the following to systemIntegrations key of your state.json file, type (y) when done"
+  echo ""
+  echo "{"
+  echo "  \"data\": {"
+  echo "    \"username\": \"$gitlab_root_username\","
+  echo "    \"subscriptionProjectLimit\": \"100\","
+  echo "    \"password\": \"$gitlab_root_password\","
+  echo "    \"url\": \"http://$gitlab_external_url/api/v3\""
+  echo "  },"
+  echo "  \"name\": \"gitlab\""
+  echo "}"
+  echo ""
+
+  __process_msg "Done? (y/n)"
+  read response
+  if [[ "$response" != "y" ]]; then
+    __process_msg "Gitlab config need to be added to state.json to install core"
+    save_gitlab_state
+  fi
+}
+
 install_gitlab() {
   __process_msg "Installing Gitlab"
   local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local host=$(echo $gitlab_host | jq '.ip')
-  local gitlab_root_password=$(cat $STATE_FILE | jq '.core[] | select (.name=="gitlab") | .secure.password' | tr -d "\"")
-  local gitlab_external_url=$(echo $host | tr -d "\"")
+  local host=$(echo $gitlab_host | jq -r '.ip')
+  local gitlab_system_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select (.name=="gitlab")')
+  local gitlab_root_username=$(echo $gitlab_system_int | jq -r '.data.username')
+  local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.data.password')
+  local gitlab_external_url=$(echo $gitlab_system_int | jq -r '.data.url')
 
   _copy_script_remote $host "installGitlab.sh" "$SCRIPT_DIR_REMOTE"
   _copy_script_remote $host "gitlab.rb" "/etc/gitlab/"
 
-  _exec_remote_cmd $host "sed -i \"s/{{gitlab_machine_url}}/$gitlab_external_url/g\" /etc/gitlab/gitlab.rb"
+  _exec_remote_cmd $host "sed -i \"s/{{gitlab_machine_url}}/$host/g\" /etc/gitlab/gitlab.rb"
   _exec_remote_cmd $host "sed -i \"s/{{gitlab_password}}/$gitlab_root_password/g\" /etc/gitlab/gitlab.rb"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installGitlab.sh"
 
   #TODO: make sure this is the same machine running this installer
-  # save gitlab creds in state.json (for now)
   #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"
 }
 
@@ -248,6 +278,7 @@ main() {
   run_migrations
   install_vault
   install_rabbitmq
+  save_gitlab_state
   install_gitlab
   install_docker
   install_swarm
