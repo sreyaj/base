@@ -82,21 +82,6 @@ save_db_credentials() {
   _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
 }
 
-create_system_config_table() {
-  __process_msg "Creating systemConfigs Table"
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $db_host | jq '.ip')
-  local db_ip=$(echo $db_host | jq '.ip')
-  local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
-
-  #TODO: fetch db_name from state.json
-  local db_name="shipdb"
-
-  _copy_script_remote $host "system_configs.sql" "/tmp"
-  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs.sql"
-  #TODO: update state
-}
-
 run_migrations() {
   __process_msg "Please copy migrations.sql onto machine which runs database, type (y) when done"
   __process_msg "Done? (y/n)"
@@ -269,9 +254,33 @@ install_swarm() {
   _copy_script_remote $host "installSwarm.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
 
+  __process_msg "Initializing docker swarm master"
+  local swarm_init_cmd="sudo docker swarm init --advertise-addr $host"
+  local swarm_init_file="$swarm_worker_join.cmd"
+  local swarm_init_file_path="$SCRIPT_DIR_REMOTE/$swarm_init_file"
 
-  #TODO create swarm cluster, make the host on running on gitlab machine as manager
-  # add all other servers as workers
+  local script_dir_local="/tmp/shippable"
+  local swarm_init_local="$script_dir_local/$swarm_init_file"
+
+  _exec_remote_cmd "$swarm_init_cmd > $swarm_init_file"
+
+  _copy_script_local $host "$swarm_init_file"
+
+  local worker_join_cmd=$(cat $STATE_FILE | jq '
+    .systemSettings.workerJoinCommand = "'$(cat $swarm_init_local)'"')
+  echo $result > $STATE_FILE
+
+}
+
+initialize_workers() {
+  __process_msg "Initializing swarm workers on service machines"
+  local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
+  local service_machines_count=$(echo $service_machines_list | jq '. | length')
+  for i in $(seq 1 $service_machines_count); do
+    local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
+    local host=$(echo $machine | jq '.ip')
+    _exec_remote_cmd "$host" "$(cat $STATE_FILE | jq '.systemSettings.workerJoinCommand')"
+  done
 }
 
 install_redis() {
@@ -294,7 +303,6 @@ main() {
   install_database
   save_db_credentials_in_statefile
   save_db_credentials
-  # create_system_config_table
   # insert_system_config
   # run_migrations
   install_vault
@@ -304,6 +312,7 @@ main() {
   install_gitlab
   install_docker
   install_swarm
+  initialize_workers
   install_redis
   update_state
 }
