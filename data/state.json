@@ -28,7 +28,7 @@
       "name": "rabbitmq"
     }
   ],
-  "systemConfig": {
+  "systemSettings": {
     "braintreeEnabled": false,
     "cachingEnabled": false,
     "hubspotEnabled": false,
