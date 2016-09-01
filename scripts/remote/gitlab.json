@@ -10,9 +10,9 @@
     "updatedBy": "54188262bc4d591ba438d62a",
     "masterDisplayName": "Internal Gitlab Server",
     "data": {
-        "username": "root",
+        "username": "{{USERNAME}}",
         "subscriptionProjectLimit": "100",
-        "password": "shippable1234",
+        "password": "{{PASSWORD}}",
         "url": "http://localhost/api/v3"
     },
     "id": "574ee745d49b091400b76273",
