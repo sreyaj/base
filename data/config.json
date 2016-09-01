@@ -2,9 +2,6 @@
   "installerVersion": "4.0.0",
   "shippableCustomerId" : "1234",
   "licenseKey": "secureLicenseKey",
-  "masterIntegrations": [{
-
-  }],
   "systemConfig": {
     "defaultMinionCount": 1,
     "defaultPipelineCount": 1,
@@ -13,11 +10,37 @@
     "hubspotEnabled": false,
     "buildTimeoutMS": 3600000,
     "defaultPrivateJobQuota": 150,
-    "serviceUserToken": "sometoken",
-    "vaultUrl": "",
-    "vaultToken": "",
     "vaultRefreshTimeInSec": 900
   },
+  "systemIntegrations": [
+    {
+      "name": "github.com",
+      "data": {
+        "clientSecret" : "",
+        "clientId" : "",
+        "protocol": "",
+        "hostname": "",
+        "providerId": ""
+      }
+    },
+    {
+      "name": "vault",
+      "data": {
+        "url" : "",
+        "port": "",
+        "token": ""
+      }
+    },{
+      "name": "rabbitmq",
+      "data": {
+        "url" : "",
+        "port": "",
+        "adminUrl": "",
+        "rootExchange": "",
+        "exchange": ""
+      }
+    }
+  ],
   "services": [{
     "name": "api",
     "image": "shipimg/api:server.1234",

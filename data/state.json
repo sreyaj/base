@@ -32,28 +32,47 @@
       "sshSuccessful": "true"
     }
   ],
-  "core": [
+  "systemConfig": {
+    "dbUrl": "",
+    "dbUsername": "apiuser",
+    "dbPassword": "testing1234",
+    "defaultMinionCount": 1,
+    "defaultPipelineCount": 1,
+    "braintreeEnabled": false,
+    "cachingEnabled": false,
+    "hubspotEnabled": false,
+    "buildTimeoutMS": 3600000,
+    "defaultPrivateJobQuota": 150,
+    "vaultRefreshTimeInSec": 900,
+    "vaultUrl": "",
+    "vaultToken": ""
+  },
+  "systemIntegrations": [
     {
-      "name": "postgresql",
-      "secure": {
-        "username": "apiuser",
-        "password": "testing1234"
+      "name": "github.com",
+      "data": {
+        "clientSecret" : "",
+        "clientId" : "",
+        "protocol": "",
+        "hostname": "",
+        "providerId": ""
       }
-    },
-    {
+    },{
       "name": "rabbitmq",
-      "secure": {
-        "username": "apiuser",
-        "password": "testing1234"
-      }
-    },
-    {
-      "name": "gitlab",
-      "secure": {
-        "username": "root",
-        "password": "testing1234"
+      "data": {
+        "url" : "",
+        "port": "",
+        "adminUrl": "",
+        "rootExchange": "",
+        "exchange": ""
       }
     }
   ],
-  "services": []
+  "services": [
+    {
+      "name": "api",
+      "url": "",
+      "token": ""
+    }
+  ]
 }
