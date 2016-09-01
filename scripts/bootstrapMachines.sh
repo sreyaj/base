@@ -33,7 +33,8 @@ validate_machines_config() {
         "sshSuccessful": "false",
         "isConsistent": "false"
       }]')
-    echo $machines_state > $STATE_FILE
+    ## TO pretty print the statefile
+    echo $machines_state | jq '.' > $STATE_FILE
   done
 }
 
@@ -124,7 +125,6 @@ update_state() {
 main() {
   __process_marker "Bootstrapping machines"
   validate_machines_config
-  exit 0
   create_ssh_keys
   update_ssh_key
   check_connection
