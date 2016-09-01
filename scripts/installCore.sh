@@ -256,30 +256,34 @@ install_swarm() {
 
   __process_msg "Initializing docker swarm master"
   local swarm_init_cmd="sudo docker swarm init --advertise-addr $host"
-  local swarm_init_file="$swarm_worker_join.cmd"
-  local swarm_init_file_path="$SCRIPT_DIR_REMOTE/$swarm_init_file"
+  _exec_remote_cmd "$host" "$swarm_init_cmd"
+
+  local swarm_worker_token="swarm_worker_token.txt"
+  local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
+  _exec_remote_cmd "$host" "sudo docker swarm join-token -q worker > $swarm_worker_token_remote"
+  _copy_script_local $host "$swarm_worker_token_remote"
 
   local script_dir_local="/tmp/shippable"
-  local swarm_init_local="$script_dir_local/$swarm_init_file"
+  local swarm_worker_token_local="$script_dir_local/$swarm_worker_token"
+  local swarm_worker_token=$(cat $swarm_worker_token_local)
 
-  _exec_remote_cmd "$swarm_init_cmd > $swarm_init_file"
-
-  _copy_script_local $host "$swarm_init_file"
-
-  local worker_join_cmd=$(cat $STATE_FILE | jq '
-    .systemSettings.workerJoinCommand = "'$(cat $swarm_init_local)'"')
-  echo $result > $STATE_FILE
-
+  local swarm_worker_token_update=$(cat $STATE_FILE | jq '
+    .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
+  echo $swarm_worker_token_update > $STATE_FILE
 }
 
 initialize_workers() {
   __process_msg "Initializing swarm workers on service machines"
+  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local gitlab_host_ip=$(echo $gitlab_host | jq -r '.ip')
+
   local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
   local service_machines_count=$(echo $service_machines_list | jq '. | length')
   for i in $(seq 1 $service_machines_count); do
     local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
-    _exec_remote_cmd "$host" "$(cat $STATE_FILE | jq '.systemSettings.workerJoinCommand')"
+    local swarm_worker_token=$(cat $STATE_FILE | jq '.systemSettings.swarmWorkerToken')
+    _exec_remote_cmd "$host" "sudo docker swarm join --token $swarm_worker_token $gitlab_host_ip"
   done
 }
 

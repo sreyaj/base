@@ -42,7 +42,7 @@
     "dbPassword": "testing1234",
     "dbUsername": "apiuser",
     "dbUrl": "",
-    "workerJoinCommand": ""
+    "swarmWorkerToken": ""
   },
   "machines": [
     {
