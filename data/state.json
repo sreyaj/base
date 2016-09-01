@@ -1,43 +1,34 @@
 {
-  "runNumber": "1",
-  "machines": [
+  "services": [
     {
-      "name": "db",
-      "group": "core",
-      "ip" : "45.55.49.134",
-      "keysUpdated": "true",
-      "sshSuccessful": "true",
-      "components": ["db"]
+      "token": "",
+      "url": "",
+      "name": "api"
+    }
+  ],
+  "systemIntegrations": [
+    {
+      "data": {
+        "providerId": "",
+        "hostname": "",
+        "protocol": "",
+        "clientId": "",
+        "clientSecret": ""
+      },
+      "name": "github.com"
     },
     {
-      "name": "swarm",
-      "group": "core",
-      "ip" : "45.55.49.134",
-      "keysUpdated": "true",
-      "sshSuccessful": "true",
-      "components": ["swarm", "gitlab"]
-    },
-    {
-      "name": "services2",
-      "group": "services",
-      "ip" : "45.55.49.134",
-      "keysUpdated": "true",
-      "sshSuccessful": "true"
-    },
-    {
-      "name": "services1",
-      "group": "services",
-      "ip" : "45.55.49.134",
-      "keysUpdated": "true",
-      "sshSuccessful": "true"
+      "data": {
+        "exchange": "",
+        "rootExchange": "",
+        "adminUrl": "",
+        "port": "",
+        "url": ""
+      },
+      "name": "rabbitmq"
     }
   ],
   "systemConfig": {
-    "dbUrl": "",
-    "dbUsername": "apiuser",
-    "dbPassword": "testing1234",
-    "defaultMinionCount": 1,
-    "defaultPipelineCount": 1,
     "braintreeEnabled": false,
     "cachingEnabled": false,
     "hubspotEnabled": false,
@@ -45,34 +36,42 @@
     "defaultPrivateJobQuota": 150,
     "vaultRefreshTimeInSec": 900,
     "vaultUrl": "",
-    "vaultToken": ""
+    "vaultToken": "",
+    "defaultPipelineCount": 1,
+    "defaultMinionCount": 1,
+    "dbPassword": "testing1234",
+    "dbUsername": "apiuser",
+    "dbUrl": ""
   },
-  "systemIntegrations": [
+  "machines": [
     {
-      "name": "github.com",
-      "data": {
-        "clientSecret" : "",
-        "clientId" : "",
-        "protocol": "",
-        "hostname": "",
-        "providerId": ""
-      }
-    },{
-      "name": "rabbitmq",
-      "data": {
-        "url" : "",
-        "port": "",
-        "adminUrl": "",
-        "rootExchange": "",
-        "exchange": ""
-      }
+      "name": "db",
+      "ip": "45.55.49.134",
+      "keysUpdated": "false",
+      "sshSuccessful": "false",
+      "isConsistent": "false"
+    },
+    {
+      "name": "swarm",
+      "ip": "45.55.49.134",
+      "keysUpdated": "false",
+      "sshSuccessful": "false",
+      "isConsistent": "false"
+    },
+    {
+      "name": "services1",
+      "ip": "45.55.49.134",
+      "keysUpdated": "false",
+      "sshSuccessful": "false",
+      "isConsistent": "false"
+    },
+    {
+      "name": "services2",
+      "ip": "45.55.49.134",
+      "keysUpdated": "false",
+      "sshSuccessful": "false",
+      "isConsistent": "false"
     }
   ],
-  "services": [
-    {
-      "name": "api",
-      "url": "",
-      "token": ""
-    }
-  ]
+  "runNumber": "1"
 }
