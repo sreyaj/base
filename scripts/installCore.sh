@@ -27,6 +27,11 @@ install_database() {
   __process_msg "Installing Database"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq '.ip')
+  ##TODO:
+  # - prommt user for db username and password
+  # - copy the installation script to remote machine
+  # - run sed command to replace username/password with user input
+  # - once complete, save the values in satefile
   _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
 }
