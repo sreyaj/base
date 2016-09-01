@@ -3,7 +3,7 @@ export VAULT_KEYFILE=/etc/vault.d/keys.txt
 export DB_USERNAME=$1
 export DB_NAME=$2
 export DB_IP=$3
-export VAULT_URL=$4
+export VAULT_IP=$4
 
 
 status() {
@@ -56,9 +56,11 @@ unseal() {
   vault unseal $KEY_2
   vault unseal $KEY_3
 
+  local VAULT_URL=$VAULT_IP":8200"
+  local VAULT_JSON_FILE="/tmp/shippable/vault.json"
   VAULT_TOKEN=$(grep 'Initial Root Token:' $VAULT_KEYFILE | awk '{print substr($NF, 1, length($NF))}')
-  printf "{\n\t\"vaultUrl\": \"$VAULT_URL\",\n\t\"vaultToken\": \"$VAULT_TOKEN\"\n}\n"
-  _copy_vault_config
+  touch $VAULT_JSON_FILE
+  printf "{\n\t\"vaultUrl\": \"$VAULT_URL\",\n\t\"vaultToken\": \"$VAULT_TOKEN\"\n}\n" > $VAULT_JSON_FILE
 }
 
 auth() {
@@ -71,19 +73,6 @@ mount_shippable() {
 
 write_policy() {
   vault policy-write shippable /etc/vault.d/policy.hcl
-}
-
-_copy_vault_config() {
-  echo "Please copy vault config values in the state.json file, type (y) when done"
-  echo "Done? (y/n)"
-  read response
-  if [[ "$response" =~ "y" ]]; then
-    echo "Proceeding with the installation"
-  else
-    echo "Vault config values are required"
-    _copy_vault_config
-  fi
-
 }
 
 main() {
