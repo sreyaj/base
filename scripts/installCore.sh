@@ -130,6 +130,8 @@ install_vault() {
   _copy_script_remote $host "installVault.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
 
+  local vault_url=$host+":8200"
+
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local db_ip=$(echo $db_host | jq '.ip')
   local db_port=5432
@@ -145,24 +147,17 @@ install_vault() {
   _copy_script_remote $host "vault.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
   _copy_script_remote $host "system_config.sql.template" "/vault/config/scripts/"
-  _copy_script_remote $host "github.json" "/vault/data/"
-  _copy_script_remote $host "gitlab.json" "/vault/data/"
 
   _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_ADDRESS}}/$db_address/g\" /etc/vault.d/vault.hcl"
 
-  #TODO: ask for prompt here
-  # drop_table_cmd="\"drop table if exists vault_kv_store\""
-  # _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -c $drop_table_cmd"
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault.sql"
 
   _exec_remote_cmd $host "sudo service vault start || true"
 
   _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip"
-
-  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /vault/config/scripts/system_config.sql"
+  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
 
   #TODO: save vault creds into state.json (for now)
   #exec_remote_cmd "root" "1.1.1.1" "mykeyfile" "install vault"

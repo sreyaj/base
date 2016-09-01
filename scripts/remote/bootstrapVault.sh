@@ -3,6 +3,7 @@ export VAULT_KEYFILE=/etc/vault.d/keys.txt
 export DB_USERNAME=$1
 export DB_NAME=$2
 export DB_IP=$3
+export VAULT_URL=$4
 
 
 status() {
@@ -20,7 +21,6 @@ check_keyfile_exists() {
       auth
       mount_shippable
       write_policy
-      insert_system_integrations
     # 2 - sealed
     else
       unseal
@@ -33,7 +33,6 @@ check_keyfile_exists() {
     auth
     mount_shippable
     write_policy
-    insert_system_integrations
   fi
 }
 
@@ -58,8 +57,8 @@ unseal() {
   vault unseal $KEY_3
 
   VAULT_TOKEN=$(grep 'Initial Root Token:' $VAULT_KEYFILE | awk '{print substr($NF, 1, length($NF))}')
-  touch /vault/config/scripts/system_config.sql
-  sed -e "s/INSERTTOKENHERE/$VAULT_TOKEN/g" /vault/config/scripts/system_config.sql.template >  /vault/config/scripts/system_config.sql
+  printf "{\n\t\"vaultUrl\": \"$VAULT_URL\",\n\t\"vaultToken\": \"$VAULT_TOKEN\"\n}\n"
+  _copy_vault_config
 }
 
 auth() {
@@ -74,10 +73,17 @@ write_policy() {
   vault policy-write shippable /etc/vault.d/policy.hcl
 }
 
-insert_system_integrations() {
-  ##TODO: read these values from state.json
-  vault write shippable/systemIntegrations/574ee745d49b091400b76273 @/vault/data/gitlab.json
-  vault write shippable/systemIntegrations/574ee745d49b091400b76274 @/vault/data/github.json
+_copy_vault_config() {
+  echo "Please copy vault config values in the state.json file, type (y) when done"
+  echo "Done? (y/n)"
+  read response
+  if [[ "$response" =~ "y" ]]; then
+    echo "Proceeding with the installation"
+  else
+    echo "Vault config values are required"
+    _copy_vault_config
+  fi
+
 }
 
 main() {
