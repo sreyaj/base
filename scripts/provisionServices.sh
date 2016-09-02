@@ -111,11 +111,11 @@ provision_sync() {
 
 main() {
   provision_api
-  #wait_for_api_boot
-  #insert_system_config
-  #run_migrations
-  #provision_www
-  #provision_sync
+  wait_for_api_boot
+  insert_system_config
+  run_migrations
+  provision_www
+  provision_sync
 }
 
 main

@@ -73,7 +73,6 @@ __check_dependencies() {
 install() {
   __check_dependencies
   source "$SCRIPTS_DIR/getConfigs.sh"
-  exit 0
   source "$SCRIPTS_DIR/bootstrapMachines.sh"
   source "$SCRIPTS_DIR/installCore.sh"
   source "$SCRIPTS_DIR/bootstrapApp.sh"
