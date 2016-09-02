@@ -1,10 +1,5 @@
 #!/bin/bash -e
 
-add_master_integrations() {
-  # TODO: add master integrations into database
-  echo "add master integrations into database"
-}
-
 add_system_integrations() {
   #TODO: add system integrations into vault
   # the namespace will be in the format
@@ -23,7 +18,6 @@ update_system_config() {
 }
 
 main() {
-  add_master_integrations
   add_system_integrations
   update_system_config
 }

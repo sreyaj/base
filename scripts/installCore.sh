@@ -296,6 +296,17 @@ install_redis() {
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRedis.sh"
 }
 
+install_rp() {
+  __process_msg "Installing reverse proxy"
+  # TODO:
+  # - read domain name
+  # - on the first services node, 
+  # - update nginx config file
+  # - update docker file
+  # - run docker build
+  # - run rp on first services
+}
+
 update_state() {
   # TODO: update state.json with the results
   echo "updating state file with core component status"
@@ -318,6 +329,7 @@ main() {
   install_swarm
   initialize_workers
   install_redis
+  install_rp
   update_state
 }
 
