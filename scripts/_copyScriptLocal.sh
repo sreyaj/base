@@ -8,7 +8,7 @@ _copy_script_local() {
   shift
   local script_path_remote="$@"
 
-  local script_dir_local=$LOCAL_DIR
+  local script_dir_local="/tmp/shippable"
 
   echo "copying from $script_path_remote to localhost: /tmp/shippable/"
   remove_key_cmd="ssh-keygen -q -f '$HOME/.ssh/known_hosts' -R $host"
