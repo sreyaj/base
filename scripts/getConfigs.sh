@@ -71,7 +71,9 @@ bootstrap_state() {
       "release": "'$release'",
       "systemSettings": {},
       "services": [],
-      "machines": []
+      "machines": [],
+      "systemIntegrations": [],
+      "core": []
     }' \
   | tee $STATE_FILE)
   __process_msg "Created state.json template"
