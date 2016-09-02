@@ -1,0 +1,4 @@
+{
+   "vaultUrl" : "{{VAULT_URL}}",
+  "vaultToken": "{{VAULT_TOKEN}}"
+}
