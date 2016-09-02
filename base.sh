@@ -16,6 +16,7 @@ readonly ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
 readonly DATA_DIR="$ROOT_DIR/data"
 readonly STATE_FILE="$DATA_DIR/state.json"
+readonly CONFIG_FILE="$DATA_DIR/config.json"
 readonly LOCAL_DIR="/tmp/shippable"
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
@@ -27,6 +28,7 @@ readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RUN_NUMBER"
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptLocal.sh"
+source "$SCRIPTS_DIR/_manageState.sh"
 
 # Helper methods ##########################################
 ###########################################################

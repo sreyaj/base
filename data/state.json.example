@@ -1,9 +1,12 @@
 {
   "services": [
     {
-      "token": "",
+      "name": "api",
       "url": "",
-      "name": "api"
+      "status": "running",
+      "port": "--publish 50000:50000/tcp",
+      "env": "-e FOO=bar -e FOO1=bar1",
+      "opts": "--mode global --network ingress"
     }
   ],
   "systemIntegrations": [
@@ -29,6 +32,8 @@
     }
   ],
   "systemSettings": {
+    "domain": "myserver.com",
+    "protocol": "http",
     "braintreeEnabled": false,
     "cachingEnabled": false,
     "hubspotEnabled": false,
@@ -42,6 +47,7 @@
     "dbPassword": "testing1234",
     "dbUsername": "apiuser",
     "dbUrl": "",
+    "serviceUserToken": "",
     "swarmWorkerToken": ""
   },
   "machines": [
@@ -74,5 +80,5 @@
       "isConsistent": "false"
     }
   ],
-  "runNumber": "1"
+  "release": "4.0.0"
 }

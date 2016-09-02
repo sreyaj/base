@@ -17,9 +17,6 @@ validate_machines_config() {
   ##TODO: if all machines are in consistent state, then skip this
   __process_msg "Validated machines config"
 
-  __process_msg "Recreating machine config in state"
-  cat $STATE_FILE | jq '.machines = []' | tee $STATE_FILE
-
   for i in $(seq 1 $machine_count); do
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
