@@ -17,7 +17,6 @@ readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
 readonly DATA_DIR="$ROOT_DIR/data"
 readonly STATE_FILE="$DATA_DIR/state.json"
 readonly CONFIG_FILE="$DATA_DIR/config.json"
-readonly LOCAL_DIR="/tmp/shippable"
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub

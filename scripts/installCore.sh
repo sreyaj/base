@@ -126,13 +126,14 @@ install_vault() {
 
   #TODO: fetch db_name from state.json
   local db_name="shipdb"
-  local VAULT_JSON_FILE="/tmp/shippable/vault.json"
+  local VAULT_JSON_FILE="/vault/config/scripts/vaultConfig.json"
 
   _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
   _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
   _copy_script_remote $host "vault.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
   _copy_script_remote $host "system_config.sql.template" "/vault/config/scripts/"
+  _copy_script_remote $host "vaultConfig.json.template" "/vault/config/scripts/"
 
   _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
@@ -150,7 +151,7 @@ install_vault() {
 
 save_vault_credentials() {
   __process_msg "Saving vault credentials in state.json"
-  local VAULT_FILE="$LOCAL_DIR/vault.json"
+  local VAULT_FILE="/tmp/shippable/vaultConfig.json"
 
   local vault_url=$(cat $VAULT_FILE | jq '.vaultUrl')
   local vault_token=$(cat $VAULT_FILE | jq '.vaultToken')

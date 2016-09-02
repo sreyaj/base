@@ -56,11 +56,19 @@ unseal() {
   vault unseal $KEY_2
   vault unseal $KEY_3
 
+  copy_vault_config
+}
+
+copy_vault_config() {
   local VAULT_URL=$VAULT_IP":8200"
-  local VAULT_JSON_FILE="/tmp/shippable/vault.json"
+  local vault_config_file="/vault/config/scripts/vaultConfig.json"
+
   VAULT_TOKEN=$(grep 'Initial Root Token:' $VAULT_KEYFILE | awk '{print substr($NF, 1, length($NF))}')
-  touch $VAULT_JSON_FILE
-  printf "{\n\t\"vaultUrl\": \"$VAULT_URL\",\n\t\"vaultToken\": \"$VAULT_TOKEN\"\n}\n" > $VAULT_JSON_FILE
+
+  touch $vault_config_file
+  cat /vault/config/scripts/vaultConfig.json.template > $vault_config_file
+  sed -i "s/{{VAULT_URL}}/$VAULT_URL/g" $vault_config_file
+  sed -i "s/{{VAULT_TOKEN}}/$VAULT_TOKEN/g" $vault_config_file
 }
 
 auth() {
