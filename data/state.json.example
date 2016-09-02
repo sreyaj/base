@@ -32,6 +32,7 @@
     }
   ],
   "systemSettings": {
+    "runMode": "debug",
     "domain": "myserver.com",
     "protocol": "http",
     "braintreeEnabled": false,
@@ -47,6 +48,7 @@
     "dbPassword": "testing1234",
     "dbUsername": "apiuser",
     "dbUrl": "",
+    "dbDialect": "postgres",
     "serviceUserToken": "",
     "swarmWorkerToken": ""
   },

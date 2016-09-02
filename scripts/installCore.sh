@@ -95,20 +95,6 @@ run_migrations() {
   fi
 }
 
-insert_system_config() {
-  __process_msg "Inserting data into systemConfigs Table"
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $db_host | jq '.ip')
-  local db_ip=$(echo $db_host | jq '.ip')
-  local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
-
-  #TODO: fetch db_name from state.json
-  local db_name="shipdb"
-
-  _copy_script_remote $host "system_configs_data.sql" "/tmp"
-  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs_data.sql"
-}
-
 install_vault() {
   __process_msg "Installing Vault"
   local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -130,16 +116,14 @@ install_vault() {
 
   _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
   _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
-  _copy_script_remote $host "vault.sql" "/etc/vault.d/"
+  _copy_script_remote $host "vault_kv_store.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
-  _copy_script_remote $host "system_config.sql.template" "/vault/config/scripts/"
-  _copy_script_remote $host "vaultConfig.json.template" "/vault/config/scripts/"
 
   _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_ADDRESS}}/$db_address/g\" /etc/vault.d/vault.hcl"
 
-  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault.sql"
+  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault_kv_store.sql"
 
   _exec_remote_cmd $host "sudo service vault start || true"
 
@@ -220,9 +204,6 @@ install_gitlab() {
   _exec_remote_cmd $host "sed -i \"s/{{gitlab_machine_url}}/$host/g\" /etc/gitlab/gitlab.rb"
   _exec_remote_cmd $host "sed -i \"s/{{gitlab_password}}/$gitlab_root_password/g\" /etc/gitlab/gitlab.rb"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installGitlab.sh"
-
-  #TODO: make sure this is the same machine running this installer
-  #exec_remote_cmd "root" "1.1.1.2" "mykeyfile" "install gitlab"
 }
 
 install_docker() {
@@ -314,7 +295,6 @@ main() {
   install_database
   save_db_credentials_in_statefile
   save_db_credentials
-  # insert_system_config
   # run_migrations
   install_vault
   save_vault_credentials

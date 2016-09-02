@@ -87,9 +87,11 @@ bootstrap_state() {
   
   for i in $(seq 1 $service_count); do
     local service_name=$(echo $service_list | jq '.['"$i-1"'] | .name')
+    local service_image=$(echo $service_list | jq '.['"$i-1"'] | .image')
     local services_state=$(cat $STATE_FILE | jq '
       .services |= . + [{
         "name": '"$service_name"',
+        "image": '"$service_image"',
         "isRunning": "false"
       }]
     ')

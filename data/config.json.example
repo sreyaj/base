@@ -48,25 +48,12 @@
     "name": "api",
     "image": "shipimg/api:server.1234",
     "envs": [
-    "SHIPPABLE_VORTEX_URL",
-    "SHIPPABLE_AMQP_URL",
-    "SHIPPABLE_VORTEX_URL",
-    "SHIPPABLE_AMQP_URL",
-    "SHIPPABLE_AMQP_MANAGEMENT_URL",
-    "SHIPPABLE_API_URL",
-    "API_PORT",
-    "RUN_MODE",
-    "LOG_LEVEL",
-    "ROOT_QUEUE_LIST",
-    "ACCESS_TOKEN",
-    "SHIPPABLE_API_TOKEN",
-    "DB_URL",
-    "DBNAME",
-    "DBUSERNAME",
-    "DBPASSWORD",
-    "DBHOST",
-    "DBPORT",
-    "DBDIALECT"
+      "DBNAME",
+      "DBUSERNAME",
+      "DBPASSWORD",
+      "DBHOST",
+      "DBPORT",
+      "DBDIALECT"
     ]
   },{
     "name": "www",
