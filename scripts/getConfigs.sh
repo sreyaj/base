@@ -17,9 +17,49 @@ get_system_config() {
 }
 
 validate_config() {
-  #TODO: validate if the config has all the fields
-  # like  version, customer id, license key, integrations etc
-  __process_msg "Validating config"
+  if [ -z "$RELEASE" ]; then
+    echo "Cannot find release version, exiting..."
+    exit 1
+  else
+    __process_msg "Installing Shippable release : $RELEASE"
+  fi
+
+  if [ ! -f "$DATA_DIR/config.json" ]; then
+    echo "Cannot find config.json, exiting..."
+    exit 1
+  else
+    __process_msg "Found config.json"
+  fi
+
+  if [ ! -f "$DATA_DIR/machines.json" ]; then
+    echo "Cannot find machines.json, exiting..."
+    exit 1
+  else
+    __process_msg "Found machines.json"
+  fi
+
+  if [ ! -f "$DATA_DIR/core.json" ]; then
+    echo "Cannot find core.json, exiting..."
+    exit 1
+  else
+    __process_msg "Found core.json"
+  fi
+
+  if [ ! -f "$DATA_DIR/state.json" ]; then
+    echo "No state.json exists, creating..."
+  fi
+
+  local customer_id=$(cat $CONFIG_FILE | jq '.shippableCustomerId')
+  if [ -z "$customer_id" ]; then
+    echo "Cannot find customer id in config.json, exiting..."
+    exit 1
+  fi
+
+  local license_key=$(cat $CONFIG_FILE | jq '.licenseKey')
+  if [ -z "$license_key" ]; then
+    echo "Cannot find customer id in config.json, exiting..."
+    exit 1
+  fi
 }
 
 bootstrap_state() {
@@ -34,7 +74,7 @@ bootstrap_state() {
       "machines": []
     }' \
   | tee $STATE_FILE)
-
+  __process_msg "Created state.json template"
 
   local service_count=$(cat $CONFIG_FILE | jq '.services | length')
   local service_list=$(cat $CONFIG_FILE | jq '.services')
@@ -43,11 +83,13 @@ bootstrap_state() {
     local service_name=$(echo $service_list | jq '.['"$i-1"'] | .name')
     local services_state=$(cat $STATE_FILE | jq '
       .services |= . + [{
-        "name": '"$service_name"'
+        "name": '"$service_name"',
+        "isRunning": "false"
       }]
     ')
     _update_state "$services_state"
   done
+  __process_msg "Updated services in state.json"
 
   local domain=$(cat $CONFIG_FILE | \
     jq -r '.systemSettings.domain')
@@ -55,10 +97,14 @@ bootstrap_state() {
     jq '.systemSettings.domain="'$domain'"')
   _update_state "$domain_update"
 
+  __process_msg "Updated domain in state.json"
+
   local domain_protocol=$(cat $CONFIG_FILE | jq -r '.systemSettings.domainProtocol')
   local domain_protocol_update=$(cat $STATE_FILE | \
     jq '.systemSettings.domainProtocol="'$domain_protocol'"')
   _update_state "$domain_protocol_update"
+
+  __process_msg "Updated domain protocol in state.json"
 }
 
 main() {
