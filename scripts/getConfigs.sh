@@ -46,7 +46,10 @@ validate_config() {
   fi
 
   if [ ! -f "$DATA_DIR/state.json" ]; then
-    echo "No state.json exists, creating..."
+    __process_msg "No state.json exists, creating..."
+    touch "$STATE_FILE"
+  else
+    __process_msg "state.json exists"
   fi
 
   local customer_id=$(cat $CONFIG_FILE | jq '.shippableCustomerId')
@@ -73,7 +76,8 @@ bootstrap_state() {
       "services": [],
       "machines": [],
       "systemIntegrations": [],
-      "core": []
+      "core": [],
+      "inProgress": "true"
     }' \
   | tee $STATE_FILE)
   __process_msg "Created state.json template"
