@@ -12,7 +12,7 @@ export CORE_MACHINES_LIST=""
 validate_core_config() {
   # TODO: check if components.json has all the require components
   __process_msg "Validating core config"
-  CORE_COMPONENTS_LIST=$(cat $CORE_CONFIG | jq '.')
+  CORE_COMPONENTS_LIST=$(cat "$CORE_CONFIG" | jq '.')
   local component_count=$(echo $CORE_COMPONENTS_LIST | jq '. | length')
   if [[ $component_count -lt 1 ]]; then
     __process_msg "5 components required to set up Shippable, $component_count provided"
@@ -149,6 +149,7 @@ install_vault() {
 }
 
 save_vault_credentials() {
+  __process_msg "Saving vault credentials in state.json"
   local VAULT_FILE="$LOCAL_DIR/vault.json"
 
   local vault_url=$(cat $VAULT_FILE | jq '.vaultUrl')
@@ -159,6 +160,7 @@ save_vault_credentials() {
 
   result=$(cat $STATE_FILE | jq ".systemSettings.vaultToken = $vault_token")
   echo $result | jq '.' > $STATE_FILE
+  __process_msg "Vault credentials successfully saved to state.json"
 }
 
 install_rabbitmq() {
@@ -183,30 +185,23 @@ install_rabbitmq() {
 save_gitlab_state() {
   #TODO: Get gitlab root username, password from user input
   local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local host=$(echo $gitlab_host | jq '.ip')
+  local host=$(echo "$gitlab_host" | jq '.ip')
   local gitlab_root_username="root"
   local gitlab_root_password="shippable"
   local gitlab_external_url=$(echo $host | tr -d "\"")
+  gitlab_external_url="http//$gitlab_external_url/api/v3"
 
-  __process_msg "Please add the following to systemIntegrations key of your state.json file, type (y) when done"
-  echo ""
-  echo "{"
-  echo "  \"data\": {"
-  echo "    \"username\": \"$gitlab_root_username\","
-  echo "    \"subscriptionProjectLimit\": \"100\","
-  echo "    \"password\": \"$gitlab_root_password\","
-  echo "    \"url\": \"http://$gitlab_external_url/api/v3\""
-  echo "  },"
-  echo "  \"name\": \"gitlab\""
-  echo "}"
-  echo ""
-
-  __process_msg "Done? (y/n)"
-  read response
-  if [[ "$response" != "y" ]]; then
-    __process_msg "Gitlab config need to be added to state.json to install core"
-    save_gitlab_state
-  fi
+  local gitlab_integration=$(cat $STATE_FILE | jq '
+    .systemIntegrations |= . + [{
+      "name": "gitlab",
+      "data": {
+        "username": "'$gitlab_root_username'",
+        "subscriptionProjectLimit": "100",
+        "password": "'$gitlab_root_password'",
+        "url": "'$gitlab_external_url'"
+      }
+    }]')
+  _update_state "$gitlab_integration"
 }
 
 install_gitlab() {

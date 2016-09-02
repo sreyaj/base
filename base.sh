@@ -21,7 +21,6 @@ readonly LOCAL_DIR="/tmp/shippable"
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
-# TODO: This should be set from statefile
 readonly RELEASE=$(cat $DATA_DIR/config.json | jq -r '.release')
 readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
 
