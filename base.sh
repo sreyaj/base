@@ -15,6 +15,7 @@ readonly IFS=$'\n\t'
 readonly ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
 readonly DATA_DIR="$ROOT_DIR/data"
+readonly REMOTE_SCRIPTS_DIR="$ROOT_DIR/scripts/remote"
 readonly STATE_FILE="$DATA_DIR/state.json"
 readonly CONFIG_FILE="$DATA_DIR/config.json"
 readonly SSH_USER="root"

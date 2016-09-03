@@ -15,54 +15,72 @@ generate_system_config() {
   local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
 
   #TODO: put sed update into a function and call it for each variable
-  local system_configs_template="$DATA_DIR/system_configs_data.sql.template"
-  local system_configs_sql="$DATA_DIR/system_configs_data.sql"
+  local system_configs_template="$REMOTE_SCRIPTS_DIR/systemConfigsData.sql.template"
+  local system_configs_sql="$REMOTE_SCRIPTS_DIR/system_configs_data.sql"
 
+  # NOTE:
+  # "sed" is using '#' as a separator in following statements
+  __process_msg "Updating : defaultMinionCount"
   local default_minion_count=$(cat $STATE_FILE | jq -r '.systemSettings.defaultMinionCount')
-  sed "s/{{DEFAULT_MINION_COUNT}}/$default_minion_count/g" $system_configs_template > $system_configs_sql
+  sed "s#{{DEFAULT_MINION_COUNT}}#$default_minion_count#g" $system_configs_template > $system_configs_sql
 
+  __process_msg "Updating : defaultPipelineCount"
   local default_pipeline_count=$(cat $STATE_FILE | jq -r '.systemSettings.defaultPipelineCount')
-  sed -i "s/{{DEFAULT_PIPELINE_COUNT}}/$default_pipeline_count/g" $system_configs_sql
+  sed -i "s#{{DEFAULT_PIPELINE_COUNT}}#$default_pipeline_count#g" $system_configs_sql
 
+  __process_msg "Updating : braintreeEnabled"
   local braintree_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.braintreeEnabled')
-  sed -i "s/{{BRAINTREE_ENABLED}}/$braintree_enabled/g" $system_configs_sql
+  sed -i "s#{{BRAINTREE_ENABLED}}#$braintree_enabled#g" $system_configs_sql
 
+  __process_msg "Updating : buildTimeout"
   local build_timeout=$(cat $STATE_FILE | jq -r '.systemSettings.buildTimeoutMS')
-  sed -i "s/{{BUILD_TIMEOUT_MS}}/$build_timeout/g" $system_configs_sql
+  sed -i "s#{{BUILD_TIMEOUT_MS}}#$build_timeout#g" $system_configs_sql
 
+  __process_msg "Updating : defaultPrivateJobQuota"
   local private_job_quota=$(cat $STATE_FILE | jq -r '.systemSettings.defaultPrivateJobQuota')
-  sed -i "s/{{DEFAULT_PRIVATE_JOB_QUOTA}}/$private_job_quota/g" $system_configs_sql
+  sed -i "s#{{DEFAULT_PRIVATE_JOB_QUOTA}}#$private_job_quota#g" $system_configs_sql
 
+  __process_msg "Updating : serviceuserToken"
   local serviceuser_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  sed -i "s/{{SERVICE_USER_TOKEN}}/$serviceuser_token/g" $system_configs_sql
+  sed -i "s#{{SERVICE_USER_TOKEN}}#$serviceuser_token#g" $system_configs_sql
 
+  __process_msg "Updating : vaultUrl"
   local vault_url=$(cat $STATE_FILE | jq -r '.systemSettings.vaultUrl')
-  sed -i "s/{{VAULT_URL}}/$vault_url/g" $system_configs_sql
+  sed -i "s#{{VAULT_URL}}#$vault_url#g" $system_configs_sql
 
+  __process_msg "Updating : vaultToken"
   local vault_token=$(cat $STATE_FILE | jq -r '.systemSettings.vaultToken')
-  sed -i "s/{{VAULT_TOKEN}}/$vault_token/g" $system_configs_sql
+  sed -i "s#{{VAULT_TOKEN}}#$vault_token#g" $system_configs_sql
 
+  __process_msg "Updating : vaultRefreshTime"
   local vault_refresh_time=$(cat $STATE_FILE | jq -r '.systemSettings.vaultRefreshTimeInSec')
-  sed -i "s/{{VAULT_REFRESH_TIME_SEC}}/$vault_refresh_time/g" $system_configs_sql
+  sed -i "s#{{VAULT_REFRESH_TIME_SEC}}#$vault_refresh_time#g" $system_configs_sql
 
+  __process_msg "Updating : cachingEnabled"
   local caching_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.cachingEnabled')
-  sed -i "s/{{CACHING_ENABLED}}/$caching_enabled/g" $system_configs_sql
+  sed -i "s#{{CACHING_ENABLED}}#$caching_enabled#g" $system_configs_sql
 
+  __process_msg "Updating : hubspotEnabled"
   local hubspot_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotEnabled')
-  sed -i "s/{{HUBSPOT_ENABLED}}/$hubspot_enabled/g" $system_configs_sql
+  sed -i "s#{{HUBSPOT_ENABLED}}#$hubspot_enabled#g" $system_configs_sql
 
+  __process_msg "Updating : amqpUrl"
   local amqp_url=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrl')
-  sed -i "s/{{AMQP_URL}}/$amqp_url/g" $system_configs_sql
+  sed -i "s#{{AMQP_URL}}#$amqp_url#g" $system_configs_sql
 
+  __process_msg "Updating : amqpUrlAdmin"
   local amqp_url_admin=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrlAdmin')
-  sed -i "s/{{AMQP_URL_ADMIN}}/$amqp_url_admin/g" $system_configs_sql
+  sed -i "s#{{AMQP_URL_ADMIN}}#$amqp_url_admin#g" $system_configs_sql
 
+  __process_msg "Updating : amqpUrlRoot"
   local amqp_url_root=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrlRoot')
-  sed -i "s/{{AMQP_URL_ROOT}}/$amqp_url_root/g" $system_configs_sql
+  sed -i "s#{{AMQP_URL_ROOT}}#$amqp_url_root#g" $system_configs_sql
 
+  __process_msg "Updating : amqpDefaultExchange"
   local amqp_default_exchange=$(cat $STATE_FILE | jq -r '.systemSettings.amqpDefaultExchange')
-  sed -i "s/{{AMQP_DEFAULT_EXCHANGE}}/$amqp_default_exchange/g" $system_configs_sql
+  sed -i "s#{{AMQP_DEFAULT_EXCHANGE}}#$amqp_default_exchange#g" $system_configs_sql
 
+  __process_msg "Updating : apiUrl"
   local api_url=""
   local domain_protocol=$(cat $STATE_FILE | jq '.systemSettings.domainProtocol')
   local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
@@ -72,11 +90,13 @@ generate_system_config() {
     #api_url="$domainProtocol://api.$domain"
     api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   fi
-  sed -i "s/{{API_URL}}/$api_url/g" $system_configs_sql
+  sed -i "s#{{API_URL}}#$api_url#g" $system_configs_sql
 
+  __process_msg "Updating : apiPort"
   local api_port=$(cat $STATE_FILE | jq -r '.systemSettings.apiPort')
-  sed -i "s/{{API_PORT}}/$api_port/g" $system_configs_sql
+  sed -i "s#{{API_PORT}}#$api_port#g" $system_configs_sql
 
+  __process_msg "Updating : wwwUrl"
   local www_url=""
   local www_port=50001
   if [ "$domain" == "localhost" ]; then
@@ -85,13 +105,15 @@ generate_system_config() {
     #www_url="$domainProtocol://$domain"
     www_url=$(cat $STATE_FILE | jq -r '.systemSettings.wwwUrl')
   fi
-  sed -i "s/{{WWW_URL}}/$www_url/g" $system_configs_sql
+  sed -i "s#{{WWW_URL}}#$www_url#g" $system_configs_sql
 
+  __process_msg "Updating : runMode"
   local run_mode=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
-  sed -i "s/{{RUN_MODE}}/$run_mode/g" $system_configs_sql
+  sed -i "s#{{RUN_MODE}}#$run_mode#g" $system_configs_sql
 
+  __process_msg "Updating : rootQueueList"
   local root_queue_list=$(cat $STATE_FILE | jq -r '.systemSettings.rootQueueList')
-  sed -i "s/{{ROOT_QUEUE_LIST}}/$root_queue_list/g" $system_configs_sql
+  sed -i "s#{{ROOT_QUEUE_LIST}}#$root_queue_list#g" $system_configs_sql
 
   __process_msg "Successfully generated 'systemConfig' table data"
 }
@@ -118,19 +140,19 @@ provision_api() {
     if [ "$env_var" == "DBNAME" ]; then
       local db_name=$(cat $STATE_FILE | jq '.systemSettings.dbname')
       api_env_values="$api_env_values -e $env_var=$db_name"
-    elif [ "$env_var" == "DB_USERNAME" ]; then
+    elif [ "$env_var" == "DBUSERNAME" ]; then
       local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
       api_env_values="$api_env_values -e $env_var=$db_username"
-    elif [ "$env_var" == "DB_PASSWORD" ]; then
+    elif [ "$env_var" == "DBPASSWORD" ]; then
       local db_password=$(cat $STATE_FILE | jq -r '.systemSettings.dbPassword')
       api_env_values="$api_env_values -e $env_var=$db_password"
-    elif [ "$env_var" == "DB_HOST" ]; then
+    elif [ "$env_var" == "DBHOST" ]; then
       local db_host=$(cat $STATE_FILE | jq -r '.systemSettings.dbHost')
       api_env_values="$api_env_values -e $env_var=$db_host"
-    elif [ "$env_var" == "DB_PORT" ]; then
+    elif [ "$env_var" == "DBPORT" ]; then
       local db_port=$(cat $STATE_FILE | jq -r '.systemSettings.dbPort')
       api_env_values="$api_env_values -e $env_var=$db_port"
-    elif [ "$env_var" == "DB_DIALECT" ]; then
+    elif [ "$env_var" == "DBDIALECT" ]; then
       local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.dbDialect')
       api_env_values="$api_env_values -e $env_var=$db_dialect"
     else
@@ -138,24 +160,56 @@ provision_api() {
       exit 1
     fi
   done
+
   echo $api_env_values
-  local api_state_env=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .env="'$api_env_vars'"')
-  _update_state "$api_state_env"
+  __process_msg "Successfully generated api environment variables"
+
+  local api_state_env=$(cat $STATE_FILE | jq '
+    .services  |= 
+    map(
+      if .name == "api" then
+        .env = "'$api_env_values'"
+      else
+        .
+      end
+    )'
+  )
+  echo $api_state_env > $STATE_FILE
   __process_msg "Successfully generated  api environment variables"
 
   __process_msg "Generating api port mapping"
   local api_port=$(cat $STATE_FILE | jq -r '.systemSettings.apiPort')
   local api_port_mapping=" --publish $api_port:$api_port/tcp"
   __process_msg "api port mapping : $api_port_mapping"
-  local api_port_update=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .port="'$api_port'"')
-  _update_state "$api_port_update"
+
+  local api_port_update=$(cat $STATE_FILE | jq '
+    .services  |= 
+    map(
+      if .name == "api" then
+        .port = "'$api_port'"
+      else
+        .
+      end
+    )'
+  )
+  echo $api_port_update > $STATE_FILE
   __process_msg "Successfully updated api port mapping"
 
   __process_msg "Generating api service config"
   local api_service_opts=" --name api --mode global --network ingress --with-registry-auth --endpoint-mode vip"
-  __process_msg "api service config : $api_service_config"
-  local api_service_update=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .port="'$opts'"')
-  _update_state "$api_service_update"
+  __process_msg "api service config : $api_service_opts"
+
+  local api_service_update=$(cat $STATE_FILE | jq '
+    .services  |= 
+    map(
+      if .name == "api" then
+        .opts = "'$api_service_opts'"
+      else
+        .
+      end
+    )'
+  )
+  echo $api_service_update > $STATE_FILE
   __process_msg "Successfully generated api serivce config"
 
   echo "==============================================================="
