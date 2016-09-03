@@ -13,7 +13,12 @@
     "hubspotEnabled": false,
     "buildTimeoutMS": 3600000,
     "defaultPrivateJobQuota": 150,
-    "vaultRefreshTimeInSec": 900
+    "vaultRefreshTimeInSec": 900,
+    "apiPort": 50000,
+    "rootQueueList": "core.sync|www.websockets",
+    "runMode": "debug",
+    "apiUrl": "http://api.myserver.com",
+    "wwwUrl": "http://myserver.com"
   },
   "systemIntegrations": [
     {

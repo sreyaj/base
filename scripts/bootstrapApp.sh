@@ -12,7 +12,6 @@ generate_system_config() {
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq '.ip')
   local db_ip=$(echo $db_host | jq '.ip')
-  local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
 
   #TODO: put sed update into a function and call it for each variable
   local system_configs_template="$REMOTE_SCRIPTS_DIR/systemConfigsData.sql.template"
@@ -183,7 +182,7 @@ provision_api() {
   local api_port_update=$(cat $STATE_FILE | jq '
     .services  |= 
     map(if .name == "api" then
-        .port = "'$api_port'"
+        .port = "'$api_port_mapping'"
       else
         .
       end
@@ -213,31 +212,27 @@ provision_api() {
   local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
 
-  local port_mapping=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .port')
-  local env_variables=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .env')
-  local name=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .name')
-  local opts=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .opts')
-  local image=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .image')
+  local port_mapping=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .port')
+  local env_variables=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .env')
+  local name=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .name')
+  local opts=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .opts')
+  local image=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .image')
 
-  local boot_api_cmd="sudo docker swarm service create \
+  local boot_api_cmd="sudo docker service create \
     $port_mapping \
     $env_variables \
-    $env_variables \
-    --name $name \
     $opts $image"
 
-  _exec_remote_cmd "$swarm_manager_host" "boot_api_cmd"
+  _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
   __process_msg "Successfully provisioned api"
 }
-
-
 
 insert_system_config() {
   __process_msg "Inserting data into systemConfigs Table"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq '.ip')
   local db_ip=$(echo $db_host | jq '.ip')
-  local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
 
   #TODO: fetch db_name from state.json
   local db_name="shipdb"
