@@ -12,23 +12,39 @@ do $$
         "vaultUrl",
         "vaultToken",
         "vaultRefreshTimeInSec",
-        "createdBy",
-        "updatedBy"
+        "cachingEnabled",
+        "hubspotEnabled",
+        "amqpUrl",
+        "amqpAdminUrl",
+        "amqpDefaultExchange",
+        "apiUrl",
+        "apiPort",
+        "wwwUrl",
+        "runMode",
+        "rootQueueList"
       )
     values
       (
         1,
         {{DEFAULT_MINION_COUNT}},
         {{DEFAULT_PIPELINE_COUNT}},
-        {{IS_BRAINTREE_ENABLED}},
+        {{BRAINTREE_ENABLED}},
         {{BUILD_TIMEOUT_MS}},
         {{DEFAULT_PRIVATE_JOB_QUOTA}},
         {{SERVICE_USER_TOKEN}},
         {{VAULT_URL}},
         {{VAULT_TOKEN}},
         {{VAULT_REFRESH_TIME_SEC}},
-        {{CREATED_BY}},
-        {{UPDATED_BY}}
+        {{CACHING_ENABLED}},
+        {{HUBSPOT_ENABLED}},
+        {{AMQP_URL}},
+        {{AMQP_ADMIN_URL}},
+        {{AMQP_DEFAULT_EXCHANGE}},
+        {{API_URL}},
+        {{API_PORT}},
+        {{WWW_URL}},
+        {{RUN_MODE}},
+        {{ROOT_QUEUE_LIST}}
       )
   end
 $$;

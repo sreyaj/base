@@ -1,5 +1,11 @@
 #!/bin/bash -e
 
+generate_serviceuser_token() {
+  __process_msg "Generating random token for serviceuser"
+  local token=$(cat /proc/sys/kernel/random/uuid)
+  local stateToken=$(cat $STATE_FILE | jq '.systemSettings.serviceUserToken="'$token'"')
+  echo $stateToken > $STATE_FILE
+}
 
 generate_system_config() {
   __process_msg "Inserting data into systemConfigs Table"
@@ -8,14 +14,67 @@ generate_system_config() {
   local db_ip=$(echo $db_host | jq '.ip')
   local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
 
-  #TODO: fetch db_name from state.json
-  local db_name="shipdb"
+  local system_configs_template="$DATA_DIR/system_configs_data.sql.template"
+  local system_configs_sql="$DATA_DIR/system_configs_data.sql"
 
-  #TODO:
-  # - get all the relevalt vaules from state.systemSettings
-  # - update system_configs_data.sql
-  # - print all thes setings to be updated
+  local default_minion_count=$(cat $STATE_FILE | jq -r '.systemSettings.defaultMinionCount')
+  sed "s/{{DEFAULT_MINION_COUNT}}/$default_minion_count/g" $system_configs_template > $system_configs_sql
 
+  local default_pipeline_count=$(cat $STATE_FILE | jq -r '.systemSettings.defaultPipelineCount')
+  sed -i "s/{{DEFAULT_PIPELINE_COUNT}}/$default_pipeline_count/g" $system_configs_sql
+
+  local braintree_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.braintreeEnabled')
+  sed -i "s/{{BRAINTREE_ENABLED}}/$braintree_enabled/g" $system_configs_sql
+
+  local build_timeout=$(cat $STATE_FILE | jq -r '.systemSettings.buildTimeoutMS')
+  sed -i "s/{{BUILD_TIMEOUT_MS}}/$build_timeout/g" $system_configs_sql
+
+  local private_job_quota=$(cat $STATE_FILE | jq -r '.systemSettings.defaultPrivateJobQuota')
+  sed -i "s/{{DEFAULT_PRIVATE_JOB_QUOTA}}/$private_job_quota/g" $system_configs_sql
+
+  local serviceuser_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
+  sed -i "s/{{SERVICE_USER_TOKEN}}/$serviceuser_token/g" $system_configs_sql
+
+  local vault_url=$(cat $STATE_FILE | jq -r '.systemSettings.vaultUrl')
+  sed -i "s/{{VAULT_URL}}/$vault_url/g" $system_configs_sql
+
+  local vault_token=$(cat $STATE_FILE | jq -r '.systemSettings.vaultToken')
+  sed -i "s/{{VAULT_TOKEN}}/$vault_token/g" $system_configs_sql
+
+  local vault_refresh_time=$(cat $STATE_FILE | jq -r '.systemSettings.vaultRefreshTimeInSec')
+  sed -i "s/{{VAULT_REFRESH_TIME_SEC}}/$vault_refresh_time/g" $system_configs_sql
+
+  local caching_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.cachingEnabled')
+  sed -i "s/{{CACHING_ENABLED}}/$caching_enabled/g" $system_configs_sql
+
+  local hubspot_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotEnabled')
+  sed -i "s/{{HUBSPOT_ENABLED}}/$hubspot_enabled/g" $system_configs_sql
+
+  local amqp_url=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrl')
+  sed -i "s/{{AMQP_URL}}/$amqp_url/g" $system_configs_sql
+
+  local amqp_admin_url=$(cat $STATE_FILE | jq -r '.systemSettings.amqpAdminUrl')
+  sed -i "s/{{AMQP_ADMIN_URL}}/$amqp_url/g" $system_configs_sql
+
+  local amqp_default_exchange=$(cat $STATE_FILE | jq -r '.systemSettings.amqpDefaultExchange')
+  sed -i "s/{{AMQP_DEFAULT_EXCHANGE}}/$amqp_default_exchange/g" $system_configs_sql
+
+  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+  sed -i "s/{{API_URL}}/$api_url/g" $system_configs_sql
+
+  local api_port=$(cat $STATE_FILE | jq -r '.systemSettings.apiPort')
+  sed -i "s/{{API_PORT}}/$api_port/g" $system_configs_sql
+
+  local www_url=$(cat $STATE_FILE | jq -r '.systemSettings.wwwUrl')
+  sed -i "s/{{WWW_URL}}/$www_url/g" $system_configs_sql
+
+  local run_mode=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
+  sed -i "s/{{RUN_MODE}}/$run_mode/g" $system_configs_sql
+
+  local root_queue_list=$(cat $STATE_FILE | jq -r '.systemSettings.rootQueueList')
+  sed -i "s/{{ROOT_QUEUE_LIST}}/$root_queue_list/g" $system_configs_sql
+
+  __process_msg "Successfully generated 'systemConfig' table data"
 }
 
 provision_api() {
@@ -90,11 +149,7 @@ insert_system_config() {
   #TODO: fetch db_name from state.json
   local db_name="shipdb"
 
-  #TODO: 
-  # fill in all the values in system_configs_data.sql
-  # use uuid of the system to generate service user uuid
-
-  _copy_script_remote $host "system_configs_data.sql" "/tmp"
+  _copy_script_remote $host "$DATA_DIR/system_configs_data.sql" "/tmp"
   _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs_data.sql"
 }
 
@@ -123,7 +178,8 @@ insert_system_integrations() {
 
 main() {
   __process_marker "Updating system config"
-  #generate_system_config
+  generate_serviceuser_token
+  generate_system_config
   #provision_api
   # -- this wil create all the tables
   # -- api will be stuck in loop because of no amqp url and other settin
