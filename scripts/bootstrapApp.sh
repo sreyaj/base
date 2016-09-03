@@ -212,18 +212,28 @@ provision_api() {
   echo $api_service_update > $STATE_FILE
   __process_msg "Successfully generated api serivce config"
 
-  echo "==============================================================="
-  echo "==============================================================="
-  echo "==============================================================="
-  echo "config done provisioning api"
-  cat $STATE_FILE
-
+  __process_msg "Provisioning api on swarm cluster"
   local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
 
-  #_copy_script_remote $host "provisionService.sh" "$SCRIPT_DIR_REMOTE"
-  #_exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/provisionService.sh $api_service_image api"
+  local port_mapping=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .port')
+  local env_variables=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .env')
+  local name=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .name')
+  local opts=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .opts')
+  local image=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .image')
+
+  local boot_api_cmd="sudo docker swarm service create \
+    $port_mapping \
+    $env_variables \
+    $env_variables \
+    --name $name \
+    $opts $image"
+
+  _exec_remote_cmd "$swarm_manager_host" "boot_api_cmd"
+  __process_msg "Successfully provisioned api"
 }
+
+
 
 insert_system_config() {
   __process_msg "Inserting data into systemConfigs Table"
