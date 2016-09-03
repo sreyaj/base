@@ -99,20 +99,15 @@ bootstrap_state() {
   done
   __process_msg "Updated services in state.json"
 
-  local domain=$(cat $CONFIG_FILE | \
-    jq -r '.systemSettings.domain')
-  local domain_update=$(cat $STATE_FILE | \
-    jq '.systemSettings.domain="'$domain'"')
-  _update_state "$domain_update"
-
-  __process_msg "Updated domain in state.json"
-
-  local domain_protocol=$(cat $CONFIG_FILE | jq -r '.systemSettings.domainProtocol')
-  local domain_protocol_update=$(cat $STATE_FILE | \
-    jq '.systemSettings.domainProtocol="'$domain_protocol'"')
-  _update_state "$domain_protocol_update"
-
   __process_msg "Updated domain protocol in state.json"
+}
+
+update_system_settings() {
+  __process_msg "Updating system settings in state.json from config.json"
+  local system_settings=$(cat $CONFIG_FILE | jq '.systemSettings')
+  local update=$(cat $STATE_FILE | jq '.systemSettings='"$system_settings"'')
+  _update_state "$update"
+  __process_msg "Succcessfully updated state.json with systemSettings"
 }
 
 main() {
@@ -120,6 +115,7 @@ main() {
   get_system_config
   validate_config
   bootstrap_state
+  update_system_settings
 }
 
 main

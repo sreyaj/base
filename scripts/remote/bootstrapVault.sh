@@ -1,3 +1,5 @@
+#!/bin/bash -e
+
 export VAULT_ADDR=http://0.0.0.0:8200
 export VAULT_KEYFILE=/etc/vault.d/keys.txt
 export DB_USERNAME=$1

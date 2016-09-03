@@ -7,7 +7,7 @@ _copy_script_remote() {
   local host="$1"
   shift
   local script_name="$1"
-  local script_path_local="$SCRIPTS_DIR/remote/$script_name"
+  local script_path_local="$REMOTE_SCRIPTS_DIR/$script_name"
   shift
   local script_dir_remote="$1"
   local script_path_remote="$script_dir_remote/$script_name"

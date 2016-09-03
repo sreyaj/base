@@ -45,10 +45,14 @@ save_db_credentials_in_statefile() {
   local db_port=5432
   local db_address=$db_ip":"$db_port
 
+  db_name="shipdb"
   db_username="apiuser"
   db_password="testing1234"
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.dbHost = "'$db_password'"')
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbHost = "'$host'"')
+  echo $result > $STATE_FILE
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbname = "'$db_name'"')
   echo $result > $STATE_FILE
 
   result=$(cat $STATE_FILE | jq '.systemSettings.dbUsername = "'$db_username'"')
@@ -167,7 +171,7 @@ install_rabbitmq() {
 
   local amqp_user="SHIPPABLETESTUSER"
   local amqp_pass="SHIPPABLETESTPASS"
-  local amqp_vhost="shippableEx"
+  local amqp_exchange="shippableEx"
   local amqp_port=5672
   local amqp_port_admin=15672
 
@@ -181,6 +185,9 @@ install_rabbitmq() {
 
   local amqp_url_admin="amqp://$amqp_user:$amqp_pass@$host:$amqp_port_admin"
   update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
+  echo $update | jq '.' > $STATE_FILE
+
+  update=$(cat $STATE_FILE | jq '.systemSettings.amqpDefaultExchange = "'$amqp_exchange'"')
   echo $update | jq '.' > $STATE_FILE
 }
 
