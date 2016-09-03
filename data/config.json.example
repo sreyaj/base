@@ -33,15 +33,6 @@
         "port": "",
         "token": ""
       }
-    },{
-      "name": "rabbitmq",
-      "data": {
-        "url" : "",
-        "port": "",
-        "adminUrl": "",
-        "rootExchange": "",
-        "exchange": ""
-      }
     }
   ],
   "services": [{

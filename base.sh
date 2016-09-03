@@ -22,6 +22,7 @@ readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
 readonly RELEASE=$(cat $DATA_DIR/config.json | jq -r '.release')
 readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
+readonly LOCAL_BRIDGE_IP=172.17.42.1
 
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"

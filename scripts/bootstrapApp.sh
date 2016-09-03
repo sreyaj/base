@@ -59,13 +59,28 @@ generate_system_config() {
   local amqp_default_exchange=$(cat $STATE_FILE | jq -r '.systemSettings.amqpDefaultExchange')
   sed -i "s/{{AMQP_DEFAULT_EXCHANGE}}/$amqp_default_exchange/g" $system_configs_sql
 
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+  local api_url=""
+  local domain_protocol=$(cat $STATE_FILE | jq '.systemSettings.domainProtocol')
+  local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
+  if [ "$domain" == "localhost" ]; then
+    api_url="http://$LOCAL_BRIDGE_IP:$api_port"
+  else
+    #api_url="$domainProtocol://api.$domain"
+    api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+  fi
   sed -i "s/{{API_URL}}/$api_url/g" $system_configs_sql
 
   local api_port=$(cat $STATE_FILE | jq -r '.systemSettings.apiPort')
   sed -i "s/{{API_PORT}}/$api_port/g" $system_configs_sql
 
-  local www_url=$(cat $STATE_FILE | jq -r '.systemSettings.wwwUrl')
+  local www_url=""
+  local www_port=50001
+  if [ "$domain" == "localhost" ]; then
+    www_url="http://$LOCAL_BRIDGE_IP:$www_port"
+  else
+    #www_url="$domainProtocol://$domain"
+    www_url=$(cat $STATE_FILE | jq -r '.systemSettings.wwwUrl')
+  fi
   sed -i "s/{{WWW_URL}}/$www_url/g" $system_configs_sql
 
   local run_mode=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
@@ -90,50 +105,63 @@ provision_api() {
   local api_env_vars_count=$(echo $api_env_vars | jq '. | length')
   __process_msg "Successfully read from config.json: api.envs ($api_env_vars_count)"
 
-  local api_port=50000
-
-  local api_url=""
-  local domain_protocol=$(cat $STATE_FILE | jq '.systemSettings.domainProtocol')
-  local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
-  if [ "$domain" == "localhost" ]; then
-    api_url="http://localhost:$api_port"
-  else
-    api_url="$domainProtocol://api.$domain"
-  fi
+  __process_msg "Generating api environment variables"
 
   local api_env_values=""
   for i in $(seq 1 $api_env_vars_count); do
     local env_var=$(echo $api_env_vars | jq -r '.['"$i-1"']')
 
-    if [ "$env_var" == "SHIPPABLE_API_TOKEN" ]; then
-      local api_token=$(cat $STATE_FILE | jq '.systemSettings.serviceUserToken')
-      if [ -z "$api_token" ]; then
-        echo "$env_var undefined, exiting"
-        exit 1
-      fi
-      api_env_values="$api_env_values -e $env_var=$api_token "
-    elif [ "$env_var" == "RUN_MODE" ]; then
-      local run_mode=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
-      api_env_values="$api_env_values -e $env_var=$runMode"
+    if [ "$env_var" == "DBNAME" ]; then
+      local db_name=$(cat $STATE_FILE | jq '.systemSettings.dbname')
+      api_env_values="$api_env_values -e $env_var=$db_name"
+    elif [ "$env_var" == "DB_USERNAME" ]; then
+      local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+      api_env_values="$api_env_values -e $env_var=$db_username"
+    elif [ "$env_var" == "DB_PASSWORD" ]; then
+      local db_password=$(cat $STATE_FILE | jq -r '.systemSettings.dbPassword')
+      api_env_values="$api_env_values -e $env_var=$db_password"
+    elif [ "$env_var" == "DB_HOST" ]; then
+      local db_host=$(cat $STATE_FILE | jq -r '.systemSettings.dbHost')
+      api_env_values="$api_env_values -e $env_var=$db_host"
+    elif [ "$env_var" == "DB_PORT" ]; then
+      local db_port=$(cat $STATE_FILE | jq -r '.systemSettings.dbPort')
+      api_env_values="$api_env_values -e $env_var=$db_port"
+    elif [ "$env_var" == "DB_DIALECT" ]; then
+      local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.dbDialect')
+      api_env_values="$api_env_values -e $env_var=$db_dialect"
     else
       echo "No handler for API env : $env_var, exiting"
       exit 1
     fi
   done
-
   echo $api_env_values
   local api_state_env=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .env="'$api_env_vars'"')
-  #_update_state "$api_state_env"
+  _update_state "$api_state_env"
+  __process_msg "Successfully generated  api environment variables"
 
-  local api_port=" --publish $api_port:$api_port/tcp"
-  local api_state_port=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .port="'$api_port'"')
-  _update_state "$api_state_port"
+  __process_msg "Generating api port mapping"
+  local api_port=$(cat $STATE_FILE | jq -r '.systemSettings.apiPort')
+  local api_port_mapping=" --publish $api_port:$api_port/tcp"
+  __process_msg "api port mapping : $api_port_mapping"
+  local api_port_update=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .port="'$api_port'"')
+  _update_state "$api_port_update"
+  __process_msg "Successfully updated api port mapping"
 
-  local api_state_opts=" --name api --mode global --network ingress --with-registry-auth --endpoint-mode vip"
-  _update_state "$api_state_port"
+  __process_msg "Generating api service config"
+  local api_service_opts=" --name api --mode global --network ingress --with-registry-auth --endpoint-mode vip"
+  __process_msg "api service config : $api_service_config"
+  local api_service_update=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .port="'$opts'"')
+  _update_state "$api_service_update"
+  __process_msg "Successfully generated api serivce config"
 
-  #local swarm_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  #local host=$(echo $swarm_host | jq '.ip')
+  echo "==============================================================="
+  echo "==============================================================="
+  echo "==============================================================="
+  echo "config done provisioning api"
+  cat $STATE_FILE
+
+  local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
 
   #_copy_script_remote $host "provisionService.sh" "$SCRIPT_DIR_REMOTE"
   #_exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/provisionService.sh $api_service_image api"
@@ -180,9 +208,10 @@ main() {
   __process_marker "Updating system config"
   generate_serviceuser_token
   generate_system_config
-  #provision_api
+  provision_api
   # -- this wil create all the tables
   # -- api will be stuck in loop because of no amqp url and other settin
+
   #insert_system_config
   # -- this will insert token
   # -- this will insert amqp url and other stuff
