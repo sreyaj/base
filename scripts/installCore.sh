@@ -121,9 +121,8 @@ install_vault() {
   local db_username=$(cat $STATE_FILE | jq '.systemSettings.dbUsername')
   local db_address=$db_ip:$db_port
 
-  #TODO: fetch db_name from state.json
   local db_name="shipdb"
-  local VAULT_JSON_FILE="/vault/config/scripts/vaultConfig.json"
+  local VAULT_JSON_FILE="/etc/vault.d/vaultConfig.json"
 
   _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
   _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
@@ -149,14 +148,15 @@ save_vault_credentials() {
   __process_msg "Saving vault credentials in state.json"
   local VAULT_FILE="/tmp/shippable/vaultConfig.json"
 
-  local vault_url=$(cat $VAULT_FILE | jq '.vaultUrl')
-  local vault_token=$(cat $VAULT_FILE | jq '.vaultToken')
-
+  local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $vault_host | jq -r '.ip')
+  local vault_url="http://$vault_ip:8200"
   result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultUrl = "'$vault_url'"')
-  echo $result | jq '.' > $STATE_FILE
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
 
+  local vault_token=$(cat $VAULT_FILE | jq -r '.vaultToken')
   result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultToken = "'$vault_token'"')
-  echo $result | jq '.' > $STATE_FILE
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
   __process_msg "Vault credentials successfully saved to state.json"
 }
 
