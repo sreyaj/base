@@ -14,6 +14,7 @@ generate_system_config() {
   local db_ip=$(echo $db_host | jq '.ip')
   local db_username=$(cat $STATE_FILE | jq '.core[] | select (.name=="postgresql") | .secure.username')
 
+  #TODO: put sed update into a function and call it for each variable
   local system_configs_template="$DATA_DIR/system_configs_data.sql.template"
   local system_configs_sql="$DATA_DIR/system_configs_data.sql"
 
@@ -53,8 +54,11 @@ generate_system_config() {
   local amqp_url=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrl')
   sed -i "s/{{AMQP_URL}}/$amqp_url/g" $system_configs_sql
 
-  local amqp_admin_url=$(cat $STATE_FILE | jq -r '.systemSettings.amqpAdminUrl')
-  sed -i "s/{{AMQP_ADMIN_URL}}/$amqp_url/g" $system_configs_sql
+  local amqp_url_admin=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrlAdmin')
+  sed -i "s/{{AMQP_URL_ADMIN}}/$amqp_url_admin/g" $system_configs_sql
+
+  local amqp_url_root=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrlRoot')
+  sed -i "s/{{AMQP_URL_ROOT}}/$amqp_url_root/g" $system_configs_sql
 
   local amqp_default_exchange=$(cat $STATE_FILE | jq -r '.systemSettings.amqpDefaultExchange')
   sed -i "s/{{AMQP_DEFAULT_EXCHANGE}}/$amqp_default_exchange/g" $system_configs_sql

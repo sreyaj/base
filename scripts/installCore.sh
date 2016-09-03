@@ -48,10 +48,13 @@ save_db_credentials_in_statefile() {
   db_username="apiuser"
   db_password="testing1234"
 
-  result=$(cat $STATE_FILE | jq ".systemSettings.dbUsername = \"$db_username\"")
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbHost = "'$db_password'"')
   echo $result > $STATE_FILE
 
-  result=$(cat $STATE_FILE | jq ".systemSettings.dbPassword = \"$db_password\"")
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbUsername = "'$db_username'"')
+  echo $result > $STATE_FILE
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbPassword = "'$db_password'"')
   echo $result > $STATE_FILE
 
   # We will need to wrap user constructed variables around "".
@@ -140,10 +143,10 @@ save_vault_credentials() {
   local vault_url=$(cat $VAULT_FILE | jq '.vaultUrl')
   local vault_token=$(cat $VAULT_FILE | jq '.vaultToken')
 
-  result=$(cat $STATE_FILE | jq ".systemSettings.vaultUrl = $vault_url")
+  result=$(cat $STATE_FILE | jq '.systemSettings.vaultUrl = "'$vault_url'"')
   echo $result | jq '.' > $STATE_FILE
 
-  result=$(cat $STATE_FILE | jq ".systemSettings.vaultToken = $vault_token")
+  result=$(cat $STATE_FILE | jq '.systemSettings.vaultToken = "'$vault_token'"')
   echo $result | jq '.' > $STATE_FILE
   __process_msg "Vault credentials successfully saved to state.json"
 }
@@ -162,9 +165,23 @@ install_rabbitmq() {
   _copy_script_remote $host "bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
 
-  amqpUrl="amqp://SHIPPABLETESTUSER:SHIPPABLETESTPASS@$host:15672/shippableRoot"
-  result=$(cat $STATE_FILE | jq ".systemSettings.amqpUrl = \"$amqpUrl\"")
-  echo $result | jq '.' > $STATE_FILE
+  local amqp_user="SHIPPABLETESTUSER"
+  local amqp_pass="SHIPPABLETESTPASS"
+  local amqp_vhost="shippableEx"
+  local amqp_port=5672
+  local amqp_port_admin=15672
+
+  local amqp_url="amqp://$amqp_user:$amqp_pass@$host:$amqp_port/shippable"
+  local update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrl = "'$amqp_url'"')
+  echo $update | jq '.' > $STATE_FILE
+
+  local amqp_url_root="amqp://$amqp_user:$amqp_pass@$host:$amqp_port/shippableRoot"
+  update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlRoot = "'$amqp_url_root'"')
+  echo $update | jq '.' > $STATE_FILE
+
+  local amqp_url_admin="amqp://$amqp_user:$amqp_pass@$host:$amqp_port_admin"
+  update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
+  echo $update | jq '.' > $STATE_FILE
 }
 
 save_gitlab_state() {
