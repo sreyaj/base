@@ -230,15 +230,14 @@ provision_api() {
 insert_system_config() {
   __process_msg "Inserting data into systemConfigs Table"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $db_host | jq '.ip')
-  local db_ip=$(echo $db_host | jq '.ip')
+  local db_ip=$(echo $db_host | jq -r '.ip')
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
 
   #TODO: fetch db_name from state.json
   local db_name="shipdb"
 
-  _copy_script_remote $host "$DATA_DIR/system_configs_data.sql" "/tmp"
-  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -f /tmp/system_configs_data.sql"
+  _copy_script_remote $db_ip "$DATA_DIR/system_configs_data.sql" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs_data.sql"
 }
 
 run_migrations() {
@@ -272,7 +271,7 @@ main() {
   # -- this wil create all the tables
   # -- api will be stuck in loop because of no amqp url and other settin
 
-  #insert_system_config
+  insert_system_config
   # -- this will insert token
   # -- this will insert amqp url and other stuff
   #run_migrations
