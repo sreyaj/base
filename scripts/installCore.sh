@@ -40,7 +40,6 @@ install_database() {
 save_db_credentials_in_statefile() {
   __process_msg "Saving database credentials in state file"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $db_host | jq '.ip')
   local db_ip=$(echo $db_host | jq -r '.ip')
   local db_port=5432
   local db_address=$db_ip":"$db_port
@@ -48,8 +47,15 @@ save_db_credentials_in_statefile() {
   db_name="shipdb"
   db_username="apiuser"
   db_password="testing1234"
+  db_dialect="postgres"
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.dbHost = "'$host'"')
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbHost = "'$db_ip'"')
+  echo $result > $STATE_FILE
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbDialect = "'$db_dialect'"')
+  echo $result > $STATE_FILE
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbPort = "'$db_port'"')
   echo $result > $STATE_FILE
 
   result=$(cat $STATE_FILE | jq '.systemSettings.dbname = "'$db_name'"')
@@ -61,9 +67,7 @@ save_db_credentials_in_statefile() {
   result=$(cat $STATE_FILE | jq '.systemSettings.dbPassword = "'$db_password'"')
   echo $result > $STATE_FILE
 
-  # We will need to wrap user constructed variables around "".
-  # The values extracted from json are already in string format.
-  result=$(cat $STATE_FILE | jq ".systemSettings.dbUrl = \"$db_address\"")
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbUrl = "'$db_address'"')
   echo $result > $STATE_FILE
 }
 
@@ -125,6 +129,7 @@ install_vault() {
   _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
   _copy_script_remote $host "vault_kv_store.sql" "/etc/vault.d/"
   _copy_script_remote $host "vault.conf" "/etc/init/"
+  _copy_script_remote $host "vaultConfig.json" "/etc/vault.d/"
 
   _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
   _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
@@ -147,10 +152,10 @@ save_vault_credentials() {
   local vault_url=$(cat $VAULT_FILE | jq '.vaultUrl')
   local vault_token=$(cat $VAULT_FILE | jq '.vaultToken')
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.vaultUrl = "'$vault_url'"')
+  result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultUrl = "'$vault_url'"')
   echo $result | jq '.' > $STATE_FILE
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.vaultToken = "'$vault_token'"')
+  result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultToken = "'$vault_token'"')
   echo $result | jq '.' > $STATE_FILE
   __process_msg "Vault credentials successfully saved to state.json"
 }

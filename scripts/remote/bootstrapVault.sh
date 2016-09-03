@@ -6,75 +6,49 @@ export DB_USERNAME=$1
 export DB_NAME=$2
 export DB_IP=$3
 export VAULT_IP=$4
-
+export EXIT_CODE=0
+export VAULT_TOKEN=""
 
 status() {
-  vault status
-  export EXIT_CODE=$?
-}
-
-check_keyfile_exists() {
-  if [ -f $VAULT_KEYFILE ]; then
-    # KEY FILE PRESENT
-    # 1 - error
-    if [ $EXIT_CODE -eq 1 ]; then
-      init
-      unseal
-      auth
-      mount_shippable
-      write_policy
-    # 2 - sealed
-    else
-      unseal
-    fi
-  else
-    # KEY FILE NOT PRESENT
-    run_vault_migration
-    init
-    unseal
-    auth
-    mount_shippable
-    write_policy
-  fi
-}
-
-run_vault_migration() {
-  psql -U $DB_USERNAME -d $DB_NAME -h $DB_IP -c "drop table if exists vault_kv_store"
-  psql -U $DB_USERNAME -h $DB_IP -d $DB_NAME -w -f /etc/vault.d/vault.sql
-  sudo service vault restart
-  sleep 5
+  {
+    vault status
+  } || {
+    export EXIT_CODE=$?
+  }
 }
 
 init() {
+  echo "Running 'vault init' to initialize Vault server"
   vault init | sudo tee $VAULT_KEYFILE
 }
 
 unseal() {
-  KEY_1=$(grep 'Key 1:' $VAULT_KEYFILE | awk '{print $NF}')
-  KEY_2=$(grep 'Key 2:' $VAULT_KEYFILE | awk '{print $NF}')
-  KEY_3=$(grep 'Key 3:' $VAULT_KEYFILE | awk '{print $NF}')
+  if [ ! -f "$VAULT_KEYFILE" ]; then
+    echo "Missing key file: $VAULT_KEYFILE required to unseal vault"
+    echo "run 'vault init | sudo tee $VAULT_KEYFILE' manually to generate keyfile"
+    exit 1
+  else
+    echo "Vault key file $VAULT_KEYFILE exists, unsealing vault"
+    KEY_1=$(grep 'Key 1:' $VAULT_KEYFILE | awk '{print $NF}')
+    KEY_2=$(grep 'Key 2:' $VAULT_KEYFILE | awk '{print $NF}')
+    KEY_3=$(grep 'Key 3:' $VAULT_KEYFILE | awk '{print $NF}')
 
-  vault unseal $KEY_1
-  vault unseal $KEY_2
-  vault unseal $KEY_3
-
-  copy_vault_config
+    vault unseal "$KEY_1"
+    vault unseal "$KEY_2"
+    vault unseal "$KEY_3"
+  fi
 }
 
-copy_vault_config() {
-  local VAULT_URL=$VAULT_IP":8200"
-  local vault_config_file="/vault/config/scripts/vaultConfig.json"
+update_vault_token() {
+  local vault_config_file="/etc/vault.d/vaultConfig.json"
 
   VAULT_TOKEN=$(grep 'Initial Root Token:' $VAULT_KEYFILE | awk '{print substr($NF, 1, length($NF))}')
 
-  touch $vault_config_file
-  cat /vault/config/scripts/vaultConfig.json.template > $vault_config_file
-  sed -i "s/{{VAULT_URL}}/$VAULT_URL/g" $vault_config_file
   sed -i "s/{{VAULT_TOKEN}}/$VAULT_TOKEN/g" $vault_config_file
 }
 
 auth() {
-  vault auth $VAULT_TOKEN
+  vault auth "$VAULT_TOKEN"
 }
 
 mount_shippable() {
@@ -87,11 +61,23 @@ write_policy() {
 
 main() {
   status
-  # 0 - Success
   if [ $EXIT_CODE -eq 0 ]; then
-    return
+    ## vault running correctly
+    echo "Vault server running in unseale state, nothing to do"
+  elif [ $EXIT_CODE -eq 2 ]; then
+    ## vault running but in sealed state
+    echo "Vault server running in sealed state"
+    unseal
+    update_vault_token
   else
-    check_keyfile_exists
+    ## error
+    echo "Initializing vault server"
+    init
+    unseal
+    update_vault_token
+    auth
+    mount_shippable
+    write_policy
   fi
 }
 

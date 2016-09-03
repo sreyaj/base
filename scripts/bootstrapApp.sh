@@ -138,7 +138,7 @@ provision_api() {
     local env_var=$(echo $api_env_vars | jq -r '.['"$i-1"']')
 
     if [ "$env_var" == "DBNAME" ]; then
-      local db_name=$(cat $STATE_FILE | jq '.systemSettings.dbname')
+      local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
       api_env_values="$api_env_values -e $env_var=$db_name"
     elif [ "$env_var" == "DBUSERNAME" ]; then
       local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
@@ -161,20 +161,18 @@ provision_api() {
     fi
   done
 
-  echo $api_env_values
-  __process_msg "Successfully generated api environment variables"
+  __process_msg "Successfully generated api environment variables : $api_env_values"
 
   local api_state_env=$(cat $STATE_FILE | jq '
     .services  |= 
-    map(
-      if .name == "api" then
+    map(if .name == "api" then
         .env = "'$api_env_values'"
       else
         .
       end
     )'
   )
-  echo $api_state_env > $STATE_FILE
+  update=$(echo $api_state_env | jq '.' | tee $STATE_FILE)
   __process_msg "Successfully generated  api environment variables"
 
   __process_msg "Generating api port mapping"
@@ -184,15 +182,14 @@ provision_api() {
 
   local api_port_update=$(cat $STATE_FILE | jq '
     .services  |= 
-    map(
-      if .name == "api" then
+    map(if .name == "api" then
         .port = "'$api_port'"
       else
         .
       end
     )'
   )
-  echo $api_port_update > $STATE_FILE
+  update=$(echo $api_port_update | jq '.' | tee $STATE_FILE)
   __process_msg "Successfully updated api port mapping"
 
   __process_msg "Generating api service config"
@@ -209,7 +206,7 @@ provision_api() {
       end
     )'
   )
-  echo $api_service_update > $STATE_FILE
+  update=$(echo $api_service_update | jq '.' | tee $STATE_FILE)
   __process_msg "Successfully generated api serivce config"
 
   __process_msg "Provisioning api on swarm cluster"
