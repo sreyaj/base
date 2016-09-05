@@ -81,6 +81,24 @@ install() {
 
 upgrade() {
   echo "Starting upgrades"
+  echo $1
+  echo $2
+  echo $3
+
+  # TODO:
+  # add a new script scripts/upgrade.sh
+  # pass the service name and image name 
+  # get swarm ip
+  # get the service name from statefile
+  # generate swarm update command using the new image(from cmd line) and options(from statefile)
+  # execute updaate command on swarm machine
+}
+
+__print_help_upgrade() {
+  echo "
+  usage: ./base.sh --upgrade <service_name> <image_name>
+  This command updates the <service_name> Shippable component with image tag <image_name>
+  "
 }
 
 __print_help() {
@@ -112,26 +130,30 @@ __show_version() {
 
 ## If size is not two at least, quit
 if [[ $# -gt 0 ]]; then
-  while [[ $# -gt 0 ]]; do
-    key="$1"
+  key="$1"
 
-    case $key in
-        -s|--status) __show_status
-          shift ;;
-        -v|--version) __show_version
-          shift ;;
-        -i|--install) install
-          shift ;;
-        -u|--upgrade) upgrade
-          shift ;;
-        -h|--help) __print_help
-          shift ;;
-        *)
-          __print_help
-          shift ;;
-      esac
-    shift
-  done
+  case $key in
+    -s|--status) __show_status
+      shift ;;
+    -v|--version) __show_version
+      shift ;;
+    -i|--install) install
+      shift ;;
+    -u|--upgrade)
+      shift
+      if [[ $# -ne 2 ]]; then
+        __print_help_upgrade
+      else
+        upgrade $@
+        shift 2
+      fi
+      ;;
+    -h|--help) __print_help
+      shift ;;
+    *)
+      __print_help
+      shift ;;
+  esac
 else
   __print_help
 fi
