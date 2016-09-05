@@ -150,7 +150,7 @@ save_vault_credentials() {
 
   local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $vault_host | jq -r '.ip')
-  local vault_url="http://$vault_ip:8200"
+  local vault_url="http://$host:8200"
   result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultUrl = "'$vault_url'"')
   update=$(echo $result | jq '.' | tee $STATE_FILE)
 
