@@ -7,6 +7,19 @@ generate_serviceuser_token() {
   echo $stateToken > $STATE_FILE
 }
 
+update_docker_creds() {
+  __process_msg "Updating docker credentials to pull shippable images"
+  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local host=$(echo "$gitlab_host" | jq '.ip')
+
+  local docker_login=$(cat $STATE_FILE | jq '.systemSettings.dockerlogin')
+  local docker_pass=$(cat $STATE_FILE | jq '.systemSettings.dockerpass')
+  local docker_email=$(cat $STATE_FILE | jq '.systemSettings.dockeremail')
+
+  local docker_login_cmd="sudo docker login -u $docker_login -p $docker_pass -e $docker_email"
+  _exec_remote_cmd $host "$docker_login_cmd"
+}
+
 generate_system_config() {
   __process_msg "Inserting data into systemConfigs Table"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -248,12 +261,19 @@ insert_system_config() {
 }
 
 run_migrations() {
-  __process_msg "Please copy migrations.sql onto machine which runs database, type (y) when done"
+  __process_msg "Running migrations.sql"
+
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local db_ip=$(echo $db_host | jq -r '.ip')
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  local db_name="shipdb"
+
+  __process_msg "Please copy migrations.sql onto $db_ip: $REMOTE_SCRIPTS_DIR/, type (y) when done"
   __process_msg "Done? (y/n)"
   read response
   if [[ "$response" =~ "y" ]]; then
     __process_msg "Proceeding with steps to run migrations"
-    #TODO: Run migrations on db
+    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/migrations.sql"
   else
     __process_msg "Migrations are required to install core"
     run_migrations
@@ -273,20 +293,13 @@ insert_system_integrations() {
 main() {
   __process_marker "Updating system config"
   generate_serviceuser_token
+  update_docker_creds
   generate_system_config
   provision_api
-  # -- this wil create all the tables
-  # -- api will be stuck in loop because of no amqp url and other settin
-
   insert_system_config
-  # -- this will insert token
-  # -- this will insert amqp url and other stuff
-  #run_migrations
-  # -- update/edit tables 
-  # -- this will create service user
+  run_migrations
   #insert_system_integrations
   # insert system integrations
-  #update_system_config
 }
 
 main
