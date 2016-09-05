@@ -114,6 +114,13 @@ generate_system_config() {
   local root_queue_list=$(cat $STATE_FILE | jq -r '.systemSettings.rootQueueList')
   sed -i "s#{{ROOT_QUEUE_LIST}}#$root_queue_list#g" $system_configs_sql
 
+  __process_msg "Updating : createdAt"
+  local created_at=$(date)
+  sed -i "s#{{CREATED_AT}}#$created_at#g" $system_configs_sql
+
+  __process_msg "Updating : updatedAt"
+  sed -i "s#{{UPDATED_AT}}#$created_at#g" $system_configs_sql
+
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 

@@ -22,7 +22,9 @@ do $$
         "apiPort",
         "wwwUrl",
         "runMode",
-        "rootQueueList"
+        "rootQueueList",
+        "createdAt",
+        "updatedAt"
       )
     values
       (
@@ -46,7 +48,9 @@ do $$
         {{API_PORT}},
         "{{WWW_URL}}",
         "{{RUN_MODE}}",
-        "{{ROOT_QUEUE_LIST}}"
+        "{{ROOT_QUEUE_LIST}}",
+        "{{CREATED_AT}}",
+        "{{UPDATED_AT}}",
       );
   end
 $$;
