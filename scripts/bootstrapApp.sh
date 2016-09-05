@@ -242,9 +242,8 @@ insert_system_config() {
 
   #TODO: fetch db_name from state.json
   local db_name="shipdb"
-  local system_configs_sql="$REMOTE_SCRIPTS_DIR/system_configs_data.sql"
 
-  _copy_script_remote $db_ip "$system_configs_sql" "$SCRIPT_DIR_REMOTE"
+  _copy_script_remote $db_ip "$system_configs_data.sql" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs_data.sql"
 }
 
