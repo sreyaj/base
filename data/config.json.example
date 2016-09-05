@@ -18,7 +18,10 @@
     "rootQueueList": "micro.vortex|micro.nf|core.nf|core.iscan|iscan.isync|iscan.esync|core.barge|micro.cu|micro.rpt|micro.ini|cluster.init|micro.su|formation.deploy|micro.buoy|nf.email|api.build.item.done|isync.autod|www.sockets|core.hubspotSync|nf.slack|min.build.item.queue|micro.ecs|nf.irc|core.marshaller|future.buildRequest|marshaller.ec2|micro.gke|marshaller.truck|job.trigger|nf.hipchat|micro.ebs|micro.dcl|nf.webhook|micro.ddc|micro.acs|barge.acs|barge.dcl|barge.ddc|barge.ebs|barge.ecs|barge.gke|barge.triton|job.request|core.braintree|core.certgen|core.sync|versions.trigger|steps.manifestSteps|steps.runCISteps|steps.runShSteps|steps.releaseSteps|steps.rSyncSteps|steps.deploySteps|core.charon",
     "runMode": "dev",
     "apiUrl": "http://api.myserver.com",
-    "wwwUrl": "http://myserver.com"
+    "wwwUrl": "http://myserver.com",
+    "dockerlogin": "test",
+    "dockerpass": "testpass",
+    "dockeremail": "test@test.com"
   },
   "systemIntegrations": [
     {
