@@ -1,6 +1,6 @@
 do $$
   begin
-    update into "systemConfigs" 
+    insert into "systemConfigs" 
       (
         "id", 
         "defaultMinionCount",
@@ -32,21 +32,21 @@ do $$
         {{BRAINTREE_ENABLED}},
         {{BUILD_TIMEOUT_MS}},
         {{DEFAULT_PRIVATE_JOB_QUOTA}},
-        {{SERVICE_USER_TOKEN}},
-        {{VAULT_URL}},
-        {{VAULT_TOKEN}},
+        "{{SERVICE_USER_TOKEN}}",
+        "{{VAULT_URL}}",
+        "{{VAULT_TOKEN}}",
         {{VAULT_REFRESH_TIME_SEC}},
         {{CACHING_ENABLED}},
         {{HUBSPOT_ENABLED}},
-        {{AMQP_URL}},
-        {{AMQP_URL_ROOT}},
-        {{AMQP_URL_ADMIN}},
-        {{AMQP_DEFAULT_EXCHANGE}},
-        {{API_URL}},
+        "{{AMQP_URL}}",
+        "{{AMQP_URL_ROOT}}",
+        "{{AMQP_URL_ADMIN}}",
+        "{{AMQP_DEFAULT_EXCHANGE}}",
+        "{{API_URL}}",
         {{API_PORT}},
-        {{WWW_URL}},
-        {{RUN_MODE}},
-        {{ROOT_QUEUE_LIST}}
-      )
+        "{{WWW_URL}}",
+        "{{RUN_MODE}}",
+        "{{ROOT_QUEUE_LIST}}"
+      );
   end
 $$;
