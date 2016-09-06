@@ -37,6 +37,9 @@ __map_env_vars() {
   elif [ "$1" == "RUN_MODE" ]; then
     env_value=production
   # TODO: Populate this
+  elif [ "$1" == "DOCKER_VERSION" ]; then
+    env_value=1.12.1
+    #statements
   elif [ "$1" == "SHIPPABLE_AWS_ACCOUNT_ID" ]; then
     env_value=null
   # TODO: Populate this
@@ -157,7 +160,7 @@ __run_service() {
   fi
 
   boot_cmd="$boot_cmd $image"
-
+  _exec_remote_cmd "$swarm_manager_host" "docker service rm $service"
   _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
   __process_msg "Successfully provisioned $service"
 }
@@ -165,6 +168,11 @@ __run_service() {
 provision_www() {
   __save_service_config www " --publish 50001:50001/tcp" " --name www --mode global --network ingress --with-registry-auth --endpoint-mode vip"
   __run_service "www"
+}
+
+provision_ini() {
+  __save_service_config ini " " " --name ini --mode global --network ingress --with-registry-auth --endpoint-mode vip" "ini"
+  __run_service "ini"
 }
 
 provision_sync() {
@@ -176,8 +184,9 @@ provision_sync() {
 main() {
   __process_marker "Provisioning services"
   load_services
-  # provision_www
+  provision_www
   provision_sync
+  provision_ini
 }
 
 main
