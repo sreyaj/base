@@ -5,7 +5,7 @@ do $$
         "id", 
         "defaultMinionCount",
         "defaultPipelineCount",
-        "braintreeEnabled",
+        "serverEnabled",
         "buildTimeoutMS",
         "defaultPrivateJobQuota",
         "serviceUserToken",

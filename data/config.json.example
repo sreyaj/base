@@ -8,7 +8,7 @@
     "domain": "myserver.com",
     "defaultMinionCount": 1,
     "defaultPipelineCount": 1,
-    "braintreeEnabled": false,
+    "serverEnabled": true,
     "cachingEnabled": false,
     "hubspotEnabled": false,
     "buildTimeoutMS": 3600000,

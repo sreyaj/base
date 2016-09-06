@@ -40,9 +40,9 @@ generate_system_config() {
   local default_pipeline_count=$(cat $STATE_FILE | jq -r '.systemSettings.defaultPipelineCount')
   sed -i "s#{{DEFAULT_PIPELINE_COUNT}}#$default_pipeline_count#g" $system_configs_sql
 
-  __process_msg "Updating : braintreeEnabled"
-  local braintree_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.braintreeEnabled')
-  sed -i "s#{{BRAINTREE_ENABLED}}#$braintree_enabled#g" $system_configs_sql
+  __process_msg "Updating : serverEnabled"
+  local braintree_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.serverEnabled')
+  sed -i "s#{{serverEnabled}}#$serverEnabled#g" $system_configs_sql
 
   __process_msg "Updating : buildTimeout"
   local build_timeout=$(cat $STATE_FILE | jq -r '.systemSettings.buildTimeoutMS')

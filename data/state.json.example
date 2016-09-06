@@ -25,7 +25,7 @@
     "runMode": "debug",
     "domain": "myserver.com",
     "protocol": "http",
-    "braintreeEnabled": false,
+    "serverEnabled": true,
     "cachingEnabled": false,
     "hubspotEnabled": false,
     "buildTimeoutMS": 3600000,
