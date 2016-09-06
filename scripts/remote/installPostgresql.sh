@@ -187,6 +187,7 @@ main() {
     return
   fi
 
+  pushd /tmp
   install_postgres
   configure_data_dirs
   update_ownership
@@ -200,6 +201,7 @@ main() {
   start_instance
   sleep 5
   bootstrap_db
+  popd
 }
 
 main
