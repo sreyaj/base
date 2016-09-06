@@ -22,9 +22,9 @@ _exec_remote_cmd() {
     $cmd"
 
   {
-    __process_msg "Executing $cmd on host: $host" && eval "$remote_cmd"
+    __process_msg "Executing on host: $host ==> '$cmd'" && eval "$remote_cmd"
   } || {
-    __process_msg "ERROR: Remote command $cmd failed on host: $host"
+    __process_msg "ERROR: Command failed on host: $host ==> '$cmd'"
     exit 1
   }
 }
