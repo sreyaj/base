@@ -37,6 +37,9 @@ __map_env_vars() {
   elif [ "$1" == "RUN_MODE" ]; then
     env_value=production
   # TODO: Populate this
+  elif [ "$1" == "DOCKER_VERSION"]; then
+    env_value=1.12.1
+    #statements
   elif [ "$1" == "SHIPPABLE_AWS_ACCOUNT_ID" ]; then
     env_value=null
   # TODO: Populate this
@@ -167,6 +170,11 @@ provision_www() {
   __run_service "www"
 }
 
+provision_ini() {
+  __save_service_config ini " " " --name www --mode global --network ingress --with-registry-auth --endpoint-mode vip"
+  __run_service "ini"
+}
+
 provision_sync() {
   __save_service_config sync "" " --name sync --mode global --network ingress --with-registry-auth --endpoint-mode vip" "sync"
   # The second argument will be used for $component
@@ -176,8 +184,9 @@ provision_sync() {
 main() {
   __process_marker "Provisioning services"
   load_services
-  # provision_www
+  provision_www
   provision_sync
+  provision_ini
 }
 
 main
