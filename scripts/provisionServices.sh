@@ -32,8 +32,6 @@ __map_env_vars() {
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.redisUrl')
   elif [ "$1" == "SHIPPABLE_ROOT_AMQP_URL" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrlRoot')
-  elif [ "$1" == "SHIPPABLE_ROOT_AMQP_URL" ]; then
-    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.amqpUrlRoot')
   elif [ "$1" == "SHIPPABLE_AMQP_DEFAULT_EXCHANGE" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.amqpDefaultExchange')
   elif [ "$1" == "RUN_MODE" ]; then
@@ -47,6 +45,12 @@ __map_env_vars() {
   # TODO: Populate this
   elif [ "$1" == "BITBUCKET_LINK_SYSINT_ID" ]; then
     env_value=null
+  elif [ "$1" == "BITBUCKET_CLIENT_ID" ]; then
+    env_value=null
+  elif [ "$1" == "BITBUCKET_CLIENT_SECRET" ]; then
+    env_value=null
+  elif [ "$1" == "COMPONENT" ]; then
+    env_value=$2
   else
     echo "No handler for env : $1, exiting"
     exit 1
@@ -57,6 +61,7 @@ __save_service_config() {
   local service=$1
   local ports=$2
   local opts=$3
+  local component=$4
 
   __process_msg "Saving config for $service"
   local env_vars=$(cat $CONFIG_FILE | jq --arg service "$service" '
@@ -69,7 +74,7 @@ __save_service_config() {
 
   for i in $(seq 1 $env_vars_count); do
     local env_var=$(echo $env_vars | jq -r '.['"$i-1"']')
-    __map_env_vars $env_var
+    __map_env_vars $env_var $component
     env_values="$env_values -e $env_var=$env_value"
   done
 
@@ -137,10 +142,21 @@ __run_service() {
   local opts=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .opts')
   local image=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .image')
 
-  local boot_cmd="sudo docker service create \
-    $port_mapping \
-    $env_variables \
-    $opts $image"
+  local boot_cmd="sudo docker service create"
+
+  if [ $port_mapping != "null" ]; then
+    boot_cmd="$boot_cmd $port_mapping"
+  fi
+
+  if [ $env_variables != "null" ]; then
+    boot_cmd="$boot_cmd $env_variables"
+  fi
+
+  if [ $opts != "null" ]; then
+    boot_cmd="$boot_cmd $opts"
+  fi
+
+  boot_cmd="$boot_cmd $image"
 
   _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
   __process_msg "Successfully provisioned $service"
@@ -152,13 +168,16 @@ provision_www() {
 }
 
 provision_sync() {
-  echo "provisioning sync"
+  __save_service_config sync "" " --name sync --mode global --network ingress --with-registry-auth --endpoint-mode vip" "sync"
+  # The second argument will be used for $component
+  __run_service "sync"
 }
 
 main() {
   __process_marker "Provisioning services"
   load_services
-  provision_www
+  # provision_www
+  provision_sync
 }
 
 main

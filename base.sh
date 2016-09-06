@@ -87,7 +87,7 @@ upgrade() {
 
   # TODO:
   # add a new script scripts/upgrade.sh
-  # pass the service name and image name 
+  # pass the service name and image name
   # get swarm ip
   # get the service name from statefile
   # generate swarm update command using the new image(from cmd line) and options(from statefile)
