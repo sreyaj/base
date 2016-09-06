@@ -264,9 +264,10 @@ install_swarm() {
   local swarm_init_cmd="sudo docker swarm init --advertise-addr $host"
   _exec_remote_cmd "$host" "$swarm_init_cmd"
 
+
   local swarm_worker_token="swarm_worker_token.txt"
   local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
-  _exec_remote_cmd "$host" "sudo docker swarm join-token -q worker > $swarm_worker_token_remote"
+  _exec_remote_cmd "$host" "'sudo docker swarm join-token -q worker > $swarm_worker_token_remote'"
   _copy_script_local $host "$swarm_worker_token_remote"
 
   local script_dir_local="/tmp/shippable"
@@ -306,7 +307,7 @@ install_rp() {
   __process_msg "Installing reverse proxy"
   # TODO:
   # - read domain name
-  # - on the first services node, 
+  # - on the first services node,
   # - update nginx config file
   # - update docker file
   # - run docker build
