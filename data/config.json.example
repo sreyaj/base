@@ -103,5 +103,19 @@
       "RUN_MODE",
       "COMPONENT"
     ]
+  },{
+    "name": "jobTrigger",
+    "image": "shipimg/www:micro.1234",
+    "envs": [
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_WWW_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_API_TOKEN",
+      "RUN_MODE",
+      "COMPONENT",
+      "API_RETRY_INTERVAL"
+    ]
   }]
 }
