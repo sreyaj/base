@@ -33,6 +33,7 @@
     "vaultRefreshTimeInSec": 900,
     "vaultUrl": "",
     "vaultToken": "",
+    "redisUrl": "",
     "defaultPipelineCount": 1,
     "defaultMinionCount": 1,
     "dbname": "shipdb",
