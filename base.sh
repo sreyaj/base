@@ -21,7 +21,7 @@ readonly CONFIG_FILE="$DATA_DIR/config.json"
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
-readonly RELEASE=$(cat $DATA_DIR/config.json | jq -r '.release')
+readonly RELEASE=$(cat $CONFIG_FILE | jq -r '.release')
 readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
 readonly LOCAL_BRIDGE_IP=172.17.42.1
 
@@ -118,15 +118,13 @@ __show_status() {
 
 __show_version() {
   echo "Installer version $INSTALLER_VERSION"
+  if [ -z "$RELEASE" ]; then
+    echo "Release version not available, update 'data/config.json'"
+  else
+    echo "Release version $RELEASE"
+  fi
 }
 
-# Use -gt 1 to consume two arguments per pass in the loop (e.g. each
-# argument has a corresponding value to go with it).
-# Use -gt 0 to consume one or more arguments per pass in the loop (e.g.
-# some arguments don't have a corresponding value to go with it such
-# as in the --default example).
-
-## If size is not two at least, quit
 if [[ $# -gt 0 ]]; then
   key="$1"
 
