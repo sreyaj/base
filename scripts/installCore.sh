@@ -303,6 +303,7 @@ install_redis() {
 
   local ip=$(echo $redis_host | jq -r '.ip')
   local redis_url="http://$ip:6379"
+  #TODO : Fetch the redis port from the redis.conf
   result=$(cat $STATE_FILE | jq -r '.systemSettings.redisUrl = "'$redis_url'"')
   update=$(echo $result | jq '.' | tee $STATE_FILE)
 }
