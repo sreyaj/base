@@ -246,5 +246,17 @@
       "SHIPPABLE_VORTEX_URL",
       "TRUCK"
     ]
+  },{
+    "name": "versionTrigger",
+    "image": "shipimg/micro50:versionTrigger.server.5298",
+    "envs": [
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_API_TOKEN",
+      "RUN_MODE",
+      "COMPONENT",
+      "SHIPPABLE_VORTEX_URL"
+    ]
   }]
 }
