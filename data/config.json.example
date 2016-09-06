@@ -25,38 +25,38 @@
   },
   "systemIntegrations": [
     {
-      "id": "",
+      "id": "574ee745d49b091400b76274",
       "name": "github.com",
       "formJSONValues": [
         {
           "label": "clientId",
-          "value": ""
+          "value": "test"
         },
         {
           "label": "clientSecret",
-          "value": ""
+          "value": "test"
         },
         {
           "label": "hostname",
-          "value": ""
+          "value": "test"
         },
         {
           "label": "port",
-          "value": ""
+          "value": "test"
         },
         {
           "label": "protocol",
-          "value": ""
+          "value": "test"
         },
         {
           "label": "providerId",
-          "value": ""
+          "value": "test"
         }
       ],
-      "masterDisplayName": "",
-      "masterIntegrationId": "",
-      "masterName": "",
-      "masterType": "",
+      "masterDisplayName": "github auth",
+      "masterIntegrationId": "577de63321333398d11a35ac",
+      "masterName": "github",
+      "masterType": "auth",
       "isEnabled": true
     }
   ],
