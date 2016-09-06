@@ -264,7 +264,6 @@ install_swarm() {
   local swarm_init_cmd="sudo docker swarm init --advertise-addr $host"
   _exec_remote_cmd "$host" "$swarm_init_cmd"
 
-
   local swarm_worker_token="swarm_worker_token.txt"
   local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
   _exec_remote_cmd "$host" "'sudo docker swarm join-token -q worker > $swarm_worker_token_remote'"
