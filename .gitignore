@@ -2,5 +2,7 @@ data/machinekey*
 data/config.json
 data/machines.json
 data/state.json
+data/state.json.backup
+scripts/remote/system_configs_data.sql
 *.swp
 *.swo
