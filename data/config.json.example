@@ -58,6 +58,87 @@
       "masterName": "github",
       "masterType": "auth",
       "isEnabled": true
+    },
+    {
+      "id": "574ee745d49b091400b76275",
+      "name": "bitbucket.com",
+      "masterDisplayName": "bitbucket auth",
+      "masterIntegrationId": "577de63321333398d11a35ad",
+      "masterName": "bitbucket",
+      "masterType": "auth",
+      "formJSONValues": [
+       {
+         "label": "clientId",
+         "value": "test"
+       },
+       {
+         "label": "clientSecret",
+         "value": "test"
+       },
+       {
+         "label": "hostname",
+         "value": "localhost"
+       },
+       {
+         "label": "port",
+         "value": "50001"
+       },
+       {
+         "label": "protocol",
+         "value": "http"
+       },
+       {
+         "label": "providerId",
+         "value": "562dbda348095b0d00ce6a43"
+       }
+      ],
+      "isEnabled": true
+    },
+    {
+      "id": "57cecf81c3d9bb70153d8247",
+      "name": "amazons3",
+      "masterDisplayName": "Amazon S3",
+      "masterIntegrationId": "57cecf81c3d9bb70153d8249",
+      "masterName": "amazons3",
+      "masterType": "system",
+      "formJSONValues": [
+       {
+         "label": "bucketName",
+         "value": "test"
+       },
+       {
+         "label": "accessKey",
+         "value": "test"
+       },
+       {
+         "label": "secretKey",
+         "value": "test"
+       }
+      ],
+      "isEnabled": true
+    },
+    {
+      "id": "57cecf81c3d9bb70153d8247",
+      "name": "SMTP",
+      "masterDisplayName": "SMTP",
+      "masterIntegrationId": "57cecf81c3d9bb70153d8249",
+      "masterName": "SMTP",
+      "masterType": "system",
+      "formJSONValues": [
+       {
+         "label": "emailAuthUser",
+         "value": "test"
+       },
+       {
+         "label": "emailAuthPassword",
+         "value": "test"
+       },
+       {
+         "label": "emailSender",
+         "value": "test"
+       }
+      ],
+      "isEnabled": true
     }
   ],
   "services": [{
