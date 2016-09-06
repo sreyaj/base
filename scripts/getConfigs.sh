@@ -110,12 +110,27 @@ update_system_settings() {
   __process_msg "Succcessfully updated state.json with systemSettings"
 }
 
+update_system_integrations() {
+  __process_msg "Updating system integrations in state.json from config.json"
+  local system_integrations_length_config=$(cat $CONFIG_FILE | jq '.systemIntegrations | length')
+  local system_integrations_length_state=$(cat $STATE_FILE | jq '.systemIntegrations | length')
+
+  for i in $(seq 1 $system_integrations_length_config); do
+    local system_integration=$(cat $CONFIG_FILE | jq '.systemIntegrations['"$i-1"']')
+    echo $system_integration
+    local update=$(cat $STATE_FILE | jq '.systemIntegrations['"$system_integrations_length_state + $i -1"']='"$system_integration"'')
+    echo $update > $STATE_FILE
+  done
+  __process_msg "Succcessfully updated state.json with systemIntegrations"
+}
+
 main() {
   __process_marker "Getting config"
   get_system_config
   validate_config
   bootstrap_state
   update_system_settings
+  update_system_integrations
 }
 
 main
