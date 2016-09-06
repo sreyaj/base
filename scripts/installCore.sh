@@ -50,25 +50,25 @@ save_db_credentials_in_statefile() {
   db_dialect="postgres"
 
   result=$(cat $STATE_FILE | jq '.systemSettings.dbHost = "'$db_ip'"')
-  echo $result > $STATE_FILE
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
 
   result=$(cat $STATE_FILE | jq '.systemSettings.dbDialect = "'$db_dialect'"')
-  echo $result > $STATE_FILE
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
 
   result=$(cat $STATE_FILE | jq '.systemSettings.dbPort = "'$db_port'"')
-  echo $result > $STATE_FILE
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
 
   result=$(cat $STATE_FILE | jq '.systemSettings.dbname = "'$db_name'"')
-  echo $result > $STATE_FILE
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
 
   result=$(cat $STATE_FILE | jq '.systemSettings.dbUsername = "'$db_username'"')
-  echo $result > $STATE_FILE
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
 
   result=$(cat $STATE_FILE | jq '.systemSettings.dbPassword = "'$db_password'"')
-  echo $result > $STATE_FILE
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
 
   result=$(cat $STATE_FILE | jq '.systemSettings.dbUrl = "'$db_address'"')
-  echo $result > $STATE_FILE
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
 }
 
 save_db_credentials() {
@@ -182,18 +182,18 @@ install_rabbitmq() {
 
   local amqp_url="amqp://$amqp_user:$amqp_pass@$host:$amqp_port/shippable"
   local update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrl = "'$amqp_url'"')
-  echo $update | jq '.' > $STATE_FILE
+  update=$(echo $update | jq '.' | tee $STATE_FILE)
 
   local amqp_url_root="amqp://$amqp_user:$amqp_pass@$host:$amqp_port/shippableRoot"
   update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlRoot = "'$amqp_url_root'"')
-  echo $update | jq '.' > $STATE_FILE
+  update=$(echo $update | jq '.' | tee $STATE_FILE)
 
   local amqp_url_admin="http://$amqp_user:$amqp_pass@$host:$amqp_port_admin"
   update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
-  echo $update | jq '.' > $STATE_FILE
+  update=$(echo $update | jq '.' | tee $STATE_FILE)
 
   update=$(cat $STATE_FILE | jq '.systemSettings.amqpDefaultExchange = "'$amqp_exchange'"')
-  echo $update | jq '.' > $STATE_FILE
+  update=$(echo $update | jq '.' | tee $STATE_FILE)
 }
 
 save_gitlab_state() {
@@ -275,7 +275,7 @@ install_swarm() {
 
   local swarm_worker_token_update=$(cat $STATE_FILE | jq '
     .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
-  echo $swarm_worker_token_update > $STATE_FILE
+  update=$(echo $swarm_worker_token_update | jq '.' | tee $STATE_FILE)
 }
 
 initialize_workers() {
@@ -319,11 +319,6 @@ install_rp() {
   # - run rp on first services
 }
 
-update_state() {
-  # TODO: update state.json with the results
-  echo "updating state file with core component status"
-}
-
 main() {
   __process_marker "Installing core"
   validate_core_config
@@ -341,7 +336,6 @@ main() {
   initialize_workers
   install_redis
   install_rp
-  update_state
 }
 
 main
