@@ -188,7 +188,7 @@ install_rabbitmq() {
   update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlRoot = "'$amqp_url_root'"')
   echo $update | jq '.' > $STATE_FILE
 
-  local amqp_url_admin="amqp://$amqp_user:$amqp_pass@$host:$amqp_port_admin"
+  local amqp_url_admin="http://$amqp_user:$amqp_pass@$host:$amqp_port_admin"
   update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
   echo $update | jq '.' > $STATE_FILE
 

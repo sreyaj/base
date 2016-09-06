@@ -256,7 +256,7 @@ insert_system_config() {
   #TODO: fetch db_name from state.json
   local db_name="shipdb"
 
-  _copy_script_remote $db_ip "$system_configs_data.sql" "$SCRIPT_DIR_REMOTE"
+  _copy_script_remote $db_ip "system_configs_data.sql" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs_data.sql"
 }
 
@@ -268,7 +268,7 @@ run_migrations() {
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
   local db_name="shipdb"
 
-  __process_msg "Please copy migrations.sql onto $db_ip: $REMOTE_SCRIPTS_DIR/, type (y) when done"
+  __process_msg "Please copy migrations.sql onto $db_ip: $SCRIPT_DIR_REMOTE/, type (y) when done"
   __process_msg "Done? (y/n)"
   read response
   if [[ "$response" =~ "y" ]]; then
