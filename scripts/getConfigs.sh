@@ -117,9 +117,8 @@ update_system_integrations() {
 
   for i in $(seq 1 $system_integrations_length_config); do
     local system_integration=$(cat $CONFIG_FILE | jq '.systemIntegrations['"$i-1"']')
-    echo $system_integration
     local update=$(cat $STATE_FILE | jq '.systemIntegrations['"$system_integrations_length_state + $i -1"']='"$system_integration"'')
-    echo $update > $STATE_FILE
+    update=$(echo $update | jq '.' | tee $STATE_FILE)
   done
   __process_msg "Succcessfully updated state.json with systemIntegrations"
 }
