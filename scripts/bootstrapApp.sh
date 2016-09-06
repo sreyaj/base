@@ -285,12 +285,30 @@ run_migrations() {
 
 insert_system_integrations() {
   __process_msg "Inserting system integrations"
-  ##TODO:
-  # get the api token from state
-  # get the api url from state
-  # get the system integrations from global config
-  # generate system integration objects from  global config
-  # call POST /systemIntegrations to insert those in database
+  local api_url=""
+  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
+  local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
+  if [ "$domain" == "localhost" ]; then
+    api_url="http://$LOCAL_BRIDGE_IP:$api_port"
+  else
+    api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+  fi
+  local system_integrations=$(cat $STATE_FILE | jq -r '.systemIntegrations')
+  local system_integrations_count=$(echo $system_integrations | jq '. | length')
+  local system_integration_post_endpoint="$api_url/systemIntegrations"
+
+  for i in $(seq 1 $system_integrations_count); do
+    local system_integration=$(echo $system_integrations | jq -r '.['"$i-1"']')
+    local system_integration_name=$(echo $system_integration | jq -r '.name')
+    local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
+      -X POST -d "$system_integration" $system_integration_post_endpoint \
+        --write-out "%{http_code}\n" --silent --output /dev/null)
+    if [ "$post_call_resp_code" -gt "299" ]; then
+      echo "Error inserting system integration $system_integration_name(status code $post_call_resp_code)"
+    else
+      echo "Sucessfully inserted system integration $system_integration_name"
+    fi
+  done
 }
 
 main() {
@@ -301,8 +319,7 @@ main() {
   provision_api
   insert_system_config
   run_migrations
-  #insert_system_integrations
-  # insert system integrations
+  insert_system_integrations
 }
 
 main
