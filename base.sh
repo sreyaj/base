@@ -80,14 +80,12 @@ install() {
 }
 
 upgrade() {
-  echo "Starting upgrades"
-  echo $1
-  echo $2
-  echo $3
+  __process_marker "Starting update"
+  local service_name="$1"
+  local service_image="$2"
+  source "$SCRIPTS_DIR/upgrade.sh" "$service_name" "$service_image"
 
   # TODO:
-  # add a new script scripts/upgrade.sh
-  # pass the service name and image name
   # get swarm ip
   # get the service name from statefile
   # generate swarm update command using the new image(from cmd line) and options(from statefile)
