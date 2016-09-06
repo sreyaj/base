@@ -300,6 +300,11 @@ install_redis() {
   _copy_script_remote $host "redis.conf" "/etc/redis"
   _copy_script_remote $host "installRedis.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRedis.sh"
+
+  local ip=$(echo $redis_host | jq -r '.ip')
+  local redis_url="http://$ip:6379"
+  result=$(cat $STATE_FILE | jq -r '.systemSettings.redisUrl = "'$redis_url'"')
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
 }
 
 install_rp() {
