@@ -183,7 +183,7 @@ provision_api() {
   __process_msg "Successfully generated api environment variables : $api_env_values"
 
   local api_state_env=$(cat $STATE_FILE | jq '
-    .services  |= 
+    .services  |=
     map(if .name == "api" then
         .env = "'$api_env_values'"
       else
@@ -200,7 +200,7 @@ provision_api() {
   __process_msg "api port mapping : $api_port_mapping"
 
   local api_port_update=$(cat $STATE_FILE | jq '
-    .services  |= 
+    .services  |=
     map(if .name == "api" then
         .port = "'$api_port_mapping'"
       else
@@ -216,7 +216,7 @@ provision_api() {
   __process_msg "api service config : $api_service_opts"
 
   local api_service_update=$(cat $STATE_FILE | jq '
-    .services  |= 
+    .services  |=
     map(
       if .name == "api" then
         .opts = "'$api_service_opts'"
@@ -248,6 +248,9 @@ provision_api() {
 }
 
 insert_system_config() {
+  # TODO: This should ideally check if the API is _actually_ up and running.
+  __process_msg "Waiting 60s for API to come up..."
+  sleep 60
   __process_msg "Inserting data into systemConfigs Table"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local db_ip=$(echo $db_host | jq -r '.ip')
