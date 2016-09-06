@@ -100,7 +100,7 @@
       "masterDisplayName": "Amazon S3",
       "masterIntegrationId": "57cecf81c3d9bb70153d8249",
       "masterName": "amazons3",
-      "masterType": "system",
+      "masterType": "cloudproviders",
       "formJSONValues": [
        {
          "label": "bucketName",
@@ -123,7 +123,7 @@
       "masterDisplayName": "SMTP",
       "masterIntegrationId": "57cecf81c3d9bb70153d8249",
       "masterName": "SMTP",
-      "masterType": "system",
+      "masterType": "notification",
       "formJSONValues": [
        {
          "label": "emailAuthUser",
@@ -135,6 +135,29 @@
        },
        {
          "label": "emailSender",
+         "value": "test"
+       }
+      ],
+      "isEnabled": true
+    },
+    {
+      "id": "57cecf81c3d9bb70153d8247",
+      "name": "docker",
+      "masterDisplayName": "hub",
+      "masterIntegrationId": "57cecf81c3d9bb70153d8249",
+      "masterName": "hub",
+      "masterType": "hub",
+      "formJSONValues": [
+       {
+         "label": "username",
+         "value": "test"
+       },
+       {
+         "label": "password",
+         "value": "test"
+       },
+       {
+         "label": "email",
          "value": "test"
        }
       ],
