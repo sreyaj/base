@@ -25,22 +25,39 @@
   },
   "systemIntegrations": [
     {
+      "id": "",
       "name": "github.com",
-      "data": {
-        "clientSecret" : "",
-        "clientId" : "",
-        "protocol": "",
-        "hostname": "",
-        "providerId": ""
-      }
-    },
-    {
-      "name": "vault",
-      "data": {
-        "url" : "",
-        "port": "",
-        "token": ""
-      }
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": ""
+        },
+        {
+          "label": "clientSecret",
+          "value": ""
+        },
+        {
+          "label": "hostname",
+          "value": ""
+        },
+        {
+          "label": "port",
+          "value": ""
+        },
+        {
+          "label": "protocol",
+          "value": ""
+        },
+        {
+          "label": "providerId",
+          "value": ""
+        }
+      ],
+      "masterDisplayName": "",
+      "masterIntegrationId": "",
+      "masterName": "",
+      "masterType": "",
+      "isEnabled": true
     }
   ],
   "services": [{
