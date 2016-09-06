@@ -1,6 +1,11 @@
 #!/bin/bash -e
 
 _copy_script_remote() {
+  if [ "$#" -ne 3 ]; then
+    __process_msg "The number of arguments expected by _copy_script_remote is 3"
+    exit 1
+  fi
+
   local user="$SSH_USER"
   local key="$SSH_PRIVATE_KEY"
   local port=22
