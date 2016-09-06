@@ -25,22 +25,39 @@
   },
   "systemIntegrations": [
     {
+      "id": "574ee745d49b091400b76274",
       "name": "github.com",
-      "data": {
-        "clientSecret" : "",
-        "clientId" : "",
-        "protocol": "",
-        "hostname": "",
-        "providerId": ""
-      }
-    },
-    {
-      "name": "vault",
-      "data": {
-        "url" : "",
-        "port": "",
-        "token": ""
-      }
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "test"
+        },
+        {
+          "label": "clientSecret",
+          "value": "test"
+        },
+        {
+          "label": "hostname",
+          "value": "test"
+        },
+        {
+          "label": "port",
+          "value": "test"
+        },
+        {
+          "label": "protocol",
+          "value": "test"
+        },
+        {
+          "label": "providerId",
+          "value": "test"
+        }
+      ],
+      "masterDisplayName": "github auth",
+      "masterIntegrationId": "577de63321333398d11a35ac",
+      "masterName": "github",
+      "masterType": "auth",
+      "isEnabled": true
     }
   ],
   "services": [{
