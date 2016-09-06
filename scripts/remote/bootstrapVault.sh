@@ -63,7 +63,8 @@ main() {
   status
   if [ $EXIT_CODE -eq 0 ]; then
     ## vault running correctly
-    echo "Vault server running in unseale state, nothing to do"
+    echo "Vault server running in unsealed state"
+    update_vault_token
   elif [ $EXIT_CODE -eq 2 ]; then
     ## vault running but in sealed state
     echo "Vault server running in sealed state"
