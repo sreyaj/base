@@ -62,7 +62,7 @@
   ],
   "services": [{
     "name": "api",
-    "image": "shipimg/api:server.1234",
+    "image": "shipimg/api50:server.5675",
     "envs": [
       "DBNAME",
       "DBUSERNAME",
@@ -73,7 +73,7 @@
     ]
   },{
     "name": "www",
-    "image": "shipimg/www:server.1234",
+    "image": "shipimg/www50:server.5672",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_VORTEX_URL",
@@ -92,7 +92,7 @@
     ]
   },{
     "name": "sync",
-    "image": "shipimg/www:micro.1234",
+    "image": "shipimg/micro50:sync.server.5298",
     "envs": [
       "BITBUCKET_CLIENT_ID",
       "BITBUCKET_CLIENT_SECRET",
@@ -105,7 +105,7 @@
     ]
   },{
     "name": "jobTrigger",
-    "image": "shipimg/www:micro.1234",
+    "image": "shipimg/micro50:jobTrigger.server.5298",
     "envs": [
       "SHIPPABLE_VORTEX_URL",
       "SHIPPABLE_WWW_URL",
