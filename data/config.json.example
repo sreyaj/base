@@ -464,6 +464,6 @@
     "certgenInstalled": false,
     "certgenInitialized": false,
     "charonInstalled": false,
-    "charonInitialized": false,
+    "charonInitialized": false
   }
 }
