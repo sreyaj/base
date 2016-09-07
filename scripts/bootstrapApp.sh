@@ -283,6 +283,44 @@ run_migrations() {
   fi
 }
 
+generate_providers() {
+  __process_msg "Inserting data into providers Table"
+
+  local providers_length=$(cat $STATE_FILE | jq '.providers | length')
+
+  for i in $(seq 1 $providers_length); do
+    local providers_template="$REMOTE_SCRIPTS_DIR/providersData.sql.template"
+    local providers_sql="$REMOTE_SCRIPTS_DIR/providers_data.sql"
+
+    __process_msg "Updating : id"
+    local id=$(cat $STATE_FILE | jq -r '.providers['"$i -1"'].id')
+    sed "s#{{ID}}#$id#g" $providers_template > $providers_sql
+
+    __process_msg "Updating : masterIntegrationId"
+    local masterIntegrationId=$(cat $STATE_FILE | jq -r '.providers['"$i -1"'].masterIntegrationId')
+    sed -i "s#{{MASTER_INTEGRATION_ID}}#$masterIntegrationId#g" $providers_sql
+
+    __process_msg "Updating : url"
+    local url=$(cat $STATE_FILE | jq -r '.providers['"$i -1"'].url')
+    sed -i "s#{{URL}}#$url#g" $providers_sql
+
+    __process_msg "Updating : name"
+    local name=$(cat $STATE_FILE | jq -r '.providers['"$i -1"'].name')
+    sed -i "s#{{NAME}}#$name#g" $providers_sql
+
+    __process_msg "Updating : createdAt"
+    local created_at=$(date)
+    sed -i "s#{{CREATED_AT}}#$created_at#g" $providers_sql
+
+    __process_msg "Updating : updatedAt"
+    sed -i "s#{{UPDATED_AT}}#$created_at#g" $providers_sql
+
+    rm $providers_sql
+  done
+
+  __process_msg "Successfully generated 'systemConfig' table data"
+}
+
 insert_system_integrations() {
   __process_msg "Inserting system integrations"
   local api_url=""
@@ -319,6 +357,7 @@ main() {
   provision_api
   insert_system_config
   run_migrations
+  generate_providers
   insert_system_integrations
 }
 

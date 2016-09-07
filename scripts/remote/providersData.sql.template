@@ -1,0 +1,22 @@
+do $$
+  begin
+    insert into "providers" 
+      (
+        "id", 
+        "masterIntegrationId",
+        "url",
+        "name",
+        "createdAt",
+        "updatedAt"
+      )
+    values
+      (
+        '{{ID}}',
+        '{{MASTER_INTEGRATION_ID}}',
+        '{{URL}}',
+        '{{NAME}}',
+        '{{CREATED_AT}}',
+        '{{UPDATED_AT}}'
+      );
+  end
+$$;
