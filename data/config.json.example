@@ -23,6 +23,20 @@
     "dockerpass": "testpass",
     "dockeremail": "test@test.com"
   },
+  "providers": [
+    {
+      "id": "563347d6036d220c002a3474",
+      "masterIntegrationId": "563347d6046d220c002a3474",
+      "url": "https://foo.github.com",
+      "name": "github-enterprise"
+    },
+    {
+      "id": "56334736036d220c002a3474",
+      "masterIntegrationId": "572af430ead9631100f7f64d",
+      "url": "https://foo.bitbucket.com",
+      "name": "bitbucket-server"
+    }
+  ],
   "systemIntegrations": [
     {
       "id": "574ee745d49b091400b76274",
