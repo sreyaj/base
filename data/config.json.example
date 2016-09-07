@@ -46,27 +46,27 @@
       "formJSONValues": [
         {
           "label": "clientId",
-          "value": "test"
+          "value": "njfgfea8n6fd9a804555"
         },
         {
           "label": "clientSecret",
-          "value": "test"
+          "value": "bcK34cD6y6Ixr7wtfnoZh48auegzR6oHKA0SVgmH"
         },
         {
           "label": "hostname",
-          "value": "test"
+          "value": "myserver.com"
         },
         {
           "label": "port",
-          "value": "test"
+          "value": "50001"
         },
         {
           "label": "protocol",
-          "value": "test"
+          "value": "http"
         },
         {
           "label": "providerId",
-          "value": "test"
+          "value": "562dbd9710c5980d003b0451"
         }
       ],
       "masterDisplayName": "github auth",
@@ -85,15 +85,15 @@
       "formJSONValues": [
        {
          "label": "clientId",
-         "value": "test"
+         "value": "njfgfea8n6fd9a804555"
        },
        {
          "label": "clientSecret",
-         "value": "test"
+         "value": "bcK34cD6y6Ixr7wtfnoZh48auegzR6oHKA0SVgmH"
        },
        {
          "label": "hostname",
-         "value": "localhost"
+         "value": "myserver.com"
        },
        {
          "label": "port",
@@ -120,61 +120,61 @@
       "formJSONValues": [
        {
          "label": "bucketName",
-         "value": "test"
+         "value": "mybucket"
        },
        {
          "label": "accessKey",
-         "value": "test"
+         "value": "jun17DnKY8CMKbAy"
        },
        {
          "label": "secretKey",
-         "value": "test"
+         "value": "NnY96kbIDIbAWJun17DnKY8CMKbAy21sDAm9HQR0"
        }
       ],
       "isEnabled": true
     },
     {
-      "id": "57cecf81c3d9bb70153d8247",
+      "id": "57cecf81c3d9bb72153d8247",
       "name": "SMTP",
       "masterDisplayName": "SMTP",
-      "masterIntegrationId": "57cecf81c3d9bb70153d8249",
+      "masterIntegrationId": "57cea8056ce9c71800d31ab3",
       "masterName": "SMTP",
       "masterType": "notification",
       "formJSONValues": [
        {
          "label": "emailAuthUser",
-         "value": "test"
+         "value": "user@myserver.com"
        },
        {
          "label": "emailAuthPassword",
-         "value": "test"
+         "value": "password"
        },
        {
          "label": "emailSender",
-         "value": "test"
+         "value": "User <sender@myserver.com>"
        }
       ],
       "isEnabled": true
     },
     {
-      "id": "57cecf81c3d9bb70153d8247",
+      "id": "57cecf81c349bb70153d8247",
       "name": "docker",
       "masterDisplayName": "hub",
-      "masterIntegrationId": "57cecf81c3d9bb70153d8249",
+      "masterIntegrationId": "5553a7ac3566980c00a3bf0e",
       "masterName": "hub",
       "masterType": "hub",
       "formJSONValues": [
        {
          "label": "username",
-         "value": "test"
+         "value": "user"
        },
        {
          "label": "password",
-         "value": "test"
+         "value": "password"
        },
        {
          "label": "email",
-         "value": "test"
+         "value": "user@domain.com"
        }
       ],
       "isEnabled": true
