@@ -9,6 +9,11 @@ readonly CORE_COMPONENTS="postgresql \
 export CORE_COMPONENTS_LIST=""
 export CORE_MACHINES_LIST=""
 
+_update_install_status() {
+  local update=$(cat $STATE_FILE | jq '.installStatus.'"$1"'='true'')
+  _update_state "$update"
+}
+
 validate_core_config() {
   # TODO: check if components.json has all the require components
   __process_msg "Validating core config"
@@ -34,6 +39,8 @@ install_database() {
   # - once complete, save the values in satefile
   _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
+  _update_install_status "databaseInstalled"
+  _update_install_status "databaseInitialized"
 }
 
 
@@ -99,6 +106,7 @@ install_vault() {
   local host=$(echo $vault_host | jq '.ip')
   _copy_script_remote $host "installVault.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
+  _update_install_status "vaultInstalled"
 
   local vault_url=$host
 
@@ -127,6 +135,7 @@ install_vault() {
 
   _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
+  _update_install_status "vaultInitialized"
 
   _copy_script_local $host $VAULT_JSON_FILE
 }
@@ -153,6 +162,7 @@ install_rabbitmq() {
   local host=$(echo $db_host | jq -r '.ip')
   _copy_script_remote $host "installRabbit.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
+  _update_install_status "rabbitmqInstalled"
 
   _copy_script_remote $host "rabbitmqadmin" "$SCRIPT_DIR_REMOTE"
 
@@ -160,6 +170,7 @@ install_rabbitmq() {
   # used by the bootstrapRabbit.sh
   _copy_script_remote $host "bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
+  _update_install_status "rabbitmqInitialized"
 
   local amqp_user="SHIPPABLETESTUSER"
   local amqp_pass="SHIPPABLETESTPASS"
@@ -220,6 +231,8 @@ install_gitlab() {
   _exec_remote_cmd $host "sed -i \"s/{{gitlab_machine_url}}/$host/g\" /etc/gitlab/gitlab.rb"
   _exec_remote_cmd $host "sed -i \"s/{{gitlab_password}}/$gitlab_root_password/g\" /etc/gitlab/gitlab.rb"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installGitlab.sh"
+  _update_install_status "gitlabInstalled"
+  _update_install_status "gitlabInitialized"
 }
 
 install_docker() {
@@ -238,6 +251,8 @@ install_docker() {
     _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
   done
+  _update_install_status "dockerInstalled"
+  _update_install_status "dockerInitialized"
 }
 
 install_swarm() {
@@ -264,7 +279,8 @@ install_swarm() {
   local swarm_worker_token_update=$(cat $STATE_FILE | jq '
     .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
   update=$(echo $swarm_worker_token_update | jq '.' | tee $STATE_FILE)
-}
+  _update_install_status "swarmInstalled"
+ }
 
 initialize_workers() {
   __process_msg "Initializing swarm workers on service machines"
@@ -280,6 +296,7 @@ initialize_workers() {
     _exec_remote_cmd "$host" "sudo docker swarm leave || true"
     _exec_remote_cmd "$host" "sudo docker swarm join --token $swarm_worker_token $gitlab_host_ip"
   done
+  _update_install_status "swarmInitialized"
 }
 
 install_redis() {
@@ -289,6 +306,8 @@ install_redis() {
   _copy_script_remote $host "redis.conf" "/etc/redis"
   _copy_script_remote $host "installRedis.sh" "$SCRIPT_DIR_REMOTE"
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRedis.sh"
+  _update_install_status "redisInstalled"
+  _update_install_status "redisInitialized"
 
   local ip=$(echo $redis_host | jq -r '.ip')
   local redis_url="http://$ip:6379"
