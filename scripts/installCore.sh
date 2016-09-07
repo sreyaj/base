@@ -245,7 +245,7 @@ install_gitlab() {
   local host=$(echo $gitlab_host | jq -r '.ip')
   local gitlab_system_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select (.name=="gitlab")')
   
-  #TODO: read this from 
+  #TODO: read this from formJsonValues and not .data
   #local gitlab_root_username=$(echo $gitlab_system_int | jq -r '.data.username')
   #local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.data.password')
   local gitlab_external_url=$(echo $gitlab_system_int | jq -r '.data.url')
