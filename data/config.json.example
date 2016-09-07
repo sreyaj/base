@@ -21,7 +21,8 @@
     "wwwUrl": "http://myserver.com",
     "dockerlogin": "test",
     "dockerpass": "testpass",
-    "dockeremail": "test@test.com"
+    "dockeremail": "test@test.com",
+    "execImage": "shipimg/mexec:master.169"
   },
   "providers": [
     {
@@ -180,7 +181,7 @@
   ],
   "services": [{
     "name": "api",
-    "image": "shipimg/api50:server.5713",
+    "image": "shipimg/api50:server.5900",
     "envs": [
       "DBNAME",
       "DBUSERNAME",
