@@ -75,6 +75,7 @@ __save_service_config() {
   local env_vars_count=$(echo $env_vars | jq '. | length')
   __process_msg "Successfully read from config.json: $service.envs ($env_vars_count)"
 
+  env_values=""
   for i in $(seq 1 $env_vars_count); do
     local env_var=$(echo $env_vars | jq -r '.['"$i-1"']')
     __map_env_vars $env_var $component
@@ -160,7 +161,7 @@ __run_service() {
   fi
 
   boot_cmd="$boot_cmd $image"
-  _exec_remote_cmd "$swarm_manager_host" "docker service rm $service"
+  _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
   _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
   __process_msg "Successfully provisioned $service"
 }
