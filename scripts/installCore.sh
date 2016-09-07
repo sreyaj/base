@@ -279,6 +279,17 @@ install_swarm() {
   local swarm_worker_token_update=$(cat $STATE_FILE | jq '
     .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
   update=$(echo $swarm_worker_token_update | jq '.' | tee $STATE_FILE)
+
+  __process_msg "Running Swarm in drain mode"
+  local swarm_master_host_name="swarm_master_host_name.txt"
+  local swarm_master_host_name_remote="$SCRIPT_DIR_REMOTE/$swarm_master_host_name"
+  _exec_remote_cmd "$host" "'sudo docker node inspect self | jq -r '.[0].Description.Hostname' > $swarm_master_host_name_remote'"
+  _copy_script_local $host "$swarm_master_host_name_remote"
+
+  local swarm_master_host_name_remote="$script_dir_local/$swarm_master_host_name"
+  local swarm_master_host_name=$(cat $swarm_master_host_name_remote)
+  _exec_remote_cmd "$host" "sudo docker node update  --availability drain $swarm_master_host_name"
+
   _update_install_status "swarmInstalled"
  }
 
