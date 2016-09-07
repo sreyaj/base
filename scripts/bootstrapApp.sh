@@ -315,10 +315,23 @@ generate_providers() {
     __process_msg "Updating : updatedAt"
     sed -i "s#{{UPDATED_AT}}#$created_at#g" $providers_sql
 
+    insert_providers
     rm $providers_sql
   done
 
   __process_msg "Successfully generated 'systemConfig' table data"
+}
+
+insert_providers() {
+  __process_msg "Inserting data into Providers"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local db_ip=$(echo $db_host | jq -r '.ip')
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+
+  local db_name="shipdb"
+
+  _copy_script_remote $db_ip "providers_data.sql" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/providers_data.sql"
 }
 
 insert_system_integrations() {
