@@ -178,6 +178,88 @@
        }
       ],
       "isEnabled": true
+    },
+    {
+      "id": "57aaff3073ea26cb053fe1cb",
+      "name": "ghe",
+      "masterDisplayName": "github enterprise auth",
+      "masterIntegrationId": "507f1f77bcf86cd799439011",
+      "masterName": "githubEnterprise",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "ksndfknds23423"
+        },
+        {
+          "label": "clientSecret",
+          "value": "jksdnfdskjfdss"
+        },
+        {
+          "label": "hostname",
+          "value": "foo.com"
+        },
+        {
+          "label": "port",
+          "value": "50001"
+        },
+        {
+          "label": "protocol",
+          "value": "http"
+        },
+        {
+          "label": "providerId",
+          "value": "563347d6036d220c002a3474"
+        }
+      ],
+      "isEnabled": true
+    },
+    {
+      "id": "507f191e810c19729de860ea",
+      "name": "bitbucketServer",
+      "masterDisplayName": "bitbucket server auth",
+      "masterIntegrationId": "577de63321333398d11a35ae",
+      "masterName": "bitbucketServer",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "ksndfknds23423"
+        },
+        {
+          "label": "clientSecret",
+          "value": "jksdnfdskjfdss"
+        },
+        {
+          "label": "hostname",
+          "value": "foo.com"
+        },
+        {
+          "label": "port",
+          "value": "50001"
+        },
+        {
+          "label": "protocol",
+          "value": "http"
+        },
+        {
+          "label": "providerId",
+          "value": "56334736036d220c002a3474"
+        },
+        {
+          "label": "requestTokenURL",
+          "value": "https://foo.com/request_token"
+        },
+        {
+          "label": "accessTokenURL",
+          "value": "https://foo.com/access_token"
+        },
+        {
+          "label": "userAuthorizationURL",
+          "value": "https://foo.com/auth"
+        }
+      ],
+      "isEnabled": true
     }
   ],
   "services": [{
