@@ -258,5 +258,91 @@
       "COMPONENT",
       "SHIPPABLE_VORTEX_URL"
     ]
+  },{
+    "name": "deploy",
+    "image": "shipimg/micro50:stepExec.server.4849",
+    "envs": [
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_API_TOKEN",
+      "JOB_TYPE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "release",
+    "image": "shipimg/micro50:stepExec.server.4849",
+    "envs": [
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_API_TOKEN",
+      "JOB_TYPE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "rSync",
+    "image": "shipimg/micro50:stepExec.server.4849",
+    "envs": [
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_API_TOKEN",
+      "BITBUCKET_CLIENT_ID",
+      "BITBUCKET_CLIENT_SECRET",
+      "JOB_TYPE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "manifest",
+    "image": "shipimg/micro50:stepExec.server.4849",
+    "envs": [
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_API_TOKEN",
+      "JOB_TYPE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "versionTrigger",
+    "image": "shipimg/micro50:versionTrigger.server.5298",
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "certgen",
+    "image": "shipimg/micro50:certgen.server.5298",
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "charon",
+    "image": "shipimg/micro50:charon.server.5298",
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
   }]
 }
