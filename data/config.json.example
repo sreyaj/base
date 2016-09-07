@@ -22,7 +22,8 @@
     "dockerlogin": "test",
     "dockerpass": "testpass",
     "dockeremail": "test@test.com",
-    "execImage": "shipimg/mexec:master.169"
+    "execImage": "shipimg/mexec:master.169",
+    "stepExecImage": "shipimg/micro50:stepExec"
   },
   "providers": [
     {
@@ -259,7 +260,9 @@
       "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
       "RUN_MODE",
       "DOCKER_VERSION",
-      "COMPONENT"
+      "COMPONENT",
+      "SETUP_RUN_SH",
+      "EXEC_IMAGE"
     ]
   },{
     "name": "nexec",

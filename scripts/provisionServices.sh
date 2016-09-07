@@ -45,6 +45,14 @@ __map_env_vars() {
     env_value=3
   elif [ "$1" == "PROVIDERS" ]; then
     env_value=ec2
+  elif [ "$1" == "SHIPPABLE_EXEC_IMAGE" ]; then
+    local step_exec_image=$(cat $STATE_FILE | jq -r '.systemSettings.stepExecImage')
+    env_value=$step_exec_image
+  elif [ "$1" == "EXEC_IMAGE" ]; then
+    local step_exec_image=$(cat $STATE_FILE | jq -r '.systemSettings.stepExecImage')
+    env_value=$step_exec_image
+  elif [ "$1" == "SETUP_RUN_SH" ]; then
+    env_value=true
   elif [ "$1" == "SHIPPABLE_AWS_ACCOUNT_ID" ]; then
     env_value=null
   elif [ "$1" == "REGISTRY_ACCOUNT_ID" ]; then
