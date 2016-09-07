@@ -222,32 +222,6 @@
       "COMPONENT"
     ]
   },{
-    "name": "jobTrigger",
-    "image": "shipimg/micro50:jobTrigger.server.5298",
-    "envs": [
-      "SHIPPABLE_VORTEX_URL",
-      "SHIPPABLE_WWW_URL",
-      "SHIPPABLE_ROOT_AMQP_URL",
-      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
-      "SHIPPABLE_API_URL",
-      "SHIPPABLE_API_TOKEN",
-      "RUN_MODE",
-      "COMPONENT",
-      "API_RETRY_INTERVAL"
-    ]
-  },{
-    "name": "cron",
-    "image": "shipimg/micro50:cron.server.5298",
-    "envs": [
-      "SHIPPABLE_ROOT_AMQP_URL",
-      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
-      "SHIPPABLE_API_URL",
-      "SHIPPABLE_API_TOKEN",
-      "RUN_MODE",
-      "COMPONENT",
-      "DEFAULT_CRON_LOOP_HOURS"
-    ]
-  },{
     "name": "ec2",
     "image": "shipimg/micro50:ec2.server.5298",
     "envs": [
@@ -271,6 +245,85 @@
       "RUN_MODE",
       "COMPONENT",
       "SHIPPABLE_VORTEX_URL"
+    ]
+  },,{
+    "name": "ini",
+    "image": "shipimg/micro50:server.5533",
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "DOCKER_VERSION",
+      "COMPONENT"
+    ]
+  },{
+    "name": "nexec",
+    "image": "shipimg/nexec:master.1803",
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE"
+    ]
+  },{
+    "name": "cron",
+    "image": "shipimg/micro50:server.5533",
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "DEFAULT_CRON_LOOP_HOURS",
+      "COMPONENT"
+    ]
+  },{
+    "name": "jobrequest",
+    "image": "shipimg/micro50:server.5533",
+    "envs": [
+      "BITBUCKET_CLIENT_ID",
+      "BITBUCKET_CLIENT_SECRET",
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_WWW_URL",
+      "REGISTRY_ACCOUNT_ID",
+      "REGISTRY_REGION",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "jobtrigger",
+    "image": "shipimg/micro50:server.5533",
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_WWW_URL",
+      "API_RETRY_INTERVAL",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "marshaller",
+    "image": "shipimg/micro50:server.5533",
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_WWW_URL",
+      "RUN_MODE",
+      "PROVIDERS",
+      "SHIPPABLE_EXEC_IMAGE",
+      "COMPONENT"
     ]
   },{
     "name": "deploy",

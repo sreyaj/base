@@ -39,8 +39,17 @@ __map_env_vars() {
   # TODO: Populate this
   elif [ "$1" == "DOCKER_VERSION" ]; then
     env_value=1.12.1
-    #statements
+  elif [ "$1" == "DEFAULT_CRON_LOOP_HOURS" ]; then
+    env_value=2
+  elif [ "$1" == "API_RETRY_INTERVAL" ]; then
+    env_value=3
+  elif [ "$1" == "PROVIDERS" ]; then
+    env_value=ec2
   elif [ "$1" == "SHIPPABLE_AWS_ACCOUNT_ID" ]; then
+    env_value=null
+  elif [ "$1" == "REGISTRY_ACCOUNT_ID" ]; then
+    env_value=null
+  elif [ "$1" == "REGISTRY_REGION" ]; then
     env_value=null
   # TODO: Populate this
   elif [ "$1" == "GITHUB_LINK_SYSINT_ID" ]; then
@@ -217,6 +226,36 @@ provision_certgen() {
 provision_charon() {
   __save_service_config charon " " " --name charon --mode global --network ingress --with-registry-auth --endpoint-mode vip" "charon"
   __run_service "charon"
+
+provision_nexec() {
+  __save_service_config ini " " " --name nexec --mode global --network ingress --with-registry-auth --endpoint-mode vip" "nexec"
+  __run_service "nexec"
+}
+
+provision_jobtrigger() {
+  __save_service_config jobtrigger " " " --name jobtrigger --mode global --network ingress --with-registry-auth --endpoint-mode vip" "jobTrigger"
+  __run_service "jobtrigger"
+}
+
+provision_jobrequest() {
+  __save_service_config jobrequest " " " --name jobrequest --mode global --network ingress --with-registry-auth --endpoint-mode vip" "jobRequest"
+  __run_service "jobrequest"
+}
+
+provision_cron() {
+  __save_service_config cron " " " --name cron --mode global --network ingress --with-registry-auth --endpoint-mode vip" "cron"
+  __run_service "cron"
+}
+
+provision_marshaller() {
+  __save_service_config marshaller " " " --name marshaller --mode global --network ingress --with-registry-auth --endpoint-mode vip" "marshaller"
+  __run_service "marshaller"
+}
+
+provision_sync() {
+  __save_service_config sync "" " --name sync --mode global --network ingress --with-registry-auth --endpoint-mode vip" "sync"
+  # The second argument will be used for $component
+  __run_service "sync"
 }
 
 main() {
@@ -225,6 +264,11 @@ main() {
   provision_www
   provision_sync
   provision_ini
+  provision_nexec
+  provision_jobrequest
+  provision_jobtrigger
+  provision_marshaller
+  provision_cron
   provision_deploy
   provision_release
   provision_rSync
