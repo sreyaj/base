@@ -382,18 +382,6 @@
       "COMPONENT"
     ]
   },{
-    "name": "versionTrigger",
-    "image": "shipimg/micro50:versionTrigger.server.5298",
-    "envs": [
-      "SHIPPABLE_API_TOKEN",
-      "SHIPPABLE_VORTEX_URL",
-      "SHIPPABLE_API_URL",
-      "SHIPPABLE_ROOT_AMQP_URL",
-      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
-      "RUN_MODE",
-      "COMPONENT"
-    ]
-  },{
     "name": "certgen",
     "image": "shipimg/micro50:certgen.server.5298",
     "envs": [
