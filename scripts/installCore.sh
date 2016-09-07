@@ -93,19 +93,6 @@ save_db_credentials() {
   _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
 }
 
-run_migrations() {
-  __process_msg "Please copy migrations.sql onto machine which runs database, type (y) when done"
-  __process_msg "Done? (y/n)"
-  read response
-  if [[ "$response" =~ "y" ]]; then
-    __process_msg "Proceeding with steps to run migrations"
-    #TODO: Run migrations on db
-  else
-    __process_msg "Migrations are required to install core"
-    run_migrations
-  fi
-}
-
 install_vault() {
   __process_msg "Installing Vault"
   local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -261,6 +248,7 @@ install_swarm() {
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
 
   __process_msg "Initializing docker swarm master"
+  _exec_remote_cmd "$host" "sudo docker swarm leave --force || true"
   local swarm_init_cmd="sudo docker swarm init --advertise-addr $host"
   _exec_remote_cmd "$host" "$swarm_init_cmd"
 
@@ -289,6 +277,7 @@ initialize_workers() {
     local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
     local swarm_worker_token=$(cat $STATE_FILE | jq '.systemSettings.swarmWorkerToken')
+    _exec_remote_cmd "$host" "sudo docker swarm leave || true"
     _exec_remote_cmd "$host" "sudo docker swarm join --token $swarm_worker_token $gitlab_host_ip"
   done
 }
@@ -325,7 +314,6 @@ main() {
   install_database
   save_db_credentials_in_statefile
   save_db_credentials
-  # run_migrations
   install_vault
   save_vault_credentials
   install_rabbitmq
