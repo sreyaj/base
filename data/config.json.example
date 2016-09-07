@@ -152,6 +152,10 @@
        {
          "label": "emailSender",
          "value": "User <sender@myserver.com>"
+       },
+       {
+         "label": "emailServiceName",
+         "value": "Mailgun"
        }
       ],
       "isEnabled": true
