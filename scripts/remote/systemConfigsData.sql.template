@@ -31,7 +31,7 @@ do $$
         1,
         {{DEFAULT_MINION_COUNT}},
         {{DEFAULT_PIPELINE_COUNT}},
-        {{BRAINTREE_ENABLED}},
+        {{SERVER_ENABLED}},
         {{BUILD_TIMEOUT_MS}},
         {{DEFAULT_PRIVATE_JOB_QUOTA}},
         '{{SERVICE_USER_TOKEN}}',
