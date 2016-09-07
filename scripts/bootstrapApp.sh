@@ -284,16 +284,8 @@ run_migrations() {
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
   local db_name="shipdb"
 
-  __process_msg "Please copy migrations.sql onto $db_ip: $SCRIPT_DIR_REMOTE/, type (y) when done"
-  __process_msg "Done? (y/n)"
-  read response
-  if [[ "$response" =~ "y" ]]; then
-    __process_msg "Proceeding with steps to run migrations"
-    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/migrations.sql"
-  else
-    __process_msg "Migrations are required to install core"
-    run_migrations
-  fi
+  _copy_script_remote $db_ip "migrations.sql" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/migrations.sql"
   _update_install_status "migrationsUpdated"
 }
 
@@ -305,16 +297,9 @@ insert_route_permissions() {
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
   local db_name="shipdb"
 
-  __process_msg "Please copy routePermissions.sql onto $db_ip: $SCRIPT_DIR_REMOTE/, type (y) when done"
-  __process_msg "Done? (y/n)"
-  read response
-  if [[ "$response" =~ "y" ]]; then
-    __process_msg "Proceeding with steps to insert routePermissions"
-    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/routePermissions.sql"
-  else
-    __process_msg "Route permissions are required to install core"
-    insert_route_permissions
-  fi
+  _copy_script_remote $db_ip "routePermissions.sql" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/routePermissions.sql"
+  _update_install_status "migrationsUpdated"
 }
 
 insert_providers() {
