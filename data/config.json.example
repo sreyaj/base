@@ -264,7 +264,7 @@
   ],
   "services": [{
     "name": "api",
-    "image": "shipimg/api50:server.5900",
+    "image": "shipimg/api50:server.5937",
     "envs": [
       "DBNAME",
       "DBUSERNAME",
@@ -275,7 +275,7 @@
     ]
   },{
     "name": "www",
-    "image": "shipimg/www50:server.5819",
+    "image": "shipimg/www50:server.5933",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_VORTEX_URL",
@@ -294,7 +294,7 @@
     ]
   },{
     "name": "sync",
-    "image": "shipimg/micro50:sync.server.5298",
+    "image": "shipimg/micro50:sync.server.5869",
     "replicas": 2,
     "envs": [
       "BITBUCKET_CLIENT_ID",
@@ -308,7 +308,7 @@
     ]
   },{
     "name": "ec2",
-    "image": "shipimg/micro50:ec2.server.5298",
+    "image": "shipimg/micro50:ec2.server.5897",
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
       "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
@@ -321,7 +321,7 @@
     ]
   },{
     "name": "versionTrigger",
-    "image": "shipimg/micro50:versionTrigger.server.5298",
+    "image": "shipimg/micro50:versionTrigger.server.5832",
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
       "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
@@ -333,7 +333,7 @@
     ]
   },{
     "name": "ini",
-    "image": "shipimg/micro50:server.5533",
+    "image": "shipimg/micro50:ini.server.5917",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_VORTEX_URL",
@@ -359,7 +359,7 @@
     ]
   },{
     "name": "cron",
-    "image": "shipimg/micro50:server.5533",
+    "image": "shipimg/micro50:cron.server.5832",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_API_URL",
@@ -371,7 +371,7 @@
     ]
   },{
     "name": "jobrequest",
-    "image": "shipimg/micro50:server.5533",
+    "image": "shipimg/micro50:jobRequest.server.5832",
     "envs": [
       "BITBUCKET_CLIENT_ID",
       "BITBUCKET_CLIENT_SECRET",
@@ -387,7 +387,7 @@
     ]
   },{
     "name": "jobtrigger",
-    "image": "shipimg/micro50:server.5533",
+    "image": "shipimg/micro50:jobTrigger.server.5895",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_API_URL",
@@ -400,7 +400,7 @@
     ]
   },{
     "name": "marshaller",
-    "image": "shipimg/micro50:server.5533",
+    "image": "shipimg/micro50:marshaller.server.5832",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_API_URL",
@@ -414,7 +414,7 @@
     ]
   },{
     "name": "deploy",
-    "image": "shipimg/micro50:stepExec.server.4849",
+    "image": "shipimg/micro50:stepExec.server.5832",
     "replicas": 2,
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
@@ -427,7 +427,7 @@
     ]
   },{
     "name": "release",
-    "image": "shipimg/micro50:stepExec.server.4849",
+    "image": "shipimg/micro50:stepExec.server.5832",
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
       "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
@@ -439,7 +439,7 @@
     ]
   },{
     "name": "rSync",
-    "image": "shipimg/micro50:stepExec.server.4849",
+    "image": "shipimg/micro50:stepExec.server.5832",
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
       "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
@@ -453,7 +453,7 @@
     ]
   },{
     "name": "manifest",
-    "image": "shipimg/micro50:stepExec.server.4849",
+    "image": "shipimg/micro50:stepExec.server.5832",
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
       "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
@@ -465,7 +465,7 @@
     ]
   },{
     "name": "certgen",
-    "image": "shipimg/micro50:certgen.server.5298",
+    "image": "shipimg/micro50:certgen.server.5832",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_VORTEX_URL",
@@ -477,7 +477,7 @@
     ]
   },{
     "name": "charon",
-    "image": "shipimg/micro50:charon.server.5298",
+    "image": "shipimg/micro50:charon.server.5832",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_VORTEX_URL",
