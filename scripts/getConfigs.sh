@@ -69,7 +69,7 @@ bootstrap_state() {
   __process_msg "Bootstrapping state.json"
 
   local release=$(cat $CONFIG_FILE | jq -r '.release')
-  local bootstrap_state=$(jq -n --arg v "$initial_obj" \
+ local bootstrap_state=$(jq -n --arg v "$initial_obj" \
     '{
       "release": "'$release'",
       "systemSettings": {},
@@ -77,14 +77,15 @@ bootstrap_state() {
       "machines": [],
       "systemIntegrations": [],
       "core": [],
-      "inProgress": "true"
+      "inProgress": "true",
+      "installStatus": {}
     }' \
   | tee $STATE_FILE)
   __process_msg "Created state.json template"
 
   local service_count=$(cat $CONFIG_FILE | jq '.services | length')
   local service_list=$(cat $CONFIG_FILE | jq '.services')
-  
+
   for i in $(seq 1 $service_count); do
     local service_name=$(echo $service_list | jq '.['"$i-1"'] | .name')
     local service_image=$(echo $service_list | jq '.['"$i-1"'] | .image')
@@ -108,6 +109,14 @@ update_system_settings() {
   local update=$(cat $STATE_FILE | jq '.systemSettings='"$system_settings"'')
   _update_state "$update"
   __process_msg "Succcessfully updated state.json with systemSettings"
+}
+
+update_install_status() {
+  __process_msg "Updating install status in state.json from config.json"
+  local install_status=$(cat $CONFIG_FILE | jq '.installStatus')
+  local update=$(cat $STATE_FILE | jq '.installStatus='"$install_status"'')
+  _update_state "$update"
+  __process_msg "Succcessfully updated state.json with installStatus"
 }
 
 update_providers() {
@@ -142,6 +151,7 @@ main() {
   validate_config
   bootstrap_state
   update_system_settings
+  update_install_status
   update_providers
   update_system_integrations
 }

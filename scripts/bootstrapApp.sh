@@ -1,10 +1,16 @@
 #!/bin/bash -e
 
+_update_install_status() {
+  local update=$(cat $STATE_FILE | jq '.installStatus.'"$1"'='true'')
+  _update_state "$update"
+}
+
 generate_serviceuser_token() {
   __process_msg "Generating random token for serviceuser"
   local token=$(cat /proc/sys/kernel/random/uuid)
   local stateToken=$(cat $STATE_FILE | jq '.systemSettings.serviceUserToken="'$token'"')
   echo $stateToken > $STATE_FILE
+  _update_install_status "serviceuserTokenGenerated"
 }
 
 update_docker_creds() {
@@ -18,6 +24,7 @@ update_docker_creds() {
 
   local docker_login_cmd="sudo docker login -u $docker_login -p $docker_pass -e $docker_email"
   _exec_remote_cmd $host "$docker_login_cmd"
+  _update_install_status "dockerCredsUpdated"
 }
 
 generate_system_config() {
@@ -134,6 +141,7 @@ generate_system_config() {
   __process_msg "Updating : updatedAt"
   sed -i "s#{{UPDATED_AT}}#$created_at#g" $system_configs_sql
 
+  _update_install_status "systemConfigSqlCreated"
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 
@@ -244,6 +252,7 @@ provision_api() {
     $opts $image"
 
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
+  _update_install_status "apiProvisioned"
   __process_msg "Successfully provisioned api"
 }
 
@@ -281,6 +290,7 @@ run_migrations() {
     __process_msg "Migrations are required to install core"
     run_migrations
   fi
+  _update_install_status "migrationsUpdated"
 }
 
 insert_system_integrations() {
@@ -320,6 +330,7 @@ main() {
   insert_system_config
   run_migrations
   insert_system_integrations
+  _update_install_status "systemConfigUpdated"
 }
 
 main

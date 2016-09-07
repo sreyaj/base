@@ -42,30 +42,7 @@
     "swarmWorkerToken": "",
     "rootQueueList": "www.sockets|core.charon|versions.trigger|core.nf|nf.email|core.braintree|core.certgen|core.marshaller|marshaller.ec2|core.sync|job.request|job.trigger|micro.ini|cluster.init|steps.deploy|steps.manifest|steps.rSync|steps.release"
   },
-  "installStatus": {
-    "machinesSSHSuccessful": true,
-    "machinesBootstrapped": true,
-    "databaseInstalled": true,
-    "databaseInitialized": true,
-    "vaultInstalled": true,
-    "vaultInitialized": true,
-    "rabbitmqInstalled": true,
-    "rabbitmqInitialized": true,
-    "gitlabInstalled": true,
-    "gitlabInitialized": true,
-    "dockerInstalled": true,
-    "dockerInitialized": true,
-    "swarmInstalled": true,
-    "swarmInitialized": true,
-    "redisInstalled": true,
-    "redisInitialized": true,
-    "serviceuserTokenGenerated": true,
-    "dockerCredsUpdated": true,
-    "systemConfigSqlCreated": true,
-    "apiProvisioned": true,
-    "systemConfigUpdated": true,
-    "migrationsUpdated": true
-  },
+  "installStatus": {},
   "machines": [
     {
       "name": "db",

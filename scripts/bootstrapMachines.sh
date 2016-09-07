@@ -78,6 +78,9 @@ check_connection() {
     _exec_remote_cmd "$host" "ls"
   done
 
+  local update=$(cat $STATE_FILE | jq '.installStatus.machinesSSHSuccessful='true'')
+  _update_state "$update"
+
   __process_msg "All hosts reachable"
 }
 
@@ -102,6 +105,9 @@ bootstrap() {
     _copy_script_remote $host "installBase.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh"
   done
+
+  local update=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped='true'')
+  _update_state "$update"
 }
 
 update_state() {
