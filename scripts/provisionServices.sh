@@ -105,6 +105,27 @@ __save_service_config() {
   )
   update=$(echo $state_env | jq '.' | tee $STATE_FILE)
 
+
+  __process_msg "Generating $service replicas"
+  local replicas=$(cat $CONFIG_FILE | jq --arg service "$service" '
+    .services[] |
+    select (.name==$service) | .replicas')
+
+  if [ $replicas != "null" ]; then
+    __process_msg "Found $replicas for $service"
+    local replicas_update=$(cat $STATE_FILE | jq --arg service "$service" '
+      .services  |=
+      map(if .name == $service then
+          .replicas = "'$replicas'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $replicas_update | jq '.' | tee $STATE_FILE)
+    __process_msg "Successfully updated $service replicas"
+  fi
+
   # Ports
   __process_msg "Generating $service port mapping"
   # TODO: Fetch from systemConfig
@@ -157,6 +178,7 @@ __run_service() {
   local name=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .name')
   local opts=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .opts')
   local image=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .image')
+  local replicas=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .replicas')
 
   local boot_cmd="sudo docker service create"
 
@@ -166,6 +188,12 @@ __run_service() {
 
   if [ $env_variables != "null" ]; then
     boot_cmd="$boot_cmd $env_variables"
+  fi
+
+  if [ $replicas != "null" ]; then
+    boot_cmd="$boot_cmd --replicas $replicas"
+  else
+    boot_cmd="$boot_cmd --mode global"
   fi
 
   if [ $opts != "null" ]; then
@@ -179,81 +207,82 @@ __run_service() {
 }
 
 provision_www() {
-  __save_service_config www " --publish 50001:50001/tcp" " --name www --mode global --network ingress --with-registry-auth --endpoint-mode vip"
+  __save_service_config www " --publish 50001:50001/tcp" " --name www --network ingress --with-registry-auth --endpoint-mode vip"
   __run_service "www"
 }
 
 provision_sync() {
-  __save_service_config sync "" " --name sync --mode global --network ingress --with-registry-auth --endpoint-mode vip" "sync"
+  __save_service_config sync "" " --name sync --network ingress --with-registry-auth --endpoint-mode vip" "sync"
   __run_service "sync"
 }
 
 provision_ini() {
-  __save_service_config ini " " " --name ini --mode global --network ingress --with-registry-auth --endpoint-mode vip" "ini"
+  __save_service_config ini " " " --name ini --network ingress --with-registry-auth --endpoint-mode vip" "ini"
   __run_service "ini"
 }
 
 provision_deploy() {
-  __save_service_config deploy " " " --name deploy --mode global --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "deploy"
+  __save_service_config deploy " " " --name deploy --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "deploy"
   __run_service "deploy"
 }
 
 provision_release() {
-  __save_service_config release " " " --name release --mode global --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "release"
+  __save_service_config release " " " --name release --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "release"
   __run_service "release"
 }
 
 provision_rSync() {
-  __save_service_config rSync " " " --name rSync --mode global --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "rSync"
+  __save_service_config rSync " " " --name rSync --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "rSync"
   __run_service "rSync"
 }
 
 provision_manifest() {
-  __save_service_config manifest " " " --name manifest --mode global --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "manifest"
+  __save_service_config manifest " " " --name manifest --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "manifest"
   __run_service "manifest"
 }
 
 provision_versionTrigger() {
-  __save_service_config versionTrigger " " " --name versionTrigger --mode global --network ingress --with-registry-auth --endpoint-mode vip" "versionTrigger"
+  __save_service_config versionTrigger " " " --name versionTrigger --network ingress --with-registry-auth --endpoint-mode vip" "versionTrigger"
   __run_service "versionTrigger"
 }
 
 provision_certgen() {
-  __save_service_config certgen " " " --name certgen --mode global --network ingress --with-registry-auth --endpoint-mode vip" "certgen"
+  __save_service_config certgen " " " --name certgen --network ingress --with-registry-auth --endpoint-mode vip" "certgen"
   __run_service "certgen"
 }
 
 provision_charon() {
-  __save_service_config charon " " " --name charon --mode global --network ingress --with-registry-auth --endpoint-mode vip" "charon"
+  __save_service_config charon " " " --name charon --network ingress --with-registry-auth --endpoint-mode vip" "charon"
   __run_service "charon"
+}
 
 provision_nexec() {
-  __save_service_config ini " " " --name nexec --mode global --network ingress --with-registry-auth --endpoint-mode vip" "nexec"
+  __save_service_config nexec " " " --name nexec --network ingress --with-registry-auth --endpoint-mode vip" "nexec"
   __run_service "nexec"
 }
 
 provision_jobtrigger() {
-  __save_service_config jobtrigger " " " --name jobtrigger --mode global --network ingress --with-registry-auth --endpoint-mode vip" "jobTrigger"
+  __save_service_config jobtrigger " " " --name jobtrigger --network ingress --with-registry-auth --endpoint-mode vip" "jobTrigger"
   __run_service "jobtrigger"
 }
 
 provision_jobrequest() {
-  __save_service_config jobrequest " " " --name jobrequest --mode global --network ingress --with-registry-auth --endpoint-mode vip" "jobRequest"
+  __save_service_config jobrequest " " " --name jobrequest --network ingress --with-registry-auth --endpoint-mode vip" "jobRequest"
   __run_service "jobrequest"
 }
 
 provision_cron() {
-  __save_service_config cron " " " --name cron --mode global --network ingress --with-registry-auth --endpoint-mode vip" "cron"
+  __save_service_config cron " " " --name cron --network ingress --with-registry-auth --endpoint-mode vip" "cron"
   __run_service "cron"
 }
 
 provision_marshaller() {
-  __save_service_config marshaller " " " --name marshaller --mode global --network ingress --with-registry-auth --endpoint-mode vip" "marshaller"
+  __save_service_config marshaller " " " --name marshaller --network ingress --with-registry-auth --endpoint-mode vip" "marshaller"
   __run_service "marshaller"
 }
 
 provision_sync() {
-  __save_service_config sync "" " --name sync --mode global --network ingress --with-registry-auth --endpoint-mode vip" "sync"
+  __save_service_config sync "" " --name sync --network ingress --with-registry-auth --endpoint-mode vip" "sync"
   # The second argument will be used for $component
   __run_service "sync"
 }
