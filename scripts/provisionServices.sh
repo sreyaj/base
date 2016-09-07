@@ -54,6 +54,8 @@ __map_env_vars() {
     env_value=null
   elif [ "$1" == "COMPONENT" ]; then
     env_value=$2
+  elif [ "$1" == "JOB_TYPE" ]; then
+    env_value=$3
   else
     echo "No handler for env : $1, exiting"
     exit 1
@@ -65,6 +67,7 @@ __save_service_config() {
   local ports=$2
   local opts=$3
   local component=$4
+  local job_type=$5
 
   __process_msg "Saving config for $service"
   local env_vars=$(cat $CONFIG_FILE | jq --arg service "$service" '
@@ -78,7 +81,7 @@ __save_service_config() {
   env_values=""
   for i in $(seq 1 $env_vars_count); do
     local env_var=$(echo $env_vars | jq -r '.['"$i-1"']')
-    __map_env_vars $env_var $component
+    __map_env_vars $env_var $component $job_type
     env_values="$env_values -e $env_var=$env_value"
   done
 
@@ -171,15 +174,49 @@ provision_www() {
   __run_service "www"
 }
 
+provision_sync() {
+  __save_service_config sync "" " --name sync --mode global --network ingress --with-registry-auth --endpoint-mode vip" "sync"
+  __run_service "sync"
+}
+
 provision_ini() {
   __save_service_config ini " " " --name ini --mode global --network ingress --with-registry-auth --endpoint-mode vip" "ini"
   __run_service "ini"
 }
 
-provision_sync() {
-  __save_service_config sync "" " --name sync --mode global --network ingress --with-registry-auth --endpoint-mode vip" "sync"
-  # The second argument will be used for $component
-  __run_service "sync"
+provision_deploy() {
+  __save_service_config deploy " " " --name deploy --mode global --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "deploy"
+  __run_service "deploy"
+}
+
+provision_release() {
+  __save_service_config release " " " --name release --mode global --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "release"
+  __run_service "release"
+}
+
+provision_rSync() {
+  __save_service_config rSync " " " --name rSync --mode global --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "rSync"
+  __run_service "rSync"
+}
+
+provision_manifest() {
+  __save_service_config manifest " " " --name manifest --mode global --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "manifest"
+  __run_service "manifest"
+}
+
+provision_versionTrigger() {
+  __save_service_config versionTrigger " " " --name versionTrigger --mode global --network ingress --with-registry-auth --endpoint-mode vip" "versionTrigger"
+  __run_service "versionTrigger"
+}
+
+provision_certgen() {
+  __save_service_config certgen " " " --name certgen --mode global --network ingress --with-registry-auth --endpoint-mode vip" "certgen"
+  __run_service "certgen"
+}
+
+provision_charon() {
+  __save_service_config charon " " " --name charon --mode global --network ingress --with-registry-auth --endpoint-mode vip" "charon"
+  __run_service "charon"
 }
 
 main() {
@@ -188,6 +225,13 @@ main() {
   provision_www
   provision_sync
   provision_ini
+  provision_deploy
+  provision_release
+  provision_rSync
+  provision_manifest
+  provision_versionTrigger
+  provision_certgen
+  provision_charon
 }
 
 main
