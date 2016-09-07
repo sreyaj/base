@@ -110,6 +110,19 @@ update_system_settings() {
   __process_msg "Succcessfully updated state.json with systemSettings"
 }
 
+update_providers() {
+  __process_msg "Updating providers in state.json from config.json"
+  local providers_length_config=$(cat $CONFIG_FILE | jq '.providers | length')
+  local providers_length_state=$(cat $STATE_FILE | jq '.providers | length')
+
+  for i in $(seq 1 $providers_length_config); do
+    local provider=$(cat $CONFIG_FILE | jq '.providers['"$i-1"']')
+    local update=$(cat $STATE_FILE | jq '.providers['"$providers_length_state + $i -1"']='"$provider"'')
+    update=$(echo $update | jq '.' | tee $STATE_FILE)
+  done
+  __process_msg "Succcessfully updated state.json with providers"
+}
+
 update_system_integrations() {
   __process_msg "Updating system integrations in state.json from config.json"
   local system_integrations_length_config=$(cat $CONFIG_FILE | jq '.systemIntegrations | length')
@@ -129,6 +142,7 @@ main() {
   validate_config
   bootstrap_state
   update_system_settings
+  update_providers
   update_system_integrations
 }
 

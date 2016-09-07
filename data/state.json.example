@@ -9,18 +9,7 @@
       "opts": "--mode global --network ingress"
     }
   ],
-  "systemIntegrations": [
-    {
-      "data": {
-        "providerId": "",
-        "hostname": "",
-        "protocol": "",
-        "clientId": "",
-        "clientSecret": ""
-      },
-      "name": "github.com"
-    }
-  ],
+  "systemIntegrations": [],
   "systemSettings": {
     "runMode": "debug",
     "domain": "myserver.com",
@@ -107,5 +96,6 @@
       "isConsistent": "false"
     }
   ],
-  "release": "4.0.0"
+  "release": "4.0.0",
+  "providers": []
 }
