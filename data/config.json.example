@@ -358,5 +358,29 @@
       "RUN_MODE",
       "COMPONENT"
     ]
-  }]
+  }],
+  "installStatus": {
+    "machinesSSHSuccessful": false,
+    "machinesBootstrapped": false,
+    "databaseInstalled": false,
+    "databaseInitialized": false,
+    "vaultInstalled": false,
+    "vaultInitialized": false,
+    "rabbitmqInstalled": false,
+    "rabbitmqInitialized": false,
+    "gitlabInstalled": false,
+    "gitlabInitialized": false,
+    "dockerInstalled": false,
+    "dockerInitialized": false,
+    "swarmInstalled": false,
+    "swarmInitialized": false,
+    "redisInstalled": false,
+    "redisInitialized": false,
+    "serviceuserTokenGenerated": false,
+    "dockerCredsUpdated": false,
+    "systemConfigSqlCreated": false,
+    "apiProvisioned": false,
+    "systemConfigUpdated": false,
+    "migrationsUpdated": false
+  }
 }
