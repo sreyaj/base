@@ -137,18 +137,20 @@ install_vault() {
   _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
   _update_install_status "vaultInitialized"
 
-  _copy_script_local $host $VAULT_JSON_FILE
 }
 
 save_vault_credentials() {
   __process_msg "Saving vault credentials in state.json"
   local VAULT_FILE="/tmp/shippable/vaultConfig.json"
+  local VAULT_JSON_FILE="/etc/vault.d/vaultConfig.json"
 
   local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $vault_host | jq -r '.ip')
   local vault_url="http://$host:8200"
   result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultUrl = "'$vault_url'"')
   update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+  _copy_script_local $host $VAULT_JSON_FILE
 
   local vault_token=$(cat $VAULT_FILE | jq -r '.vaultToken')
   result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultToken = "'$vault_token'"')
@@ -199,7 +201,7 @@ save_gitlab_state() {
   local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local host=$(echo "$gitlab_host" | jq '.ip')
   local gitlab_root_username="root"
-  local gitlab_root_password="shippable"
+  local gitlab_root_password="shippable1234"
   local gitlab_external_url=$(echo $host | tr -d "\"")
   gitlab_external_url="http//$gitlab_external_url/api/v3"
 
@@ -242,9 +244,12 @@ install_gitlab() {
   local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local host=$(echo $gitlab_host | jq -r '.ip')
   local gitlab_system_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select (.name=="gitlab")')
-  local gitlab_root_username=$(echo $gitlab_system_int | jq -r '.data.username')
-  local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.data.password')
+  
+  #TODO: read this from formJsonValues and not .data
+  #local gitlab_root_username=$(echo $gitlab_system_int | jq -r '.data.username')
+  #local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.data.password')
   local gitlab_external_url=$(echo $gitlab_system_int | jq -r '.data.url')
+  local gitlab_root_password="shippable1234"
 
   _copy_script_remote $host "installGitlab.sh" "$SCRIPT_DIR_REMOTE"
   _copy_script_remote $host "gitlab.rb" "/etc/gitlab/"

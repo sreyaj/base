@@ -22,7 +22,7 @@
     "dockerlogin": "test",
     "dockerpass": "testpass",
     "dockeremail": "test@test.com",
-    "execImage": "shipimg/mexec:master.169",
+    "execImage": "shipimg/mexec:master.3859",
     "stepExecImage": "shipimg/micro50:stepExec"
   },
   "providers": [
