@@ -166,7 +166,7 @@
   ],
   "services": [{
     "name": "api",
-    "image": "shipimg/api50:server.5675",
+    "image": "shipimg/api50:server.5713",
     "envs": [
       "DBNAME",
       "DBUSERNAME",
@@ -177,7 +177,7 @@
     ]
   },{
     "name": "www",
-    "image": "shipimg/www50:server.5672",
+    "image": "shipimg/www50:server.5819",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_VORTEX_URL",

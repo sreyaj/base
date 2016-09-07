@@ -21,9 +21,9 @@ readonly CONFIG_FILE="$DATA_DIR/config.json"
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
-readonly RELEASE=$(cat $CONFIG_FILE | jq -r '.release')
 readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
 readonly LOCAL_BRIDGE_IP=172.17.42.1
+export RELEASE=""
 
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
@@ -72,6 +72,7 @@ __check_dependencies() {
 
 install() {
   __check_dependencies
+  RELEASE=$(cat $CONFIG_FILE | jq -r '.release')
   source "$SCRIPTS_DIR/getConfigs.sh"
   source "$SCRIPTS_DIR/bootstrapMachines.sh"
   source "$SCRIPTS_DIR/installCore.sh"
@@ -118,11 +119,6 @@ __show_status() {
 
 __show_version() {
   echo "Installer version $INSTALLER_VERSION"
-  if [ -z "$RELEASE" ]; then
-    echo "Release version not available, update 'data/config.json'"
-  else
-    echo "Release version $RELEASE"
-  fi
 }
 
 if [[ $# -gt 0 ]]; then
