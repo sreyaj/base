@@ -146,6 +146,11 @@ __save_service_config() {
   fi
 }
 
+_update_install_status() {
+  local update=$(cat $STATE_FILE | jq '.installStatus.'"$1"'='true'')
+  _update_state "$update"
+}
+
 __run_service() {
   service=$1
   __process_msg "Provisioning $service on swarm cluster"
@@ -173,6 +178,8 @@ __run_service() {
   fi
 
   boot_cmd="$boot_cmd $image"
+  _update_install_status "${service}Installed"
+  _update_install_status "${service}Initialized"
   _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
   _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
   __process_msg "Successfully provisioned $service"
@@ -226,6 +233,7 @@ provision_certgen() {
 provision_charon() {
   __save_service_config charon " " " --name charon --mode global --network ingress --with-registry-auth --endpoint-mode vip" "charon"
   __run_service "charon"
+}
 
 provision_nexec() {
   __save_service_config ini " " " --name nexec --mode global --network ingress --with-registry-auth --endpoint-mode vip" "nexec"
