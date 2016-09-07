@@ -23,6 +23,7 @@ do $$
         "wwwUrl",
         "runMode",
         "rootQueueList",
+        "execImage",
         "createdAt",
         "updatedAt"
       )
@@ -49,6 +50,7 @@ do $$
         '{{WWW_URL}}',
         '{{RUN_MODE}}',
         '{{ROOT_QUEUE_LIST}}',
+        '{{EXEC_IMAGE}}',
         '{{CREATED_AT}}',
         '{{UPDATED_AT}}'
       );
