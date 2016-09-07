@@ -206,12 +206,33 @@ save_gitlab_state() {
   local gitlab_integration=$(cat $STATE_FILE | jq '
     .systemIntegrations |= . + [{
       "name": "gitlab",
-      "data": {
-        "username": "'$gitlab_root_username'",
-        "subscriptionProjectLimit": "100",
-        "password": "'$gitlab_root_password'",
-        "url": "'$gitlab_external_url'"
-      }
+      "masterIntegrationId": "574ee696d49b091400b75f19",
+      "masterDisplayName": "Internal Gitlab Server",
+      "masterName": "Git store",
+      "masterType": "scm",
+      "isEnabled": true,
+      "formJSONValues": [
+        {
+          "label": "username",
+          "value": "'$gitlab_root_username'"
+        },
+        {
+          "label": "subscriptionProjectLimit",
+          "value": "100"
+        },
+        {
+          "label": "password",
+          "value": "'$gitlab_root_password'"
+        },
+        {
+          "label": "url",
+          "value": "'$gitlab_external_url'"
+        },
+        {
+          "label": "sshPort",
+          "value": "22"
+        }
+      ]
     }]')
   _update_state "$gitlab_integration"
 }
