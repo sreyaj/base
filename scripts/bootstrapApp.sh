@@ -262,8 +262,8 @@ provision_api() {
 
 insert_system_config() {
   # TODO: This should ideally check if the API is _actually_ up and running.
-  __process_msg "Waiting 60s for API to come up..."
-  sleep 60
+  __process_msg "Waiting 120s for API to come up..."
+  sleep 120
   __process_msg "Inserting data into systemConfigs Table"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local db_ip=$(echo $db_host | jq -r '.ip')
@@ -295,6 +295,26 @@ run_migrations() {
     run_migrations
   fi
   _update_install_status "migrationsUpdated"
+}
+
+insert_route_permissions() {
+  __process_msg "Running routePermissions.sql"
+
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local db_ip=$(echo $db_host | jq -r '.ip')
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  local db_name="shipdb"
+
+  __process_msg "Please copy routePermissions.sql onto $db_ip: $SCRIPT_DIR_REMOTE/, type (y) when done"
+  __process_msg "Done? (y/n)"
+  read response
+  if [[ "$response" =~ "y" ]]; then
+    __process_msg "Proceeding with steps to insert routePermissions"
+    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/routePermissions.sql"
+  else
+    __process_msg "Route permissions are required to install core"
+    insert_route_permissions
+  fi
 }
 
 insert_providers() {
@@ -384,6 +404,7 @@ main() {
   provision_api
   insert_system_config
   run_migrations
+  insert_route_permissions
   generate_providers
   insert_system_integrations
   _update_install_status "systemConfigUpdated"
