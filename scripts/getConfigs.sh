@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 readonly SERVICES_CONFIG="$DATA_DIR/config.json"
+local STATE_FILE_BACKUP="$DATA_DIR/state.json.backup"
 
 ###########################################################
 #s3 access
@@ -65,6 +66,17 @@ validate_config() {
   fi
 }
 
+check_state_backup_exists() {
+  export INIT_STATE_FILE=1
+  if [ -f "$STATE_FILE_BACKUP" ]; then
+    __process_msg "A state.json.backup file exists, do you want to use the backup to initialize state.json?(y/n)"
+    read response
+    if [[ "$response" =~ "y" ]]; then
+      INIT_STATE_FILE=0
+    fi
+  fi
+}
+
 bootstrap_state() {
   __process_msg "Bootstrapping state.json"
 
@@ -102,6 +114,7 @@ bootstrap_state() {
 
   __process_msg "Updated domain protocol in state.json"
 }
+
 
 update_system_settings() {
   __process_msg "Updating system settings in state.json from config.json"
@@ -145,15 +158,24 @@ update_system_integrations() {
   __process_msg "Succcessfully updated state.json with systemIntegrations"
 }
 
+restore_state() {
+  cp $STATE_FILE_BACKUP $STATE_FILE
+}
+
 main() {
   __process_marker "Getting config"
   get_system_config
   validate_config
-  bootstrap_state
-  update_system_settings
-  update_install_status
-  update_providers
-  update_system_integrations
+  check_state_backup_exists
+  if [ $INIT_STATE_FILE -eq 1 ]; then
+    bootstrap_state
+    update_system_settings
+    update_install_status
+    update_providers
+    update_system_integrations
+  else
+    restore_state
+  fi
 }
 
 main
