@@ -638,6 +638,6 @@
     "hipchatInstalled": false,
     "hipchatInitialized": false,
     "ircInstalled": false,
-    "ircInitialized": false,
+    "ircInitialized": false
   }
 }
