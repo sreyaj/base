@@ -96,8 +96,9 @@ save_db_credentials() {
   _exec_remote_cmd $host "sed -i \"s/{{database}}/$db_name/g\" /root/.pgpass"
   _exec_remote_cmd $host "sed -i \"s/{{username}}/$db_username/g\" /root/.pgpass"
   _exec_remote_cmd $host "sed -i \"s/{{password}}/$db_password/g\" /root/.pgpass"
-
   _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
+  __process_msg "Waiting 30s for postgres to boot"
+  sleep 30s
 }
 
 install_vault() {
