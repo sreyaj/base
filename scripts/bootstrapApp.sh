@@ -294,19 +294,26 @@ provision_api() {
 }
 
 insert_system_config() {
-  # TODO: This should ideally check if the API is _actually_ up and running.
-  __process_msg "Waiting 120s for API to come up..."
-  sleep 120
-  __process_msg "Inserting data into systemConfigs Table"
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local db_ip=$(echo $db_host | jq -r '.ip')
-  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  skip_step=0
+  _check_component_status "systemConfigUpdated"
+  if [ $skip_step -eq 0 ]; then
+    # TODO: This should ideally check if the API is _actually_ up and running.
+    __process_msg "Waiting 120s for API to come up..."
+    sleep 120
+    __process_msg "Inserting data into systemConfigs Table"
+    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+    local db_ip=$(echo $db_host | jq -r '.ip')
+    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
 
-  #TODO: fetch db_name from state.json
-  local db_name="shipdb"
+    #TODO: fetch db_name from state.json
+    local db_name="shipdb"
 
-  _copy_script_remote $db_ip "system_configs_data.sql" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs_data.sql"
+    _copy_script_remote $db_ip "system_configs_data.sql" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs_data.sql"
+    _update_install_status "systemConfigUpdated"
+  else
+    __process_msg "System config already updated, skipping"
+  fi
 }
 
 run_migrations() {
@@ -427,23 +434,16 @@ insert_system_integrations() {
 }
 
 main() {
-  skip_step=0
-  _check_component_status "systemConfigUpdated"
-  if [ $skip_step -eq 0 ]; then
-    __process_marker "Updating system config"
-    generate_serviceuser_token
-    update_docker_creds
-    generate_system_config
-    provision_api
-    insert_system_config
-    run_migrations
-    insert_route_permissions
-    generate_providers
-    insert_system_integrations
-    _update_install_status "systemConfigUpdated"
-  else
-    __process_msg "System configs already updated, skipping"
-  fi
+  __process_marker "Updating system config"
+  generate_serviceuser_token
+  update_docker_creds
+  generate_system_config
+  provision_api
+  insert_system_config
+  run_migrations
+  insert_route_permissions
+  generate_providers
+  insert_system_integrations
 }
 
 main
