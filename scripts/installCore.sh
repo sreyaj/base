@@ -244,12 +244,9 @@ install_gitlab() {
   local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local host=$(echo $gitlab_host | jq -r '.ip')
   local gitlab_system_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select (.name=="gitlab")')
-  
-  #TODO: read this from formJsonValues and not .data
-  #local gitlab_root_username=$(echo $gitlab_system_int | jq -r '.data.username')
-  #local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.data.password')
-  local gitlab_external_url=$(echo $gitlab_system_int | jq -r '.data.url')
-  local gitlab_root_password="shippable1234"
+
+  local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="password")|.value')
+  local gitlab_external_url=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="url")|.value')
 
   _copy_script_remote $host "installGitlab.sh" "$SCRIPT_DIR_REMOTE"
   _copy_script_remote $host "gitlab.rb" "/etc/gitlab/"

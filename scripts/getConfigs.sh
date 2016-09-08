@@ -68,7 +68,7 @@ validate_config() {
 bootstrap_state() {
   __process_msg "Bootstrapping state.json"
 
-  local release=$(cat $CONFIG_FILE | jq -r '.release')
+ local release=$(cat $CONFIG_FILE | jq -r '.release')
  local bootstrap_state=$(jq -n --arg v "$initial_obj" \
     '{
       "release": "'$release'",
