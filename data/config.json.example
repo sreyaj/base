@@ -23,7 +23,8 @@
     "dockerpass": "testpass",
     "dockeremail": "test@test.com",
     "execImage": "shipimg/mexec:master.3859",
-    "stepExecImage": "shipimg/micro50:stepExec"
+    "stepExecImage": "shipimg/micro50:stepExec",
+    "runShImage": "shipimg/micro50:stepExec.server.6262"
   },
   "providers": [
     {
@@ -268,7 +269,7 @@
   ],
   "services": [{
     "name": "api",
-    "image": "shipimg/api50:server.5937",
+    "image": "shipimg/api50:server.6377",
     "envs": [
       "DBNAME",
       "DBUSERNAME",

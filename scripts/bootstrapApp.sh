@@ -478,6 +478,45 @@ insert_system_integrations() {
   done
 }
 
+insert_system_machine_image() {
+  __process_msg "Inserting system machine image"
+  local api_url=""
+  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
+  local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
+  if [ "$domain" == "localhost" ]; then
+    api_url="http://$LOCAL_BRIDGE_IP:$api_port"
+  else
+    api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+  fi
+  local system_machine_image_post_endpoint="$api_url/systemMachineImages"
+  local exec_image=$(cat $STATE_FILE | jq '.systemSettings.execImage')
+  local run_sh_image=$(cat $STATE_FILE | jq '.systemSettings.runShImage')
+
+  local system_machine_image='{
+    "externalId": "shippable",
+    "provider": "shippable",
+    "name": "shippable",
+    "description": "shippable",
+    "isAvailable": true,
+    "isDefault": true,
+    "region": "shippable",
+    "keyName": "shippable",
+    "systemIntegrationId": "shippable",
+    "execImage": "'$exec_image'",
+    "runShImage": "'$run_sh_image'",
+    "securityGroup": "shippable",
+  }'
+
+  local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
+    -X POST -d "$system_machine_image" $system_machine_image_post_endpoint \
+      --write-out "%{http_code}\n" --silent --output /dev/null)
+  if [ "$post_call_resp_code" -gt "299" ]; then
+    echo "Error inserting system machine image(status code $post_call_resp_code)"
+  else
+    echo "Sucessfully inserted system machine image"
+  fi
+}
+
 main() {
   __process_marker "Updating system config"
   generate_serviceuser_token
@@ -491,6 +530,7 @@ main() {
   insert_route_permissions
   generate_providers
   insert_system_integrations
+  insert_system_machine_image
 }
 
 main
