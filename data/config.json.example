@@ -504,6 +504,47 @@
       "RUN_MODE",
       "COMPONENT"
     ]
+  },{
+    "name": "nf",
+    "image": "shipimg/micro50:nf.server.5988",
+    "replicas": 1,
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "email",
+    "image": "shipimg/micro50:email.server.5988",
+    "replicas": 1,
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_WWW_URL",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "slack",
+    "image": "shipimg/micro50:slack.master.5987",
+    "replicas": 1,
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_WWW_URL",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
   }],
   "installStatus": {
     "machinesSSHSuccessful": false,

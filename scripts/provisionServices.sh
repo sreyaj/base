@@ -302,6 +302,21 @@ provision_sync() {
   __run_service "sync"
 }
 
+provision_nf() {
+  __save_service_config nf "" " --name nf --network ingress --with-registry-auth --endpoint-mode vip" "nf"
+  __run_service "nf"
+}
+
+provision_email() {
+  __save_service_config email "" " --name email --network ingress --with-registry-auth --endpoint-mode vip" "email"
+  __run_service "email"
+}
+
+provision_slack() {
+  __save_service_config slack "" " --name slack --network ingress --with-registry-auth --endpoint-mode vip" "slack"
+  __run_service "slack"
+}
+
 main() {
   __process_marker "Provisioning services"
   load_services
@@ -320,6 +335,9 @@ main() {
   provision_versionTrigger
   provision_certgen
   provision_charon
+  provision_nf
+  provision_email
+  provision_slack
 }
 
 main
