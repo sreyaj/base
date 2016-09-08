@@ -35,7 +35,7 @@ __map_env_vars() {
   elif [ "$1" == "SHIPPABLE_AMQP_DEFAULT_EXCHANGE" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.amqpDefaultExchange')
   elif [ "$1" == "RUN_MODE" ]; then
-    env_value=production
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
   # TODO: Populate this
   elif [ "$1" == "DOCKER_VERSION" ]; then
     env_value=1.12.1
@@ -73,6 +73,8 @@ __map_env_vars() {
     env_value=$2
   elif [ "$1" == "JOB_TYPE" ]; then
     env_value=$3
+  elif [ "$1" == "IRC_BOT_NICK" ]; then
+    env_value=shippable-betaone
   else
     echo "No handler for env : $1, exiting"
     exit 1
@@ -317,6 +319,16 @@ provision_slack() {
   __run_service "slack"
 }
 
+provision_hipchat() {
+  __save_service_config hipchat "" " --name hipchat --network ingress --with-registry-auth --endpoint-mode vip" "hipchat"
+  __run_service "hipchat"
+}
+
+provision_irc() {
+  __save_service_config irc "" " --name irc --network ingress --with-registry-auth --endpoint-mode vip" "irc"
+  __run_service "irc"
+}
+
 main() {
   __process_marker "Provisioning services"
   load_services
@@ -338,6 +350,8 @@ main() {
   provision_nf
   provision_email
   provision_slack
+  provision_hipchat
+  provision_irc
 }
 
 main

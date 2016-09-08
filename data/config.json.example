@@ -545,6 +545,35 @@
       "RUN_MODE",
       "COMPONENT"
     ]
+  },{
+    "name": "hipchat",
+    "image": "shipimg/micro50:hipchat.server.5988",
+    "replicas": 1,
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_WWW_URL",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
+  },{
+    "name": "irc",
+    "image": "shipimg/micro50:irc.server.5988",
+    "replicas": 1,
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_WWW_URL",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "IRC_BOT_NICK",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
   }],
   "installStatus": {
     "machinesSSHSuccessful": false,
