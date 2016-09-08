@@ -69,7 +69,7 @@ validate_config() {
 check_state_backup_exists() {
   export INIT_STATE_FILE=1
   if [ -f "$STATE_FILE_BACKUP" ]; then
-    __process_msg "A state.json.backup file exists, do you want to use the backup to initialize state.json?(y/n)"
+    __process_msg "A state.json.backup file exists, do you want to use the backup to initialize state.json? (y/n)"
     read response
     if [[ "$response" =~ "y" ]]; then
       INIT_STATE_FILE=0
