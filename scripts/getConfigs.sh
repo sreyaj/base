@@ -160,6 +160,8 @@ update_system_integrations() {
 
 restore_state() {
   cp $STATE_FILE_BACKUP $STATE_FILE
+  update=$(cat $STATE_FILE | jq '.machines='[]'')
+  _update_state "$update"
 }
 
 main() {
