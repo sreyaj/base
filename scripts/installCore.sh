@@ -8,10 +8,18 @@ readonly CORE_COMPONENTS="postgresql \
 ###########################################################
 export CORE_COMPONENTS_LIST=""
 export CORE_MACHINES_LIST=""
+export skip_step=0
 
 _update_install_status() {
   local update=$(cat $STATE_FILE | jq '.installStatus.'"$1"'='true'')
   _update_state "$update"
+}
+
+_check_component_status() {
+  local status=$(cat $STATE_FILE | jq '.installStatus.'"$1"'')
+  if [ "$status" = true ]; then
+    skip_step=1;
+  fi
 }
 
 validate_core_config() {
@@ -25,22 +33,28 @@ validate_core_config() {
   else
     __process_msg "Component count: $component_count"
   fi
-
 }
 
 install_database() {
-  __process_msg "Installing Database"
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $db_host | jq '.ip')
-  ##TODO:
-  # - prommt user for db username and password
-  # - copy the installation script to remote machine
-  # - run sed command to replace username/password with user input
-  # - once complete, save the values in satefile
-  _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
-  _update_install_status "databaseInstalled"
-  _update_install_status "databaseInitialized"
+  skip_step=0
+  _check_component_status "databaseInitialized"
+  if [ $skip_step -eq 0 ]; then
+    __process_msg "Installing Database"
+    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+    local host=$(echo $db_host | jq '.ip')
+    ##TODO:
+    # - prommt user for db username and password
+    # - copy the installation script to remote machine
+    # - run sed command to replace username/password with user input
+    # - once complete, save the values in satefile
+    _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
+    _update_install_status "databaseInstalled"
+    _update_install_status "databaseInitialized"
+  else
+    __process_msg "Database already installed, skipping"
+    __process_msg "Database already initialized, skipping"
+  fi
 }
 
 
@@ -101,42 +115,54 @@ save_db_credentials() {
 }
 
 install_vault() {
-  __process_msg "Installing Vault"
   local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $vault_host | jq '.ip')
-  _copy_script_remote $host "installVault.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
-  _update_install_status "vaultInstalled"
 
-  local vault_url=$host
+  skip_step=0
+  _check_component_status "vaultInstalled"
+  if [ $skip_step -eq 0 ]; then
+    __process_msg "Installing Vault"
+    _copy_script_remote $host "installVault.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
+    _update_install_status "vaultInstalled"
+  else
+    __process_msg "Vault already installed, skipping"
+  fi
 
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local db_ip=$(echo $db_host | jq '.ip')
-  local db_port=5432
-  local db_username=$(cat $STATE_FILE | jq '.systemSettings.dbUsername')
-  local db_address=$db_ip:$db_port
+  skip_step=0
+  _check_component_status "vaultInitialized"
+  if [ $skip_step -eq 0 ]; then
+    local vault_url=$host
 
-  local db_name="shipdb"
-  local VAULT_JSON_FILE="/etc/vault.d/vaultConfig.json"
+    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+    local db_ip=$(echo $db_host | jq '.ip')
+    local db_port=5432
+    local db_username=$(cat $STATE_FILE | jq '.systemSettings.dbUsername')
+    local db_address=$db_ip:$db_port
 
-  _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
-  _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
-  _copy_script_remote $host "vault_kv_store.sql" "/etc/vault.d/"
-  _copy_script_remote $host "vault.conf" "/etc/init/"
-  _copy_script_remote $host "vaultConfig.json" "/etc/vault.d/"
+    local db_name="shipdb"
+    local VAULT_JSON_FILE="/etc/vault.d/vaultConfig.json"
 
-  _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
-  _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
-  _exec_remote_cmd $host "sed -i \"s/{{DB_ADDRESS}}/$db_address/g\" /etc/vault.d/vault.hcl"
+    _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
+    _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
+    _copy_script_remote $host "vault_kv_store.sql" "/etc/vault.d/"
+    _copy_script_remote $host "vault.conf" "/etc/init/"
+    _copy_script_remote $host "vaultConfig.json" "/etc/vault.d/"
 
-  _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault_kv_store.sql"
+    _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
+    _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
+    _exec_remote_cmd $host "sed -i \"s/{{DB_ADDRESS}}/$db_address/g\" /etc/vault.d/vault.hcl"
 
-  _exec_remote_cmd $host "sudo service vault start || true"
+    _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault_kv_store.sql"
 
-  _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
-  _update_install_status "vaultInitialized"
+    _exec_remote_cmd $host "sudo service vault start || true"
 
+    _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
+    _update_install_status "vaultInitialized"
+  else
+    __process_msg "Vault already initialized, skipping"
+  fi
 }
 
 save_vault_credentials() {
@@ -159,20 +185,33 @@ save_vault_credentials() {
 }
 
 install_rabbitmq() {
-  __process_msg "Installing RabbitMQ"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq -r '.ip')
-  _copy_script_remote $host "installRabbit.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
-  _update_install_status "rabbitmqInstalled"
+
+  skip_step=0
+  _check_component_status "rabbitmqInstalled"
+  if [ $skip_step -eq 0 ]; then
+    __process_msg "Installing RabbitMQ"
+    _copy_script_remote $host "installRabbit.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
+    _update_install_status "rabbitmqInstalled"
+  else
+    __process_msg "RabbitMQ already installed, skipping"
+  fi
 
   _copy_script_remote $host "rabbitmqadmin" "$SCRIPT_DIR_REMOTE"
 
   # TODO: The user should be prompted to enter a username and password, which should be
   # used by the bootstrapRabbit.sh
-  _copy_script_remote $host "bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
-  _update_install_status "rabbitmqInitialized"
+  skip_step=0
+  _check_component_status "rabbitmqInitialized"
+  if [ $skip_step -eq 0 ]; then
+    _copy_script_remote $host "bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
+    _update_install_status "rabbitmqInitialized"
+  else
+    __process_msg "RabbitMQ already initialized, skipping"
+  fi
 
   local amqp_user="SHIPPABLETESTUSER"
   local amqp_pass="SHIPPABLETESTPASS"
@@ -240,108 +279,141 @@ save_gitlab_state() {
 }
 
 install_gitlab() {
-  __process_msg "Installing Gitlab"
-  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local host=$(echo $gitlab_host | jq -r '.ip')
-  local gitlab_system_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select (.name=="gitlab")')
+  skip_step=0
+  _check_component_status "gitlabInitialized"
+  if [ $skip_step -eq 0 ]; then
+    __process_msg "Installing Gitlab"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host | jq -r '.ip')
+    local gitlab_system_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select (.name=="gitlab")')
 
-  local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="password")|.value')
-  local gitlab_external_url=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="url")|.value')
+    local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="password")|.value')
+    local gitlab_external_url=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="url")|.value')
 
-  _copy_script_remote $host "installGitlab.sh" "$SCRIPT_DIR_REMOTE"
-  _copy_script_remote $host "gitlab.rb" "/etc/gitlab/"
+    _copy_script_remote $host "installGitlab.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "gitlab.rb" "/etc/gitlab/"
 
-  _exec_remote_cmd $host "sed -i \"s/{{gitlab_machine_url}}/$host/g\" /etc/gitlab/gitlab.rb"
-  _exec_remote_cmd $host "sed -i \"s/{{gitlab_password}}/$gitlab_root_password/g\" /etc/gitlab/gitlab.rb"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installGitlab.sh"
-  _update_install_status "gitlabInstalled"
-  _update_install_status "gitlabInitialized"
+    _exec_remote_cmd $host "sed -i \"s/{{gitlab_machine_url}}/$host/g\" /etc/gitlab/gitlab.rb"
+    _exec_remote_cmd $host "sed -i \"s/{{gitlab_password}}/$gitlab_root_password/g\" /etc/gitlab/gitlab.rb"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installGitlab.sh"
+    _update_install_status "gitlabInstalled"
+    _update_install_status "gitlabInitialized"
+  else
+    __process_msg "Gitlab already installed, skipping"
+    __process_msg "Gitlab already initialized, skipping"
+  fi
 }
 
 install_docker() {
-  __process_msg "Installing Docker on management machine"
-  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local host=$(echo $gitlab_host | jq '.ip')
-  _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
-
-  __process_msg "Installing Docker on service machines"
-  local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
-  local service_machines_count=$(echo $service_machines_list | jq '. | length')
-  for i in $(seq 1 $service_machines_count); do
-    local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
+  skip_step=0
+  _check_component_status "dockerInitialized"
+  if [ $skip_step -eq 0 ]; then
+    __process_msg "Installing Docker on management machine"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host | jq '.ip')
     _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
-  done
-  _update_install_status "dockerInstalled"
-  _update_install_status "dockerInitialized"
+
+    __process_msg "Installing Docker on service machines"
+    local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
+    local service_machines_count=$(echo $service_machines_list | jq '. | length')
+    for i in $(seq 1 $service_machines_count); do
+      local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
+      local host=$(echo $machine | jq '.ip')
+      _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
+      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
+    done
+    _update_install_status "dockerInstalled"
+    _update_install_status "dockerInitialized"
+  else
+    __process_msg "Docker already installed, skipping"
+    __process_msg "Docker already initialized, skipping"
+  fi
 }
 
 install_swarm() {
-  __process_msg "Installing Swarm"
-  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local host=$(echo $gitlab_host | jq '.ip')
-  _copy_script_remote $host "installSwarm.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
+  skip_step=0
+  _check_component_status "swarmInstalled"
+  if [ $skip_step -eq 0 ]; then
+    __process_msg "Installing Swarm"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host | jq '.ip')
+    _copy_script_remote $host "installSwarm.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
 
-  __process_msg "Initializing docker swarm master"
-  _exec_remote_cmd "$host" "sudo docker swarm leave --force || true"
-  local swarm_init_cmd="sudo docker swarm init --advertise-addr $host"
-  _exec_remote_cmd "$host" "$swarm_init_cmd"
+    __process_msg "Initializing docker swarm master"
+    _exec_remote_cmd "$host" "sudo docker swarm leave --force || true"
+    local swarm_init_cmd="sudo docker swarm init --advertise-addr $host"
+    _exec_remote_cmd "$host" "$swarm_init_cmd"
 
-  local swarm_worker_token="swarm_worker_token.txt"
-  local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
-  _exec_remote_cmd "$host" "'sudo docker swarm join-token -q worker > $swarm_worker_token_remote'"
-  _copy_script_local $host "$swarm_worker_token_remote"
+    local swarm_worker_token="swarm_worker_token.txt"
+    local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
+    _exec_remote_cmd "$host" "'sudo docker swarm join-token -q worker > $swarm_worker_token_remote'"
+    _copy_script_local $host "$swarm_worker_token_remote"
 
-  local script_dir_local="/tmp/shippable"
-  local swarm_worker_token_local="$script_dir_local/$swarm_worker_token"
-  local swarm_worker_token=$(cat $swarm_worker_token_local)
+    local script_dir_local="/tmp/shippable"
+    local swarm_worker_token_local="$script_dir_local/$swarm_worker_token"
+    local swarm_worker_token=$(cat $swarm_worker_token_local)
 
-  local swarm_worker_token_update=$(cat $STATE_FILE | jq '
-    .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
-  update=$(echo $swarm_worker_token_update | jq '.' | tee $STATE_FILE)
+    local swarm_worker_token_update=$(cat $STATE_FILE | jq '
+      .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
+    update=$(echo $swarm_worker_token_update | jq '.' | tee $STATE_FILE)
 
-  __process_msg "Running Swarm in drain mode"
-  local swarm_master_host_name="swarm_master_host_name.txt"
-  local swarm_master_host_name_remote="$SCRIPT_DIR_REMOTE/$swarm_master_host_name"
-  _exec_remote_cmd "$host" "'sudo docker node inspect self | jq -r '.[0].Description.Hostname' > $swarm_master_host_name_remote'"
-  _copy_script_local $host "$swarm_master_host_name_remote"
+    __process_msg "Running Swarm in drain mode"
+    local swarm_master_host_name="swarm_master_host_name.txt"
+    local swarm_master_host_name_remote="$SCRIPT_DIR_REMOTE/$swarm_master_host_name"
+    _exec_remote_cmd "$host" "'sudo docker node inspect self | jq -r '.[0].Description.Hostname' > $swarm_master_host_name_remote'"
+    _copy_script_local $host "$swarm_master_host_name_remote"
 
-  local swarm_master_host_name_remote="$script_dir_local/$swarm_master_host_name"
-  local swarm_master_host_name=$(cat $swarm_master_host_name_remote)
-  _exec_remote_cmd "$host" "sudo docker node update  --availability drain $swarm_master_host_name"
+    local swarm_master_host_name_remote="$script_dir_local/$swarm_master_host_name"
+    local swarm_master_host_name=$(cat $swarm_master_host_name_remote)
+    _exec_remote_cmd "$host" "sudo docker node update  --availability drain $swarm_master_host_name"
 
-  _update_install_status "swarmInstalled"
+    _update_install_status "swarmInstalled"
+  else
+    __process_msg "Swarm already installed, skipping"
+  fi
  }
 
 initialize_workers() {
-  __process_msg "Initializing swarm workers on service machines"
-  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local gitlab_host_ip=$(echo $gitlab_host | jq -r '.ip')
+  skip_step=0
+  _check_component_status "swarmInitialized"
+  if [ $skip_step -eq 0 ]; then
+    __process_msg "Initializing swarm workers on service machines"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local gitlab_host_ip=$(echo $gitlab_host | jq -r '.ip')
 
-  local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
-  local service_machines_count=$(echo $service_machines_list | jq '. | length')
-  for i in $(seq 1 $service_machines_count); do
-    local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    local swarm_worker_token=$(cat $STATE_FILE | jq '.systemSettings.swarmWorkerToken')
-    _exec_remote_cmd "$host" "sudo docker swarm leave || true"
-    _exec_remote_cmd "$host" "sudo docker swarm join --token $swarm_worker_token $gitlab_host_ip"
-  done
-  _update_install_status "swarmInitialized"
+    local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
+    local service_machines_count=$(echo $service_machines_list | jq '. | length')
+    for i in $(seq 1 $service_machines_count); do
+      local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
+      local host=$(echo $machine | jq '.ip')
+      local swarm_worker_token=$(cat $STATE_FILE | jq '.systemSettings.swarmWorkerToken')
+      _exec_remote_cmd "$host" "sudo docker swarm leave || true"
+      _exec_remote_cmd "$host" "sudo docker swarm join --token $swarm_worker_token $gitlab_host_ip"
+    done
+    _update_install_status "swarmInitialized"
+  else
+    __process_msg "Swarm already initialized, skipping"
+  fi
 }
 
 install_redis() {
-  __process_msg "Installing Redis"
-  local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local host=$(echo $redis_host | jq '.ip')
-  _copy_script_remote $host "redis.conf" "/etc/redis"
-  _copy_script_remote $host "installRedis.sh" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRedis.sh"
-  _update_install_status "redisInstalled"
-  _update_install_status "redisInitialized"
+  skip_step=0
+  _check_component_status "redisInitialized"
+  if [ $skip_step -eq 0 ]; then
+    __process_msg "Installing Redis"
+    local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $redis_host | jq '.ip')
+    _copy_script_remote $host "redis.conf" "/etc/redis"
+    _copy_script_remote $host "installRedis.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRedis.sh"
+    _update_install_status "redisInstalled"
+    _update_install_status "redisInitialized"
+  else
+    __process_msg "Redis already installed, skipping"
+    __process_msg "Redis already initialized, skipping"
+  fi
 
   local ip=$(echo $redis_host | jq -r '.ip')
   local redis_url="http://$ip:6379"

@@ -627,6 +627,17 @@
     "certgenInstalled": false,
     "certgenInitialized": false,
     "charonInstalled": false,
-    "charonInitialized": false
+    "charonInitialized": false,
+    "routePermissionsUpdated": false,
+    "nfInstalled": false,
+    "nfInitialized": false,
+    "emailInstalled": false,
+    "emailInitialized": false,
+    "slackInstalled": false,
+    "slackInitialized": false,
+    "hipchatInstalled": false,
+    "hipchatInitialized": false,
+    "ircInstalled": false,
+    "ircInitialized": false
   }
 }
