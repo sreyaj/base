@@ -19,7 +19,7 @@ __map_env_vars() {
   if [ "$1" == "SHIPPABLE_API_TOKEN" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
   elif [ "$1" == "SHIPPABLE_VORTEX_URL" ]; then
-    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.apiVortexUrl')
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')/vortex
   elif [ "$1" == "SHIPPABLE_API_URL" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   elif [ "$1" == "SHIPPABLE_WWW_PORT" ]; then
