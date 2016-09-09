@@ -402,7 +402,7 @@ initialize_workers() {
 install_redis() {
   skip_step=0
   _check_component_status "redisInitialized"
-  local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $redis_host | jq '.ip')
 
   if [ $skip_step -eq 0 ]; then
