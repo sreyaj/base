@@ -21,7 +21,6 @@ readonly CONFIG_FILE="$DATA_DIR/config.json"
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
-readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
 readonly LOCAL_BRIDGE_IP=172.17.42.1
 export RELEASE=""
 
@@ -73,6 +72,7 @@ __check_dependencies() {
 install() {
   __check_dependencies
   RELEASE=$(cat $CONFIG_FILE | jq -r '.release')
+  readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
   source "$SCRIPTS_DIR/getConfigs.sh"
   source "$SCRIPTS_DIR/bootstrapMachines.sh"
   source "$SCRIPTS_DIR/installCore.sh"
