@@ -334,6 +334,10 @@ run_migrations() {
   skip_step=0
   _check_component_status "migrationsUpdated"
   if [ $skip_step -eq 0 ]; then
+
+    __process_msg "Waiting 120s for API to come up..."
+    sleep 120
+
     __process_msg "Running migrations.sql"
 
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
