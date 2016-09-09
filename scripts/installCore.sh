@@ -243,7 +243,7 @@ save_gitlab_state() {
   local gitlab_root_username="root"
   local gitlab_root_password="shippable1234"
   local gitlab_external_url=$(echo $host | tr -d "\"")
-  gitlab_external_url="http//$gitlab_external_url/api/v3"
+  gitlab_external_url="http://$gitlab_external_url/api/v3"
 
   local gitlab_integration=$(cat $STATE_FILE | jq '
     .systemIntegrations |= . + [{
@@ -418,7 +418,7 @@ install_redis() {
   fi
 
   local ip=$(echo $redis_host | jq -r '.ip')
-  local redis_url="http://$ip:6379"
+  local redis_url="$ip:6379"
   #TODO : Fetch the redis port from the redis.conf
   result=$(cat $STATE_FILE | jq -r '.systemSettings.redisUrl = "'$redis_url'"')
   update=$(echo $result | jq '.' | tee $STATE_FILE)
