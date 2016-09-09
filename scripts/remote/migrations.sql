@@ -590,23 +590,6 @@ do $$
       values (36, '5723561699ddf70c00be27ed', 'url', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    -- TRIECS
-    if not exists (select 1 from "masterIntegrations" where "name" = 'TRIECS' and "typeCode" = 5002) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57477bba7585fd0c00b3332f', 14, 'TRIECS', 'Joyent Triton Elastic Container Service', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-     -- masterIntegrationFields for TRIECS
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 37) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (37, '57477bba7585fd0c00b3332f', 'username', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 38) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (38, '57477bba7585fd0c00b3332f', 'url', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
     -- ghe
     if not exists (select 1 from "masterIntegrations" where "name" = 'ghe' and "typeCode" = 5000) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
