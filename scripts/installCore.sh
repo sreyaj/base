@@ -402,10 +402,11 @@ initialize_workers() {
 install_redis() {
   skip_step=0
   _check_component_status "redisInitialized"
+  local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local host=$(echo $redis_host | jq '.ip')
+
   if [ $skip_step -eq 0 ]; then
     __process_msg "Installing Redis"
-    local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-    local host=$(echo $redis_host | jq '.ip')
     _copy_script_remote $host "redis.conf" "/etc/redis"
     _copy_script_remote $host "installRedis.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRedis.sh"
