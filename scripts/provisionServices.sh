@@ -350,6 +350,11 @@ provision_irc() {
   __run_service "irc"
 }
 
+provision_webhook() {
+  __save_service_config webhook "" " --name webhook --network ingress --with-registry-auth --endpoint-mode vip" "webhook"
+  __run_service "webhook"
+}
+
 main() {
   __process_marker "Provisioning services"
   load_services
@@ -373,6 +378,7 @@ main() {
   provision_slack
   provision_hipchat
   provision_irc
+  provision_webhook
 }
 
 main

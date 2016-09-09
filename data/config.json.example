@@ -575,6 +575,20 @@
       "RUN_MODE",
       "COMPONENT"
     ]
+  },{
+    "name": "webhook",
+    "image": "shipimg/micro50:webhook.server.5988",
+    "replicas": 1,
+    "envs": [
+      "SHIPPABLE_API_TOKEN",
+      "SHIPPABLE_WWW_URL",
+      "SHIPPABLE_VORTEX_URL",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
   }],
   "installStatus": {
     "machinesSSHSuccessful": false,
@@ -639,6 +653,8 @@
     "hipchatInstalled": false,
     "hipchatInitialized": false,
     "ircInstalled": false,
-    "ircInitialized": false
+    "ircInitialized": false,
+    "webhookInstalled": false,
+    "webhookInitialized": false
   }
 }
