@@ -40,7 +40,7 @@ __map_env_vars() {
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
   # TODO: Populate this
   elif [ "$1" == "DOCKER_VERSION" ]; then
-    env_value=1.12.1
+    env_value=1.9.1
   elif [ "$1" == "DEFAULT_CRON_LOOP_HOURS" ]; then
     env_value=2
   elif [ "$1" == "API_RETRY_INTERVAL" ]; then
