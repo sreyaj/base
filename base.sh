@@ -22,6 +22,7 @@ readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
 readonly LOCAL_BRIDGE_IP=172.17.42.1
+export LC_ALL=C
 export RELEASE=""
 
 source "$SCRIPTS_DIR/_execScriptRemote.sh"

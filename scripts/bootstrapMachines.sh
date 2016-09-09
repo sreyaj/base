@@ -96,6 +96,16 @@ check_requirements() {
   done
 }
 
+export_language() {
+  __process_msg "Exporting Language Preferences"
+  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
+  for i in $(seq 1 $machine_count); do
+    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
+    local host=$(echo $machine | jq '.ip')
+    _exec_remote_cmd "$host" "export LC_ALL=C"
+  done
+}
+
 bootstrap() {
   __process_msg "Installing core components on machines"
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
@@ -134,6 +144,7 @@ main() {
   update_ssh_key
   check_connection
   check_requirements
+  export_language
   bootstrap
   #update_state
 }
