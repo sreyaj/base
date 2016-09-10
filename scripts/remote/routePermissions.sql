@@ -1239,6 +1239,13 @@ do $$
       allowedRoles := '["owner","collaborator","justUser","opsUser","superUser","serviceUser"]'
     );
 
+    perform set_route_permission(
+      httpVerb := 'POST',
+      routePattern := '/systemMachineImages',
+      type := 'foo',
+      allowedRoles := '["superUser"]'
+    );
+
     -- set systemProperties routePermissions
 
     perform set_route_permission(
