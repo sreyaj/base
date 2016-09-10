@@ -37,13 +37,27 @@ update_docker_creds() {
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo "$gitlab_host" | jq '.ip')
 
+    local credentials_template="$REMOTE_SCRIPTS_DIR/credentials.template"
+    local credentials_file="$REMOTE_SCRIPTS_DIR/credentials"
+
+    __process_msg "Updating : awsAccessKey"
     local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.awsAccessKey')
+    sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
+
+    __process_msg "Updating : awsSecretKey"
     local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.awsSecretKey')
+    sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
+
     local aws_region=$(cat $STATE_FILE | jq -r '.systemSettings.awsRegion')
 
     _copy_script_remote $host "credentials" "/root/.aws/"
-    local docker_login_cmd="$(aws ecr --region $aws_region get-login)"
+    local save_docker_login_cmd='aws ecr --region us-east-1 get-login > /tmp/docker_login.sh'
+    _exec_remote_cmd $host "$save_docker_login_cmd"
+    local update_perm='chmod +x /tmp/docker_login.sh'
+    _exec_remote_cmd $host "$update_perm"
+    local docker_login_cmd='/tmp/docker_login.sh'
     _exec_remote_cmd $host "$docker_login_cmd"
+
     _update_install_status "dockerCredsUpdated"
   else
     __process_msg "Docker credentials already updated, skipping"
