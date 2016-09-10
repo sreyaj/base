@@ -502,9 +502,9 @@ insert_system_machine_image() {
     "region": "shippable",
     "keyName": "shippable",
     "systemIntegrationId": "shippable",
-    "execImage": "'$exec_image'",
-    "runShImage": "'$run_sh_image'",
-    "securityGroup": "shippable",
+    "execImage": '$exec_image',
+    "runShImage": '$run_sh_image',
+    "securityGroup": "shippable"
   }'
 
   local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
