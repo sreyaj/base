@@ -350,12 +350,12 @@ test_api_endpoint() {
     sleep_time=$(( $sleep_time * 2 ))
   fi
 
-  api_response=$(curl -s -o /dev/null -w "%{http_code}" $api_url)
+  api_response=$(curl -Is $api_url | head -1 | awk {'print $2'})
 
-  if [ $api_response -eq 200 ]; then
+  if [ "$api_response" == "200" ]; then
     __process_msg "API is up and running proceeding with other steps"
   else
-    __process_msg "API not running waiting for $sleep_time"
+    __process_msg "API not running retrying in $sleep_time seconds"
     sleep $sleep_time
     test_api_endpoint
   fi
