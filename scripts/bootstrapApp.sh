@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 export skip_step=0
+export sleep_time=1
 
 _update_install_status() {
   local update=$(cat $STATE_FILE | jq '.installStatus.'"$1"'='true'')
@@ -330,14 +331,40 @@ provision_api() {
   fi
 }
 
+test_api_endpoint() {
+  __process_msg "Testing API endpoint to determine API status"
+
+  local api_url=""
+  local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
+  local api_port=$(cat $STATE_FILE | jq '.systemSettings.apiPort')
+
+  if [ "$domain" == "localhost" ]; then
+    api_url="http://$LOCAL_BRIDGE_IP:$api_port"
+  else
+    api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+  fi
+
+  if [ $sleep_time -eq 64 ]; then
+    sleep_time=2;
+  else
+    sleep_time=$(( $sleep_time * 2 ))
+  fi
+
+  api_response=$(curl -Is $api_url | head -1 | awk {'print $2'})
+
+  if [ "$api_response" == "200" ]; then
+    __process_msg "API is up and running proceeding with other steps"
+  else
+    __process_msg "API not running retrying in $sleep_time seconds"
+    sleep $sleep_time
+    test_api_endpoint
+  fi
+}
+
 run_migrations() {
   skip_step=0
   _check_component_status "migrationsUpdated"
   if [ $skip_step -eq 0 ]; then
-
-    __process_msg "Waiting 120s for API to come up..."
-    sleep 120
-
     __process_msg "Running migrations.sql"
 
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -459,6 +486,7 @@ main() {
   create_system_config
   insert_system_config
   provision_api
+  test_api_endpoint
   run_migrations
   insert_route_permissions
   generate_providers
