@@ -2,7 +2,7 @@ create table if not exists "systemConfigs" (
   "id" INT  PRIMARY KEY NOT NULL,
   "defaultMinionCount" INT DEFAULT 1 NOT NULL,
   "defaultPipelineCount" INT DEFAULT 1 NOT NULL,
-  "braintreeEnabled" BOOLEAN NOT NULL,
+  "serverEnabled" BOOLEAN NOT NULL,
   "cachingEnabled" BOOLEAN DEFAULT TRUE NOT NULL,
   "hubspotEnabled" BOOLEAN DEFAULT TRUE NOT NULL,
   "buildTimeoutMS" INT DEFAULT 3600000 NOT NULL,
