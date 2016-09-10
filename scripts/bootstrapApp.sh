@@ -37,11 +37,12 @@ update_docker_creds() {
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo "$gitlab_host" | jq '.ip')
 
-    local docker_login=$(cat $STATE_FILE | jq '.systemSettings.dockerlogin')
-    local docker_pass=$(cat $STATE_FILE | jq '.systemSettings.dockerpass')
-    local docker_email=$(cat $STATE_FILE | jq '.systemSettings.dockeremail')
+    local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.awsAccessKey')
+    local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.awsSecretKey')
+    local aws_region=$(cat $STATE_FILE | jq -r '.systemSettings.awsRegion')
 
-    local docker_login_cmd="sudo docker login -u $docker_login -p $docker_pass -e $docker_email"
+    _copy_script_remote $host "credentials" "/root/.aws/"
+    local docker_login_cmd="$(aws ecr --region $aws_region get-login)"
     _exec_remote_cmd $host "$docker_login_cmd"
     _update_install_status "dockerCredsUpdated"
   else

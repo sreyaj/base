@@ -49,6 +49,8 @@ install_database() {
     # - once complete, save the values in satefile
     _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
+    __process_msg "Waiting 30s for postgres to boot"
+    sleep 30s
     _update_install_status "databaseInstalled"
     _update_install_status "databaseInitialized"
   else
@@ -56,7 +58,6 @@ install_database() {
     __process_msg "Database already initialized, skipping"
   fi
 }
-
 
 save_db_credentials_in_statefile() {
   __process_msg "Saving database credentials in state file"
@@ -111,8 +112,6 @@ save_db_credentials() {
   _exec_remote_cmd $host "sed -i \"s/{{username}}/$db_username/g\" /root/.pgpass"
   _exec_remote_cmd $host "sed -i \"s/{{password}}/$db_password/g\" /root/.pgpass"
   _exec_remote_cmd $host "chmod 0600 /root/.pgpass"
-  __process_msg "Waiting 30s for postgres to boot"
-  sleep 30s
 }
 
 install_vault() {
@@ -332,6 +331,23 @@ install_docker() {
   fi
 }
 
+install_ecr() {
+  skip_step=0
+  _check_component_status "ecrInitialized"
+  if [ $skip_step -eq 0 ]; then
+    __process_msg "Installing Docker on management machine"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host | jq '.ip')
+    _copy_script_remote $host "installEcr.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installEcr.sh"
+    _update_install_status "ecrInstalled"
+    _update_install_status "ecrInitialized"
+  else
+    __process_msg "ECR already installed, skipping"
+    __process_msg "ECR already initialized, skipping"
+  fi
+}
+
 install_swarm() {
   skip_step=0
   _check_component_status "swarmInstalled"
@@ -447,6 +463,7 @@ main() {
   save_gitlab_state
   install_gitlab
   install_docker
+  install_ecr
   install_swarm
   initialize_workers
   install_redis
