@@ -233,10 +233,10 @@ __run_service() {
     fi
 
     boot_cmd="$boot_cmd $image"
-    _update_install_status "${service}Installed"
-    _update_install_status "${service}Initialized"
     _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
     _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
+    _update_install_status "${service}Installed"
+    _update_install_status "${service}Initialized"
     __process_msg "Successfully provisioned $service"
   else
     __process_msg "${service} already installed, skipping"
