@@ -535,6 +535,27 @@ insert_system_machine_image() {
   fi
 }
 
+restart_api() {
+  local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
+
+  local port_mapping=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .port')
+  local env_variables=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .env')
+  local name=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .name')
+  local opts=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .opts')
+  local image=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .image')
+
+  local boot_api_cmd="sudo docker service create \
+    $port_mapping \
+    $env_variables \
+    $opts $image"
+
+  local rm_api_cmd="sudo docker service rm api || true"
+
+  _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
+  _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
+}
+
 main() {
   __process_marker "Updating system config"
   generate_serviceuser_token
@@ -549,6 +570,7 @@ main() {
   generate_providers
   insert_system_integrations
   insert_system_machine_image
+  restart_api
 }
 
 main
