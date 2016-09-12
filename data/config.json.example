@@ -30,13 +30,13 @@
       "id": "563347d6036d220c002a3474",
       "masterIntegrationId": "563347d6046d220c002a3474",
       "url": "https://foo.github.com",
-      "name": "github-enterprise"
+      "name": "ghe"
     },
     {
       "id": "56334736036d220c002a3474",
       "masterIntegrationId": "572af430ead9631100f7f64d",
       "url": "https://foo.bitbucket.com",
-      "name": "bitbucket-server"
+      "name": "bitbucketServer"
     }
   ],
   "systemIntegrations": [
@@ -247,11 +247,11 @@
       "formJSONValues": [
         {
           "label": "clientId",
-          "value": "ksndfknds23423"
+          "value": "Shippable"
         },
         {
           "label": "clientSecret",
-          "value": "jksdnfdskjfdss"
+          "value": "private-key"
         },
         {
           "label": "hostname",
@@ -271,15 +271,15 @@
         },
         {
           "label": "requestTokenURL",
-          "value": "https://foo.com/request_token"
+          "value": "https://foo.com/plugins/servlet/oauth/request-token"
         },
         {
           "label": "accessTokenURL",
-          "value": "https://foo.com/access_token"
+          "value": "https://foo.com/plugins/servlet/oauth/access-token"
         },
         {
           "label": "userAuthorizationURL",
-          "value": "https://foo.com/auth"
+          "value": "https://foo.com/plugins/servlet/shippable-oauth/authorize"
         }
       ],
       "isEnabled": true
