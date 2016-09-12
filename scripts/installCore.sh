@@ -8,7 +8,7 @@ readonly CORE_COMPONENTS="postgresql \
 ###########################################################
 export CORE_COMPONENTS_LIST=""
 export CORE_MACHINES_LIST=""
-export skip_step=0
+export SKIP_STEP=false
 
 _update_install_status() {
   local update=$(cat $STATE_FILE | jq '.installStatus.'"$1"'='true'')
@@ -18,7 +18,7 @@ _update_install_status() {
 _check_component_status() {
   local status=$(cat $STATE_FILE | jq '.installStatus.'"$1"'')
   if [ "$status" = true ]; then
-    skip_step=1;
+    SKIP_STEP=true;
   fi
 }
 
@@ -36,9 +36,9 @@ validate_core_config() {
 }
 
 install_database() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "databaseInitialized"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Database"
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
     local host=$(echo $db_host | jq '.ip')
@@ -118,9 +118,9 @@ install_vault() {
   local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $vault_host | jq '.ip')
 
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "vaultInstalled"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Vault"
     _copy_script_remote $host "installVault.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
@@ -129,9 +129,9 @@ install_vault() {
     __process_msg "Vault already installed, skipping"
   fi
 
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "vaultInitialized"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     local vault_url=$host
 
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -188,9 +188,9 @@ install_rabbitmq() {
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq -r '.ip')
 
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "rabbitmqInstalled"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing RabbitMQ"
     _copy_script_remote $host "installRabbit.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
@@ -203,9 +203,9 @@ install_rabbitmq() {
 
   # TODO: The user should be prompted to enter a username and password, which should be
   # used by the bootstrapRabbit.sh
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "rabbitmqInitialized"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     _copy_script_remote $host "bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
     _update_install_status "rabbitmqInitialized"
@@ -282,9 +282,9 @@ save_gitlab_state() {
 }
 
 install_gitlab() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "gitlabInitialized"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Gitlab"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq -r '.ip')
@@ -308,9 +308,9 @@ install_gitlab() {
 }
 
 install_docker() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "dockerInitialized"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Docker on management machine"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq '.ip')
@@ -337,9 +337,9 @@ install_docker() {
 }
 
 install_ecr() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "ecrInitialized"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Docker on management machine"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq '.ip')
@@ -354,9 +354,9 @@ install_ecr() {
 }
 
 install_swarm() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "swarmInstalled"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Swarm"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq '.ip')
@@ -398,9 +398,9 @@ install_swarm() {
  }
 
 initialize_workers() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "swarmInitialized"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Initializing swarm workers on service machines"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local gitlab_host_ip=$(echo $gitlab_host | jq -r '.ip')
@@ -421,12 +421,12 @@ initialize_workers() {
 }
 
 install_redis() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "redisInitialized"
   local redis_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $redis_host | jq '.ip')
 
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Redis"
     _copy_script_remote $host "redis.conf" "/etc/redis"
     _copy_script_remote $host "installRedis.sh" "$SCRIPT_DIR_REMOTE"
