@@ -126,10 +126,9 @@ update_system_settings() {
 
 update_ecr_system_integration() {
   __process_msg "Updating ecr system integration in state.json"
-  local system_integrations_length_config=$(cat $CONFIG_FILE | jq '.systemIntegrations | length')
   local system_integrations_length_state=$(cat $STATE_FILE | jq '.systemIntegrations | length')
-  local installer_access_key=$(cat $CONFIG_FILE | jq -r '.systemSettings.installerAccessKey')
-  local installer_secret_key=$(cat $CONFIG_FILE | jq -r '.systemSettings.installerSecretKey')
+  local installer_access_key=$(cat $CONFIG_FILE | jq '.systemSettings.installerAccessKey')
+  local installer_secret_key=$(cat $CONFIG_FILE | jq '.systemSettings.installerSecretKey')
   local ecr_system_integration='{
     "id": "57cecf81c349bb70153d8250",
     "name": "Internal Shippable ECR",
