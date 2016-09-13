@@ -40,15 +40,13 @@ update_docker_creds() {
     local credentials_template="$REMOTE_SCRIPTS_DIR/credentials.template"
     local credentials_file="$REMOTE_SCRIPTS_DIR/credentials"
 
-    __process_msg "Updating : awsAccessKey"
-    local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.awsAccessKey')
+    __process_msg "Updating : installerAccessKey"
+    local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
     sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
 
-    __process_msg "Updating : awsSecretKey"
-    local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.awsSecretKey')
+    __process_msg "Updating : installerSecretKey"
+    local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
     sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
-
-    local aws_region=$(cat $STATE_FILE | jq -r '.systemSettings.awsRegion')
 
     _copy_script_remote $host "credentials" "/root/.aws/"
     local save_docker_login_cmd='aws ecr --region us-east-1 get-login > /tmp/docker_login.sh'
