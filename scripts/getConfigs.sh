@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 readonly SERVICES_CONFIG="$DATA_DIR/config.json"
-local STATE_FILE_BACKUP="$DATA_DIR/state.json.backup"
 
 ###########################################################
 #s3 access
@@ -10,6 +9,8 @@ readonly CONFIG_ACCESS_KEY="test"
 readonly CONFIG_SECRET_KEY="test"
 #s3 bucket
 readonly CONFIG_FOLDER="test"
+
+PROVIDER_ID=3
 
 
 get_system_config() {
@@ -145,6 +146,31 @@ update_providers() {
   __process_msg "Succcessfully updated state.json with providers"
 }
 
+update_bbserver_details() {
+  __process_msg "Do you want to add the BitBucket Server integration? (y/n)"
+  read response
+  if [[ "$response" =~ "y" ]]; then
+    __process_msg "Please enter the URL for the BitBucket Server : "
+    read response
+    local id=$(cat /proc/sys/kernel/random/uuid)
+    local url=$response
+    local providers_state=$(cat $STATE_FILE | jq '
+      .providers |= . + [{
+        "id": "'$id'",
+        "url": "'$url'",
+        "providerId": '$PROVIDER_ID',
+        "masterIntegrationId": "572af430ead9631100f7f64d",
+        "name": "bitbucketServer",
+        "createdAt": "2016-09-12T07:16:55.387Z",
+        "updatedAt": "2016-09-12T08:04:18.893Z"
+      }]'
+    )
+    echo $providers_state | jq '.' > $STATE_FILE
+
+    ((PROVIDER_ID++))
+  fi
+}
+
 update_system_integrations() {
   __process_msg "Updating system integrations in state.json from config.json"
   local system_integrations_length_config=$(cat $CONFIG_FILE | jq '.systemIntegrations | length')
@@ -174,6 +200,7 @@ main() {
     update_system_settings
     update_install_status
     update_providers
+    update_bbserver_details
     update_system_integrations
   else
     restore_state
