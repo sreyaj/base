@@ -124,6 +124,35 @@ update_system_settings() {
   __process_msg "Succcessfully updated state.json with systemSettings"
 }
 
+update_ecr_system_integration() {
+  __process_msg "Updating ecr system integration in state.json"
+  local system_integrations_length_config=$(cat $CONFIG_FILE | jq '.systemIntegrations | length')
+  local system_integrations_length_state=$(cat $STATE_FILE | jq '.systemIntegrations | length')
+  local installer_access_key=$(cat $CONFIG_FILE | jq -r '.systemSettings.installerAccessKey')
+  local installer_secret_key=$(cat $CONFIG_FILE | jq -r '.systemSettings.installerSecretKey')
+  local ecr_system_integration='{
+    "id": "57cecf81c349bb70153d8250",
+    "name": "Internal Shippable ECR",
+    "masterDisplayName": "hub",
+    "masterIntegrationId": "5673c6561895ca4474669507",
+    "masterName": "ECR",
+    "masterType": "hub",
+    "formJSONValues": [
+     {
+       "label": "aws_access_key_id",
+       "value": '$installer_access_key'
+     },
+     {
+       "label": "aws_secret_access_key",
+       "value": '$installer_secret_key'
+     }
+    ],
+    "isEnabled": true
+  }'
+  local update=$(cat $STATE_FILE | jq '.systemIntegrations['"$system_integrations_length_state"']='"$ecr_system_integration"'')
+  update=$(echo $update | jq '.' | tee $STATE_FILE)
+}
+
 update_install_status() {
   __process_msg "Updating install status in state.json from config.json"
   local install_status=$(cat $CONFIG_FILE | jq '.installStatus')
@@ -172,6 +201,7 @@ main() {
   if [ $INIT_STATE_FILE -eq 1 ]; then
     bootstrap_state
     update_system_settings
+    update_ecr_system_integration
     update_install_status
     update_providers
     update_system_integrations
