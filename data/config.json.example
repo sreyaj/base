@@ -19,9 +19,8 @@
     "runMode": "dev",
     "apiUrl": "http://api.myserver.com",
     "wwwUrl": "http://myserver.com",
-    "awsAccessKey": "AKIAIE5KBZR4STNKIIII",
-    "awsSecretKey": "GPGPGccYiBtkjT2m9evnFr3ghZjpIczy4rHVO/0",
-    "awsRegion": "us-east-1",
+    "installerAccessKey": "AKIAIE5KBZR4STNKIIII",
+    "installerSecretKey": "GPGPGccYiBtkjT2m9evnFr3ghZjpIczy4rHVO/0",
     "execImage": "shipimg/mexec:master.3859",
     "runShImage": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.4"
   },
