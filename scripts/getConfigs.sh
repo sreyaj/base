@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 readonly SERVICES_CONFIG="$DATA_DIR/config.json"
-local STATE_FILE_BACKUP="$DATA_DIR/state.json.backup"
 
 ###########################################################
 #s3 access
@@ -11,7 +10,7 @@ readonly CONFIG_SECRET_KEY="test"
 #s3 bucket
 readonly CONFIG_FOLDER="test"
 
-local PROVIDER_ID=3
+PROVIDER_ID=3
 
 
 get_system_config() {

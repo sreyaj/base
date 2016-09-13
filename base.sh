@@ -17,6 +17,7 @@ readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
 readonly DATA_DIR="$ROOT_DIR/data"
 readonly REMOTE_SCRIPTS_DIR="$ROOT_DIR/scripts/remote"
 readonly STATE_FILE="$DATA_DIR/state.json"
+readonly STATE_FILE_BACKUP="$DATA_DIR/state.json.backup"
 readonly CONFIG_FILE="$DATA_DIR/config.json"
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
