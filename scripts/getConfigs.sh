@@ -11,7 +11,7 @@ readonly CONFIG_SECRET_KEY="test"
 #s3 bucket
 readonly CONFIG_FOLDER="test"
 
-export PROVIDER_ID=3
+local PROVIDER_ID=3
 
 
 get_system_config() {
