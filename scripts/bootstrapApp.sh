@@ -331,12 +331,12 @@ provision_api() {
     local opts=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .opts')
     local image=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .image')
 
-    local boot_api_cmd="sudo docker service create \
+    local boot_api_cmd="docker service create \
       $port_mapping \
       $env_variables \
       $opts $image"
 
-    local rm_api_cmd="sudo docker service rm api || true"
+    local rm_api_cmd="docker service rm api || true"
 
     _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
     _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
@@ -543,12 +543,12 @@ restart_api() {
   local opts=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .opts')
   local image=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .image')
 
-  local boot_api_cmd="sudo docker service create \
+  local boot_api_cmd="docker service create \
     $port_mapping \
     $env_variables \
     $opts $image"
 
-  local rm_api_cmd="sudo docker service rm api || true"
+  local rm_api_cmd="docker service rm api || true"
 
   _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"

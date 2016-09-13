@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 install_base_binaries() {
-  sudo apt-get -y update
-  sudo apt-get install -y jq vim git-core
+  apt-get -y update
+  apt-get install -y jq vim git-core
 }
 
 main() {

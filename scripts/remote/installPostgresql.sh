@@ -34,11 +34,11 @@ install_postgres() {
 
   if [ -z "$pg_path" ]; then
     echo "|_########## Postgres not installed, installing"
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee -a /etc/apt/sources.list.d/pgdg.list
-    wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee -a /etc/apt/sources.list.d/pgdg.list
+    wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
 
-    sudo apt-get update -y
-    sudo apt-get install -y postgresql postgresql-contrib
+    apt-get update -y
+    apt-get install -y postgresql postgresql-contrib
 
   else
     echo "|_########## Postgres already installed, skipping"
@@ -49,32 +49,32 @@ install_postgres() {
 __create_filesystem() {
   local mount_point="$1"
   echo "|_########## Creating filesystem from mount $mount_point"
-  sudo mkfs.ext4 "$mount_point"
+  mkfs.ext4 "$mount_point"
 }
 
 __mount_filesystem() {
   local mount_point="$1"
   local mount_path="$2"
   echo "|_########## Mounting new filesystem to $mount_path"
-  sudo mkdir -p "$mount_path"
-  echo "$mount_point $mount_path auto noatime 0 0" | sudo tee -a /etc/fstab
-  sudo mount "$mount_path"
+  mkdir -p "$mount_path"
+  echo "$mount_point $mount_path auto noatime 0 0" | tee -a /etc/fstab
+  mount "$mount_path"
 }
 
 configure_data_dirs() {
   echo "Configuring Postgres data directory"
-  sudo mkdir -p $ROOT_MOUNT_PATH
+  mkdir -p $ROOT_MOUNT_PATH
 
   echo "Configuring Shippable data directory"
-  sudo mkdir -p $DATA_MOUNT_PATH
+  mkdir -p $DATA_MOUNT_PATH
 }
 
 update_ownership() {
   echo "Updating ownership of Postgres data directory"
-  sudo chown -cR $PG_USER:$PG_USER $ROOT_MOUNT_PATH
+  chown -cR $PG_USER:$PG_USER $ROOT_MOUNT_PATH
 
   echo "Updating ownership of Shippable data directory"
-  sudo chown -cR $PG_USER:$PG_USER $DATA_MOUNT_PATH
+  chown -cR $PG_USER:$PG_USER $DATA_MOUNT_PATH
 }
 
 initialize_root_db() {
@@ -89,16 +89,13 @@ initialize_root_db() {
 initialize_data_db_directory() {
   echo "Initializing  data DB"
   sudo -u postgres mkdir -p $DATA_DB_PATH
-  #local init_db_cmd="sudo -u postgres $PG_BIN_PATH/initdb $DATA_DB_PATH"
-  #echo "|_######### executing $init_db_cmd"
-  #init_db_cmd_res=$($init_db_cmd)
 }
 
 
 stop_running_instance() {
   echo "Stopping running Postgres instance"
   {
-    sudo service postgresql stop
+    service postgresql stop
   } || {
     echo "Service already stopped"
   }
@@ -110,21 +107,21 @@ create_root_config_files() {
   # These are just copied over from the default installation
   # and need to be checked out from SCM
   ##
-  sudo cp -vr $PG_DEFAULT_CONFIG_PATH/pg_hba.conf $ROOT_CONFIG_PATH/pg_hba.conf
-  sudo cp -vr $PG_DEFAULT_CONFIG_PATH/pg_ident.conf $ROOT_CONFIG_PATH/pg_ident.conf
+  cp -vr $PG_DEFAULT_CONFIG_PATH/pg_hba.conf $ROOT_CONFIG_PATH/pg_hba.conf
+  cp -vr $PG_DEFAULT_CONFIG_PATH/pg_ident.conf $ROOT_CONFIG_PATH/pg_ident.conf
 }
 
 update_root_config() {
   echo "Updating root database path to : $ROOT_DB_PATH"
-  echo "data_directory = '$ROOT_DB_PATH'" | sudo tee -a $PG_CONFIG_PATH
+  echo "data_directory = '$ROOT_DB_PATH'" | tee -a $PG_CONFIG_PATH
 
   echo "Updating hba file path to : $ROOT_CONFIG_PATH/pg_hba.conf"
-  echo "hba_file = '$ROOT_CONFIG_PATH/pg_hba.conf'"  | sudo tee -a $PG_CONFIG_PATH
+  echo "hba_file = '$ROOT_CONFIG_PATH/pg_hba.conf'"  | tee -a $PG_CONFIG_PATH
 
   echo "Updating ident file path to : $ROOT_CONFIG_PATH/pg_ident.conf"
-  echo "ident_file = '$ROOT_CONFIG_PATH/pg_ident.conf'"  | sudo tee -a $PG_CONFIG_PATH
+  echo "ident_file = '$ROOT_CONFIG_PATH/pg_ident.conf'"  | tee -a $PG_CONFIG_PATH
 
-  sudo chown -cR postgres:postgres $ROOT_CONFIG_PATH
+  chown -cR postgres:postgres $ROOT_CONFIG_PATH
 }
 
 initialize_custom_config() {
@@ -132,16 +129,16 @@ initialize_custom_config() {
   {
     grep "$header" $PG_CONFIG_PATH
   } || {
-    echo "#------------------------------------------------------" | sudo tee -a $PG_CONFIG_PATH
-    echo "#----------- Shippable Postgres Config ----------------" | sudo tee -a $PG_CONFIG_PATH
-    echo "#------------------------------------------------------" | sudo tee -a $PG_CONFIG_PATH
+    echo "#------------------------------------------------------" | tee -a $PG_CONFIG_PATH
+    echo "#----------- Shippable Postgres Config ----------------" | tee -a $PG_CONFIG_PATH
+    echo "#------------------------------------------------------" | tee -a $PG_CONFIG_PATH
   }
   #################################################################
   ######### SHIPPABLE custom POSTGRES configuration ###############
   ######### add variables here that will override defaults in #####
   ######### /etc/postgresql/9.5/main/postgresql.conf ##############
   #################################################################
-  echo "listen_addresses='*'"  | sudo tee -a $PG_CONFIG_PATH
+  echo "listen_addresses='*'"  | tee -a $PG_CONFIG_PATH
 }
 
 initialize_auth_config() {
@@ -150,21 +147,21 @@ initialize_auth_config() {
   {
     grep "$header" $hba_config
   } || {
-    echo "#------------------------------------------------------" | sudo tee -a $hba_config
-    echo "#----------- Shippable Postgres Config ----------------" | sudo tee -a $hba_config
-    echo "#------------------------------------------------------" | sudo tee -a $hba_config
+    echo "#------------------------------------------------------" | tee -a $hba_config
+    echo "#----------- Shippable Postgres Config ----------------" | tee -a $hba_config
+    echo "#------------------------------------------------------" | tee -a $hba_config
   }
   #################################################################
   ######### SHIPPABLE custom POSTGRES configuration ###############
   ######### add variables here that will override defaults in #####
   ######### /pg/config/pg_hba.conf ################################
   #################################################################
-  echo "host all  all    0.0.0.0/0  md5" | sudo tee -a $hba_config
+  echo "host all  all    0.0.0.0/0  md5" | tee -a $hba_config
 }
 
 start_instance() {
   echo "Starting Postgres"
-  sudo service postgresql start
+  service postgresql start
 }
 
 bootstrap_db() {
@@ -178,7 +175,7 @@ bootstrap_db() {
 
 main() {
   {
-    check_postgres=$(sudo service --status-all 2>&1 | grep postgres)
+    check_postgres=$(service --status-all 2>&1 | grep postgres)
   } || {
     true
   }

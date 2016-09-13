@@ -155,10 +155,10 @@ install_vault() {
 
     _exec_remote_cmd $host "psql -U $db_username -h $db_ip -d $db_name -w -f /etc/vault.d/vault_kv_store.sql"
 
-    _exec_remote_cmd $host "sudo service vault start || true"
+    _exec_remote_cmd $host "service vault start || true"
 
     _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
+    _exec_remote_cmd_proxyless "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
     _update_install_status "vaultInitialized"
   else
     __process_msg "Vault already initialized, skipping"
@@ -359,13 +359,13 @@ install_swarm() {
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
 
     __process_msg "Initializing docker swarm master"
-    _exec_remote_cmd "$host" "sudo docker swarm leave --force || true"
-    local swarm_init_cmd="sudo docker swarm init --advertise-addr $host"
+    _exec_remote_cmd "$host" "docker swarm leave --force || true"
+    local swarm_init_cmd="docker swarm init --advertise-addr $host"
     _exec_remote_cmd "$host" "$swarm_init_cmd"
 
     local swarm_worker_token="swarm_worker_token.txt"
     local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
-    _exec_remote_cmd "$host" "'sudo docker swarm join-token -q worker > $swarm_worker_token_remote'"
+    _exec_remote_cmd "$host" "'docker swarm join-token -q worker > $swarm_worker_token_remote'"
     _copy_script_local $host "$swarm_worker_token_remote"
 
     local script_dir_local="/tmp/shippable"
@@ -379,12 +379,12 @@ install_swarm() {
     __process_msg "Running Swarm in drain mode"
     local swarm_master_host_name="swarm_master_host_name.txt"
     local swarm_master_host_name_remote="$SCRIPT_DIR_REMOTE/$swarm_master_host_name"
-    _exec_remote_cmd "$host" "'sudo docker node inspect self | jq -r '.[0].Description.Hostname' > $swarm_master_host_name_remote'"
+    _exec_remote_cmd "$host" "'docker node inspect self | jq -r '.[0].Description.Hostname' > $swarm_master_host_name_remote'"
     _copy_script_local $host "$swarm_master_host_name_remote"
 
     local swarm_master_host_name_remote="$script_dir_local/$swarm_master_host_name"
     local swarm_master_host_name=$(cat $swarm_master_host_name_remote)
-    _exec_remote_cmd "$host" "sudo docker node update  --availability drain $swarm_master_host_name"
+    _exec_remote_cmd "$host" "docker node update  --availability drain $swarm_master_host_name"
 
     _update_install_status "swarmInstalled"
   else
@@ -406,8 +406,8 @@ initialize_workers() {
       local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
       local host=$(echo $machine | jq '.ip')
       local swarm_worker_token=$(cat $STATE_FILE | jq '.systemSettings.swarmWorkerToken')
-      _exec_remote_cmd "$host" "sudo docker swarm leave || true"
-      _exec_remote_cmd "$host" "sudo docker swarm join --token $swarm_worker_token $gitlab_host_ip"
+      _exec_remote_cmd "$host" "docker swarm leave || true"
+      _exec_remote_cmd "$host" "docker swarm join --token $swarm_worker_token $gitlab_host_ip"
     done
     _update_install_status "swarmInitialized"
   else

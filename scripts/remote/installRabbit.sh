@@ -1,37 +1,37 @@
 #!/bin/bash -e
 
 install_log_rotate() {
-  sudo apt-get update
-  sudo apt-get -y -q install wget logrotate
+  apt-get update
+  apt-get -y -q install wget logrotate
 }
 
 install_rabbitmq() {
   wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
-  sudo apt-key add rabbitmq-signing-key-public.asc
+  apt-key add rabbitmq-signing-key-public.asc
 
   # Install
-  sudo echo "deb http://www.rabbitmq.com/debian/ testing main" >> /etc/apt/sources.list
-  sudo apt-get update
-  sudo apt-get -y --force-yes install rabbitmq-server
+  echo "deb http://www.rabbitmq.com/debian/ testing main" >> /etc/apt/sources.list
+  apt-get update
+  apt-get -y --force-yes install rabbitmq-server
 }
 
 configure_rabbitmq() {
   # Create config and enable admin
-  sudo echo -e "[ \n {rabbit, [ \n {loopback_users, []}, \n {heartbeat, 3600} \n ]} \n ]." >> /etc/rabbitmq/rabbitmq.config
-  sudo /usr/sbin/rabbitmq-plugins enable rabbitmq_management
+  echo -e "[ \n {rabbit, [ \n {loopback_users, []}, \n {heartbeat, 3600} \n ]} \n ]." >> /etc/rabbitmq/rabbitmq.config
+  /usr/sbin/rabbitmq-plugins enable rabbitmq_management
 }
 
 start_rabbitmq() {
   # Start
-  sudo chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/mnesia
-  sudo chown -R rabbitmq:rabbitmq /var/log/rabbitmq
+  chown -R rabbitmq:rabbitmq /var/lib/rabbitmq/mnesia
+  chown -R rabbitmq:rabbitmq /var/log/rabbitmq
   ulimit -n 65536
-  sudo service rabbitmq-server restart
+  service rabbitmq-server restart
 }
 
 main() {
   {
-    check_rabbitmq=$(sudo service --status-all 2>&1 | grep rabbitmq-server)
+    check_rabbitmq=$(service --status-all 2>&1 | grep rabbitmq-server)
   } || {
     true
   }
