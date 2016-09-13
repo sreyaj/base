@@ -5,7 +5,7 @@ VAULTDOWNLOAD=https://releases.hashicorp.com/vault/${VAULTVERSION}/vault_${VAULT
 VAULTCONFIGDIR=/etc/vault.d
 
 download_vault() {
-  sudo apt-get install -y zip
+  apt-get install -y zip
   echo "Fetching Vault..."
   curl -L $VAULTDOWNLOAD > vault.zip
 }
@@ -19,8 +19,8 @@ install_vault() {
 
 create_config_dirs() {
   echo "Creating Vault configuration..."
-  sudo mkdir -p $VAULTCONFIGDIR
-  sudo chmod 755 $VAULTCONFIGDIR
+  mkdir -p $VAULTCONFIGDIR
+  chmod 755 $VAULTCONFIGDIR
 }
 
 main() {

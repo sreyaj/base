@@ -53,21 +53,21 @@ __check_dependencies() {
     type jq &> /dev/null && __process_msg "'jq' already installed, skipping"
   } || {
     __process_msg "Installing 'jq'"
-    sudo apt-get install -y jq
+    apt-get install -y jq
   }
 
   {
     type rsync &> /dev/null && __process_msg "'rsync' already installed, skipping"
   } || {
     __process_msg "Installing 'rsync'"
-    sudo apt-get install -y rsync
+    apt-get install -y rsync
   }
 
   {
     type ssh &> /dev/null && __process_msg "'ssh' already installed, skipping"
   } || {
     __process_msg "Installing 'ssh'"
-    sudo apt-get install -y ssh-client
+    apt-get install -y ssh-client
   }
 }
 

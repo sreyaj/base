@@ -2,18 +2,18 @@
 export GITLAB_VERSION=8.9.6-ce.0
 install_deps() {
   echo "installing dependencies"
-  sudo apt-get -y install curl openssh-server ca-certificates
+  apt-get -y install curl openssh-server ca-certificates
 }
 
 install_gitlab() {
   echo "installing Gitlab"
-  curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
-  sudo apt-get -y install gitlab-ce=$GITLAB_VERSION
+  curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | bash
+  apt-get -y install gitlab-ce=$GITLAB_VERSION
 }
 
 configure_and_start() {
   echo "configuring and starting gitlab"
-  sudo gitlab-ctl reconfigure
+  gitlab-ctl reconfigure
 }
 
 main() {

@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-export VAULT_ADDR=http://0.0.0.0:8200
+export VAULT_ADDR=http://localhost:8200
 export VAULT_KEYFILE=/etc/vault.d/keys.txt
 export DB_USERNAME=$1
 export DB_NAME=$2
@@ -19,13 +19,13 @@ status() {
 
 init() {
   echo "Running 'vault init' to initialize Vault server"
-  vault init | sudo tee $VAULT_KEYFILE
+  vault init | tee $VAULT_KEYFILE
 }
 
 unseal() {
   if [ ! -f "$VAULT_KEYFILE" ]; then
     echo "Missing key file: $VAULT_KEYFILE required to unseal vault"
-    echo "run 'vault init | sudo tee $VAULT_KEYFILE' manually to generate keyfile"
+    echo "run 'vault init | tee $VAULT_KEYFILE' manually to generate keyfile"
     exit 1
   else
     echo "Vault key file $VAULT_KEYFILE exists, unsealing vault"

@@ -8,7 +8,7 @@ readonly KERNEL_ARCH=64
 check_64_bit() {
   echo 'Checking kernel'
 
-  kernel=$(sudo uname -m)
+  kernel=$(uname -m)
 
   # need a 64 bit kernel
   if [[ $kernel == *"$KERNEL_ARCH"* ]]; then
@@ -19,13 +19,13 @@ check_64_bit() {
   fi
   ## this has to be added because apt-get update was throwing this error
   ## http://askubuntu.com/questions/104160/method-driver-usr-lib-apt-methods-https-could-not-be-found-update-error
-  sudo apt-get -y install apt-transport-https
+  apt-get -y install apt-transport-https
 }
 
 check_ram() {
   echo "Checking RAM"
 
-  mem=$(sudo free -m | grep "Mem:" | awk '{print $2}' || echo "")
+  mem=$(free -m | grep "Mem:" | awk '{print $2}' || echo "")
 
   if [ -z "$mem" ]; then
     echo "Unable to determine RAM"
@@ -41,7 +41,7 @@ check_ram() {
 
 check_hdd_space() {
   echo "Checking HDD"
-  total_space=$(sudo df --total | grep "total" | awk '{print $2}' || echo "")
+  total_space=$(df --total | grep "total" | awk '{print $2}' || echo "")
 
   if [ -z "$total_space" ]; then
     echo "Unable to determine disk space"

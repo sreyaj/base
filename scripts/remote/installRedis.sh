@@ -7,7 +7,7 @@ install_redis() {
 
 main() {
   {
-    check_redis=$(sudo service --status-all 2>&1 | grep redis-server)
+    check_redis=$(service --status-all 2>&1 | grep redis-server)
   } || {
     true
   }

@@ -212,7 +212,7 @@ __run_service() {
     local image=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .image')
     local replicas=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .replicas')
 
-    local boot_cmd="sudo docker service create"
+    local boot_cmd="docker service create"
 
     if [ $port_mapping != "null" ]; then
       boot_cmd="$boot_cmd $port_mapping"

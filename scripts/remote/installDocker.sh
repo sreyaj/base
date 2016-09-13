@@ -5,7 +5,7 @@ export docker_restart=false
 readonly DOCKER_VERSION=1.12.1-0~trusty
 
 _run_update() {
-  sudo apt-get update
+  apt-get update
 }
 
 docker_install() {
@@ -13,17 +13,17 @@ docker_install() {
 
   _run_update
 
-  sudo apt-get install -y apt-transport-https ca-certificates
+  apt-get install -y apt-transport-https ca-certificates
 
-  sudo apt-get install -y linux-image-extra-`uname -r` linux-image-extra-virtual
+  apt-get install -y linux-image-extra-`uname -r` linux-image-extra-virtual
 
-  sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+  apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
-  echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" | sudo tee -a /etc/apt/sources.list.d/docker.list
+  echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" | tee -a /etc/apt/sources.list.d/docker.list
 
   _run_update
 
-  sudo apt-get install -y docker-engine=$DOCKER_VERSION
+  apt-get install -y docker-engine=$DOCKER_VERSION
 
 }
 
@@ -31,12 +31,12 @@ check_docker_opts() {
   echo "Checking docker options"
 
   SHIPPABLE_DOCKER_OPTS='DOCKER_OPTS="$DOCKER_OPTS -H unix:///var/run/docker.sock -g=/data --storage-driver aufs"'
-  opts_exist=$(sudo sh -c "grep '$SHIPPABLE_DOCKER_OPTS' /etc/default/docker || echo ''")
+  opts_exist=$(sh -c "grep '$SHIPPABLE_DOCKER_OPTS' /etc/default/docker || echo ''")
 
   if [ -z "$opts_exist" ]; then
     ## docker opts do not exist
     echo "appending DOCKER_OPTS to /etc/default/docker"
-    sudo sh -c "echo '$SHIPPABLE_DOCKER_OPTS' >> /etc/default/docker"
+    sh -c "echo '$SHIPPABLE_DOCKER_OPTS' >> /etc/default/docker"
     docker_restart=true
   else
     echo "Shippable docker options already present in /etc/default/docker"
@@ -44,14 +44,14 @@ check_docker_opts() {
 
   ## remove the docker option to listen on all ports
   echo "Disabling docker tcp listener"
-  sudo sh -c "sed -e s/\"-H tcp:\/\/0.0.0.0:4243\"//g -i /etc/default/docker"
+  sh -c "sed -e s/\"-H tcp:\/\/0.0.0.0:4243\"//g -i /etc/default/docker"
 }
 
 restart_docker_service() {
   echo "checking if docker restart is necessary"
   if [ $docker_restart == true ]; then
     echo "restarting docker service on reset"
-    sudo service docker restart
+    service docker restart
   else
     echo "docker_restart set to false, not restarting docker daemon"
   fi
@@ -59,7 +59,7 @@ restart_docker_service() {
 
 main() {
   {
-    check_docker=$(sudo service --status-all 2>&1 | grep docker)
+    check_docker=$(service --status-all 2>&1 | grep docker)
   } || {
     true
   }
