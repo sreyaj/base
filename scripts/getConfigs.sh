@@ -157,13 +157,13 @@ update_bbserver_details() {
     local url=$response
     local providers_state=$(cat $STATE_FILE | jq '
       .providers |= . + [{
-        "id": '"$id"',
-        "url": '"$url"',
+        "id": "'$id'",
+        "url": "'$url'",
         "providerId": '$PROVIDER_ID',
-        "masterIntegrationId": '"572af430ead9631100f7f64d"',
+        "masterIntegrationId": "572af430ead9631100f7f64d",
         "name": "bitbucketServer",
-        "createdAt": '"2016-09-12T07:16:55.387Z"',
-        "updatedAt": '"2016-09-12T08:04:18.893Z"'
+        "createdAt": "2016-09-12T07:16:55.387Z",
+        "updatedAt": "2016-09-12T08:04:18.893Z"
       }]'
     )
     echo $providers_state | jq '.' > $STATE_FILE
