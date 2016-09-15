@@ -9,13 +9,17 @@ add_bbserver() {
   __process_msg "Do you want to add the Bitbucket Server integration? (y/n)"
   read response
   if [[ "$response" =~ "y" ]]; then
-    __process_msg "Please enter the URL for the Bitbucket Server : "
+    __process_msg "Please enter the private IP for the Bitbucket Server(eg: http://app.shippable.com) : "
     read response
+    local private_url=$response
+    __process_msg "Please enter the public IP for the Bitbucket Server(eg: http://app.shippable.com) : "
+    read response
+    local public_url=$response
     local id=$(cat /proc/sys/kernel/random/uuid)
-    local url=$response
+
     local bbs_provider='{
         "id": "'$id'",
-        "url": "'$url'",
+        "url": "'$private_url'",
         "providerId": '$PROVIDER_ID',
         "masterIntegrationId": "572af430ead9631100f7f64d",
         "name": "bitbucketServer",
@@ -23,24 +27,20 @@ add_bbserver() {
         "updatedAt": "2016-09-12T08:04:18.893Z"
       }'
 
-    __process_msg "Please enter the hostname : "
+    __process_msg "Please enter the hostname(eg: shippable.com) : "
     read response
     local host_name=$response
-
     __process_msg "Please enter the port(optional) : "
     read response
     local port=$response
-
     __process_msg "Please enter the protocol : "
     read response
     local protocol=$response
-
     __generate_ssh_key
     local bbs_ssh_key=""
     while read -r line || [[ -n "$line" ]]; do
-      bbs_ssh_key=$bbs_ssh_key"$line\\n"
+      bbs_ssh_key=$bbs_ssh_key"$line\\r\\n"
     done < "$BBS_KEY"
-
 
     local bbserver_sys_integration='{
       "id": "507f191e810c19729de860ea",
@@ -62,7 +62,6 @@ add_bbserver() {
         "label": "hostname",
         "value": "'$host_name'"
       },'
-
       if [ ! -z $port ]; then
         bbserver_sys_integration=$bbserver_sys_integration'
         {
@@ -82,15 +81,15 @@ add_bbserver() {
       },
       {
         "label": "requestTokenURL",
-        "value": "'$url'/plugins/servlet/oauth/request-token"
+        "value": "'$private_url'/plugins/servlet/oauth/request-token"
       },
       {
         "label": "accessTokenURL",
-        "value": "'$url'/plugins/servlet/oauth/access-token"
+        "value": "'$private_url'/plugins/servlet/oauth/access-token"
       },
       {
         "label": "userAuthorizationURL",
-        "value": "'$url'/plugins/servlet/shippable-oauth/authorize"
+        "value": "'$public_url'/plugins/servlet/shippable-oauth/authorize"
       }
       ],
       "isEnabled": true
@@ -102,8 +101,6 @@ add_bbserver() {
 
     __process_msg "Please add the following json to the systemIntegrations array in the config.json file..."
     echo $bbserver_sys_integration | jq '.'
-    # local update=$(cat $STATE_FILE | jq '.systemIntegrations['"$system_integrations_length_state"']='"$bbserver_sys_integration"'')
-    # update=$(echo $update | jq '.' | tee $STATE_FILE)
 
     ((PROVIDER_ID++))
   fi
