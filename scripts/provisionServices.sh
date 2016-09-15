@@ -121,6 +121,21 @@ __save_service_config() {
       env_values="$env_values -e $env_var=$env_value"
     done
 
+    # Proxy
+    __process_msg "Adding $service proxy mapping"
+    http_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpProxy')
+    https_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpsProxy')
+
+    if [ ! -z $http_proxy ]; then
+      env_values="$env_values -e http_proxy=$http_proxy HTTP_PROXY=$http_proxy"
+      __process_msg "Successfully updated $service http proxy mapping"
+    fi
+
+    if [ ! -z $https_proxy ]; then
+      env_values="$env_values -e http_proxy=$https_proxy HTTP_PROXY=$https_proxy"
+      __process_msg "Successfully updated $service http proxy mapping"
+    fi
+
     local state_env=$(cat $STATE_FILE | jq --arg service "$service" '
       .services  |=
       map(if .name==$service then
@@ -131,6 +146,7 @@ __save_service_config() {
       )'
     )
     update=$(echo $state_env | jq '.' | tee $STATE_FILE)
+
 
 
     __process_msg "Generating $service replicas"
