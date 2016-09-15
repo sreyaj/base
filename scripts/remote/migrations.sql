@@ -13,6 +13,11 @@ do $$
       alter table "systemProperties" add constraint "systemProperties_pkey" primary key ("fieldName");
     end if;
 
+    -- Update  systemMachineImages.systemIntegrationId and set allowedNull to true
+    if exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'systemIntegrationId') then
+      alter table "systemMachineImages" alter column "systemIntegrationId" drop not null;
+    end if;
+
     -- insert all systemCodes
     if not exists (select 1 from "systemCodes" where code = 1000) then
       insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -515,23 +520,6 @@ do $$
     if not exists (select 1 from "masterIntegrationFields" where "id" = 27) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (27, '571032a897aadea0ee186900', 'url', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-23', '2016-06-23');
-    end if;
-
-    -- AWS-ROOT
-    if not exists (select 1 from "masterIntegrations" where "name" = 'AWS' and "typeCode" = 5005) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57467326b3cbfc0c004f9110', 10, 'AWS', 'AWS-ROOT', 'cloudproviders', true, 'system', 5005, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-     -- masterIntegrationFields for AWS-ROOT
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 28) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (28, '57467326b3cbfc0c004f9110', 'accessKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 29) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (29, '57467326b3cbfc0c004f9110', 'secretKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- GKE
