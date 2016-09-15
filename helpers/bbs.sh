@@ -15,7 +15,7 @@ add_bbserver() {
     __process_msg "Please enter the public IP/URL for the Bitbucket Server(eg: http://bitbucketServer.com) : "
     read response
     local public_url=$response
-    local id=$(cat /proc/sys/kernel/random/uuid)
+    local id="57d293efeecf9c0f0016cf2c"
 
     local bbs_provider='{
         "id": "'$id'",
