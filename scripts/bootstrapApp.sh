@@ -267,11 +267,30 @@ provision_api() {
       elif [ "$env_var" == "DBDIALECT" ]; then
         local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.dbDialect')
         api_env_values="$api_env_values -e $env_var=$db_dialect"
+      elif [ "$env_var" == "SHIPPABLE_API_URL" ]; then
+        local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+        api_env_values="$api_env_values -e $env_var=$db_dialect"
+      elif [ "$env_var" == "RUN_MODE" ]; then
+        local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
+        api_env_values="$api_env_values -e $env_var=$db_dialect"
       else
         echo "No handler for API env : $env_var, exiting"
         exit 1
       fi
     done
+
+    http_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpProxy')
+    https_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpsProxy')
+
+    if [ ! -z $http_proxy ]; then
+      api_env_values="$api_env_values -e http_proxy=$http_proxy -e HTTP_PROXY=$http_proxy"
+      __process_msg "Successfully updated api http proxy mapping"
+    fi
+
+    if [ ! -z $https_proxy ]; then
+      api_env_values="$api_env_values -e https_proxy=$https_proxy -e HTTPS_PROXY=$https_proxy"
+      __process_msg "Successfully updated api https proxy mapping"
+    fi
 
     __process_msg "Successfully generated api environment variables : $api_env_values"
 

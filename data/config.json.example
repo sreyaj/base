@@ -21,6 +21,8 @@
     "wwwUrl": "http://myserver.com",
     "installerAccessKey": "xxx",
     "installerSecretKey": "xxx",
+    "httpProxy": "",
+    "httpsProxy": "",
     "execImage": "shipimg/mexec:master.3859",
     "runShImage": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.4"
   },
@@ -274,7 +276,9 @@
       "DBPASSWORD",
       "DBHOST",
       "DBPORT",
-      "DBDIALECT"
+      "DBDIALECT",
+      "SHIPPABLE_API_URL",
+      "RUN_MODE"
     ]
   },{
     "name": "www",
