@@ -276,7 +276,9 @@
       "DBPASSWORD",
       "DBHOST",
       "DBPORT",
-      "DBDIALECT"
+      "DBDIALECT",
+      "SHIPPABLE_API_URL",
+      "RUN_MODE"
     ]
   },{
     "name": "www",

@@ -127,13 +127,13 @@ __save_service_config() {
     https_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpsProxy')
 
     if [ ! -z $http_proxy ]; then
-      env_values="$env_values -e http_proxy=$http_proxy HTTP_PROXY=$http_proxy"
+      env_values="$env_values -e http_proxy=$http_proxy -e HTTP_PROXY=$http_proxy"
       __process_msg "Successfully updated $service http proxy mapping"
     fi
 
     if [ ! -z $https_proxy ]; then
-      env_values="$env_values -e http_proxy=$https_proxy HTTP_PROXY=$https_proxy"
-      __process_msg "Successfully updated $service http proxy mapping"
+      env_values="$env_values -e https_proxy=$https_proxy -e HTTPS_PROXY=$https_proxy"
+      __process_msg "Successfully updated $service https proxy mapping"
     fi
 
     local state_env=$(cat $STATE_FILE | jq --arg service "$service" '
