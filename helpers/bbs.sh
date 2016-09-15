@@ -9,10 +9,10 @@ add_bbserver() {
   __process_msg "Do you want to add the Bitbucket Server integration? (y/n)"
   read response
   if [[ "$response" =~ "y" ]]; then
-    __process_msg "Please enter the private IP for the Bitbucket Server(eg: http://app.shippable.com) : "
+    __process_msg "Please enter the private IP for the Bitbucket Server(eg: http://127.0.0.1) : "
     read response
     local private_url=$response
-    __process_msg "Please enter the public IP for the Bitbucket Server(eg: http://app.shippable.com) : "
+    __process_msg "Please enter the public IP/URL for the Bitbucket Server(eg: http://bitbucketServer.com) : "
     read response
     local public_url=$response
     local id=$(cat /proc/sys/kernel/random/uuid)
@@ -27,7 +27,7 @@ add_bbserver() {
         "updatedAt": "2016-09-12T08:04:18.893Z"
       }'
 
-    __process_msg "Please enter the hostname(eg: shippable.com) : "
+    __process_msg "Please enter the hostname(eg: ship.com) : "
     read response
     local host_name=$response
     __process_msg "Please enter the port(optional) : "
