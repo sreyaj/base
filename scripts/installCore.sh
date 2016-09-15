@@ -323,6 +323,8 @@ install_docker() {
       _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
       _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
     done
+    __process_msg "Please configure http_proxy in /etc/default/docker, if proxy needs to be configured. Press any button to continue, once this is done..."
+    read response
     _update_install_status "dockerInstalled"
     _update_install_status "dockerInitialized"
   else
