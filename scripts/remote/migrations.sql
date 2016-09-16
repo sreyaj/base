@@ -1,6 +1,18 @@
 do $$
   begin
 
+    -- Remove old masterIntegrationFields from github auth
+    delete from "masterIntegrationFields" where id in (76, 77, 78);
+
+    -- Remove redundant masterIntegrationFields from bitbucket auth
+    delete from "masterIntegrationFields" where id in (82, 83, 84);
+
+    -- Remove old masterIntegrationFields from bitbucket server auth
+    delete from "masterIntegrationFields" where id in (95, 96, 98, 99, 100, 101);
+
+    -- Remove old masterIntegrationFields from github enterprise auth
+    delete from "masterIntegrationFields" where id in (104, 105, 106);
+
     -- Remove systemCodes.id and set code as primary key
     if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'id') then
       alter table "systemCodes" drop column id;
@@ -193,6 +205,11 @@ do $$
       values (5008, 'payment', 'integration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    if not exists (select 1 from "systemCodes" where code = 5009) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (5009, 'externalci', 'integration', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
     if not exists (select 1 from "systemCodes" where code = 0) then
       insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
       values (0, 'WAITING', 'statusCodes', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
@@ -261,6 +278,21 @@ do $$
     if not exists (select 1 from "systemCodes" where code = 120) then
       insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
       values (120, 'DELETED', 'statusCodes', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 6000) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (6000, 'member', 'roles', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 6010) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (6010, 'collaborator', 'roles', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 6020) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (6020, 'admin', 'roles', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- insert all systemProperties
@@ -520,6 +552,23 @@ do $$
     if not exists (select 1 from "masterIntegrationFields" where "id" = 27) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (27, '571032a897aadea0ee186900', 'url', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-23', '2016-06-23');
+    end if;
+
+    -- AWS-ROOT
+    if not exists (select 1 from "masterIntegrations" where "name" = 'AWS' and "typeCode" = 5005) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('57467326b3cbfc0c004f9110', 10, 'AWS', 'AWS-ROOT', 'cloudproviders', true, 'system', 5005, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- masterIntegrationFields for AWS-ROOT
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 28) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (28, '57467326b3cbfc0c004f9110', 'accessKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 29) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (29, '57467326b3cbfc0c004f9110', 'secretKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- GKE
@@ -824,6 +873,10 @@ do $$
       values (70, '576ce63321333398d11a35ab', 'validityPeriod', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    if exists (select 1 from "systemMachineImages" where "provider" = 'AWS') then
+      update "systemMachineImages" set "systemIntegrationId" = NULL where "provider" = 'AWS';
+    end if;
+
     if exists (select 1 from "masterIntegrationFields" where "id" = 71 and "isRequired" = true) then
       update "masterIntegrationFields" set "isRequired" = false where "id" = 71;
     end if;
@@ -868,19 +921,9 @@ do $$
       values (75, '577de63321333398d11a35ac', 'clientSecret', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 76) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 111) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (76, '577de63321333398d11a35ac', 'hostname', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 77) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (77, '577de63321333398d11a35ac', 'port', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 78) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (78, '577de63321333398d11a35ac', 'protocol', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (111, '577de63321333398d11a35ac', 'wwwUrl', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 79) then
@@ -905,19 +948,9 @@ do $$
       values (81, '577de63321333398d11a35ad', 'clientSecret', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 82) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 108) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (82, '577de63321333398d11a35ad', 'hostname', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 83) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (83, '577de63321333398d11a35ad', 'port', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 84) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (84, '577de63321333398d11a35ad', 'protocol', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (108, '577de63321333398d11a35ad', 'wwwUrl', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 85) then
@@ -992,39 +1025,14 @@ do $$
       values (94, '577de63321333398d11a35ae', 'clientSecret', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 95) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 109) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (95, '577de63321333398d11a35ae', 'hostname', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 96) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (96, '577de63321333398d11a35ae', 'protocol', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (109, '577de63321333398d11a35ae', 'wwwUrl', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 97) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (97, '577de63321333398d11a35ae', 'providerId', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 98) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (98, '577de63321333398d11a35ae', 'requestTokenURL', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 99) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (99, '577de63321333398d11a35ae', 'accessTokenURL', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 100) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (100, '577de63321333398d11a35ae', 'userAuthorizationURL', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 101) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (101, '577de63321333398d11a35ae', 'port', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- github enterprise auth
@@ -1044,24 +1052,36 @@ do $$
       values (103, '507f1f77bcf86cd799439011', 'clientSecret', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 104) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 110) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (104, '507f1f77bcf86cd799439011', 'hostname', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 105) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (105, '507f1f77bcf86cd799439011', 'port', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 106) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (106, '507f1f77bcf86cd799439011', 'protocol', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (110, '507f1f77bcf86cd799439011', 'wwwUrl', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 107) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (107, '507f1f77bcf86cd799439011', 'providerId', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- JENKINS
+    if not exists (select 1 from "masterIntegrations" where "name" = 'jenkinsJob' and "typeCode" = 5009) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('57dbab5d15c59206bf4fbb50', 37, 'jenkinsJob', 'Jenkins', 'externalci', true, 'account', 5009, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    -- masterIntegrationFields for JENKINS
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 108) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (108, '57dbab5d15c59206bf4fbb50', 'username', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 109) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (109, '57dbab5d15c59206bf4fbb50', 'password/apiToken', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 110) then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (110, '57dbab5d15c59206bf4fbb50', 'url', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- Add systemImages
@@ -1387,11 +1407,31 @@ do $$
       alter table "buildJobs" alter column "isSerial" SET DEFAULT true;
     end if;
 
+    --Add execImage column to systemMachineImages
+    if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'execImage') then
+      alter table "systemMachineImages" add column "execImage" varchar(80);
+      update "systemMachineImages" set "execImage"='shipimg/mexec:master.3859' where "execImage" is null;
+      alter table "systemMachineImages" alter column "execImage" set not null;
+    end if;
+
     --Add runShImage column to systemMachineImages
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'runShImage') then
       alter table "systemMachineImages" add column "runShImage" varchar(80);
       update "systemMachineImages" set "runShImage"='shipimg/micro50:stepExec.server.6262' where "runShImage" is null;
       alter table "systemMachineImages" alter column "runShImage" set not null;
+    end if;
+
+    --Add execImage column to systemConfigs
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'execImage') then
+      alter table "systemConfigs" add column "execImage" varchar(255);
+      update "systemConfigs" set "execImage"='shipimg/mexec:master.3859' where "execImage" is null;
+      alter table "systemConfigs" alter column "execImage" set not null;
+    end if;
+
+    -- Add systemMachineImages to postgres
+    if not exists (select 1 from "systemMachineImages" where "systemMachineImageId" = 1) then
+      insert into "systemMachineImages" ("id", "systemMachineImageId","externalId",  "provider", "name", "description", "isAvailable","isDefault","securityGroup", "keyName", "execImage", "runShImage","region","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('572c81cb39a5440c0031b61c', 1, 'ami-1015f47d', 'AWS', 'Stable-EC2', 'Stable AMI version of ec2', true, true,'"sg-89eb30f1','shippable-beta', (select "execImage" from "systemConfigs" where id=1), 'shipimg/micro50:stepExec.server.6262', 'us-east-1','540e7734399939140041d882', '540e7734399939140041d882', '2016-05-06T11:36:43.715Z', '2016-06-11T02:33:27.469Z');
     end if;
 
     -- Add versionName to versions
@@ -1621,6 +1661,256 @@ do $$
 
     -- "port" is not a required field for bitbucket auth master integration
     update "masterIntegrationFields" set "isRequired" = false where "id" = 83;
+
+    -- Remove braintree systemIntegration
+    delete from "systemIntegrations" where "name" = 'braintree' and "masterType" = 'payment';
+
+  -- Adds foreign key relationships for resources
+    if not exists (select 1 from pg_constraint where conname = 'resources_subscriptionId_fkey') then
+      alter table "resources" add constraint "resources_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'resources_subscriptionIntegrationId_fkey') then
+      alter table "resources" add constraint "resources_subscriptionIntegrationId_fkey" foreign key ("subscriptionIntegrationId") references "subscriptionIntegrations"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'resources_projectId_fkey') then
+      alter table "resources" add constraint "resources_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'resources_typeCode_fkey') then
+      alter table "resources" add constraint "resources_typeCode_fkey" foreign key ("typeCode") references "systemCodes"(code) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for versions
+    if not exists (select 1 from pg_constraint where conname = 'versions_subscriptionId_fkey') then
+      alter table "versions" add constraint "versions_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'versions_projectId_fkey') then
+      alter table "versions" add constraint "versions_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for jobDependencies
+    if not exists (select 1 from pg_constraint where conname = 'jobDependencies_subscriptionId_fkey') then
+      alter table "jobDependencies" add constraint "jobDependencies_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for buildJobs
+    if not exists (select 1 from pg_constraint where conname = 'buildJobs_subscriptionId_fkey') then
+      alter table "buildJobs" add constraint "buildJobs_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'buildJobs_projectId_fkey') then
+      alter table "buildJobs" add constraint "buildJobs_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for buildJobConsoles
+    if not exists (select 1 from pg_constraint where conname = 'buildJobConsoles_buildJobId_fkey') then
+      alter table "buildJobConsoles" add constraint "buildJobConsoles_buildJobId_fkey" foreign key ("buildJobId") references "buildJobs"(id) on update restrict on delete restrict;
+    end if;
+
+  --Adds foreign key relationships for accountIntegrations
+    if not exists (select 1 from pg_constraint where conname = 'accountIntegrations_accountId_fkey') then
+      alter table "accountIntegrations" add constraint "accountIntegrations_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'accountIntegrations_providerId_fkey') then
+      alter table "accountIntegrations" add constraint "accountIntegrations_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'accountIntegrations_masterIntegrationId_fkey') then
+      alter table "accountIntegrations" add constraint "accountIntegrations_masterIntegrationId_fkey" foreign key ("masterIntegrationId") references "masterIntegrations"(id) on update restrict on delete restrict;
+    end if;
+
+  --Adds foreign key relationships for systemMachineImages
+    if not exists (select 1 from pg_constraint where conname = 'systemMachineImages_systemIntegrationId_fkey') then
+      alter table "systemMachineImages" add constraint "systemMachineImages_systemIntegrationId_fkey" foreign key ("systemIntegrationId") references "systemIntegrations"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for accountTokens
+    if not exists (select 1 from pg_constraint where conname = 'accountTokens_accountId_fkey') then
+      alter table "accountTokens" add constraint "accountTokens_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for accountProfiles
+    if not exists (select 1 from pg_constraint where conname = 'accountProfiles_accountId_fkey') then
+      alter table "accountProfiles" add constraint "accountProfiles_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'accountProfiles_providerId_fkey') then
+      alter table "accountProfiles" add constraint "accountProfiles_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
+    end if;
+
+  --Adds foreign key relationships for systemIntegrations
+    if not exists (select 1 from pg_constraint where conname = 'systemIntegrations_masterIntegrationId_fkey') then
+      alter table "systemIntegrations" add constraint "systemIntegrations_masterIntegrationId_fkey" foreign key ("masterIntegrationId") references "masterIntegrations"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for projectPermissions
+    if not exists (select 1 from pg_constraint where conname = 'projectPermissions_accountId_fkey') then
+      alter table "projectPermissions" add constraint "projectPermissions_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'projectPermissions_providerId_fkey') then
+      alter table "projectPermissions" add constraint "projectPermissions_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'projectPermissions_projectId_fkey') then
+      alter table "projectPermissions" add constraint "projectPermissions_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'projectPermissions_subscriptionId_fkey') then
+      alter table "projectPermissions" add constraint "projectPermissions_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for subscriptionIntegrations
+    if not exists (select 1 from pg_constraint where conname = 'subscriptionIntegrations_subscriptionId_fkey') then
+      alter table "subscriptionIntegrations" add constraint "subscriptionIntegrations_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'subscriptionIntegrations_accountIntegrationId_fkey') then
+      alter table "subscriptionIntegrations" add constraint "subscriptionIntegrations_accountIntegrationId_fkey" foreign key ("accountIntegrationId") references "accountIntegrations"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for subscriptionPermissions
+    if not exists (select 1 from pg_constraint where conname = 'subscriptionPermissions_accountId_fkey') then
+      alter table "subscriptionPermissions" add constraint "subscriptionPermissions_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'subscriptionPermissions_providerId_fkey') then
+      alter table "subscriptionPermissions" add constraint "subscriptionPermissions_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'subscriptionPermissions_subscriptionId_fkey') then
+      alter table "subscriptionPermissions" add constraint "subscriptionPermissions_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+  --Adds foreign key relationships for projects
+    if not exists (select 1 from pg_constraint where conname = 'projects_providerId_fkey') then
+      alter table "projects" add constraint "projects_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'projects_subscriptionId_fkey') then
+      alter table "projects" add constraint "projects_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+  --Adds foreign key relationships for projectDailyAggs
+    if not exists (select 1 from pg_constraint where conname = 'projectDailyAggs_projectId_fkey') then
+      alter table "projectDailyAggs" add constraint "projectDailyAggs_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'projectDailyAggs_subscriptionId_fkey') then
+      alter table "projectDailyAggs" add constraint "projectDailyAggs_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for transactions
+    if not exists (select 1 from pg_constraint where conname = 'transactions_accountId_fkey') then
+      alter table "transactions" add constraint "transactions_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'transactions_subscriptionId_fkey') then
+      alter table "transactions" add constraint "transactions_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for builds
+    if not exists (select 1 from pg_constraint where conname = 'builds_subscriptionId_fkey') then
+      alter table "builds" add constraint "builds_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'builds_projectId_fkey') then
+      alter table "builds" add constraint "builds_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for clusterNodeStats
+    if not exists (select 1 from pg_constraint where conname = 'clusterNodeStats_clusterNodeId_fkey') then
+      alter table "clusterNodeStats" add constraint "clusterNodeStats_clusterNodeId_fkey" foreign key ("clusterNodeId") references "clusterNodes"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for clusterNodeConsoles
+    if not exists (select 1 from pg_constraint where conname = 'clusterNodeConsoles_clusterNodeId_fkey') then
+      alter table "clusterNodeConsoles" add constraint "clusterNodeConsoles_clusterNodeId_fkey" foreign key ("clusterNodeId") references "clusterNodes"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for jobConsoles
+    if not exists (select 1 from pg_constraint where conname = 'jobConsoles_jobId_fkey') then
+      alter table "jobConsoles" add constraint "jobConsoles_jobId_fkey" foreign key ("jobId") references "jobs"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for clusterNodes
+    if not exists (select 1 from pg_constraint where conname = 'clusterNodes_subscriptionId_fkey') then
+      alter table "clusterNodes" add constraint "clusterNodes_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'clusterNodes_statusCode_fkey') then
+      alter table "clusterNodes" add constraint "clusterNodes_statusCode_fkey" foreign key ("statusCode") references "systemCodes"(code) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'clusterNodes_systemMachineImageId_fkey') then
+      alter table "clusterNodes" add constraint "clusterNodes_systemMachineImageId_fkey" foreign key ("systemMachineImageId") references "systemMachineImages"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for jobTestReports
+    if not exists (select 1 from pg_constraint where conname = 'jobTestReports_jobId_fkey') then
+      alter table "jobTestReports" add constraint "jobTestReports_jobId_fkey" foreign key ("jobId") references "jobs"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for jobCoverageReports
+    if not exists (select 1 from pg_constraint where conname = 'jobCoverageReports_jobId_fkey') then
+      alter table "jobCoverageReports" add constraint "jobCoverageReports_jobId_fkey" foreign key ("jobId") references "jobs"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for jobs
+    if not exists (select 1 from pg_constraint where conname = 'jobs_statusCode_fkey') then
+      alter table "jobs" add constraint "jobs_statusCode_fkey" foreign key ("statusCode") references "systemCodes"(code) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'jobs_subscriptionId_fkey') then
+      alter table "jobs" add constraint "jobs_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'jobs_projectId_fkey') then
+      alter table "jobs" add constraint "jobs_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'jobs_runId_fkey') then
+      alter table "jobs" add constraint "jobs_runId_fkey" foreign key ("runId") references "runs"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for runs
+    if not exists (select 1 from pg_constraint where conname = 'runs_statusCode_fkey') then
+      alter table "runs" add constraint "runs_statusCode_fkey" foreign key ("statusCode") references "systemCodes"(code) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'runs_projectId_fkey') then
+      alter table "runs" add constraint "runs_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'runs_providerId_fkey') then
+      alter table "runs" add constraint "runs_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'runs_subscriptionId_fkey') then
+      alter table "runs" add constraint "runs_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for providers
+    if not exists (select 1 from pg_constraint where conname = 'providers_masterIntegrationId_fkey') then
+      alter table "providers" add constraint "providers_masterIntegrationId_fkey" foreign key ("masterIntegrationId") references "masterIntegrations"(id) on update restrict on delete restrict;
+    end if;
+
+  -- Adds foreign key relationships for subscriptions
+    if not exists (select 1 from pg_constraint where conname = 'subscriptions_providerId_fkey') then
+      alter table "subscriptions" add constraint "subscriptions_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'subscriptions_systemMachineImageId_fkey') then
+      alter table "subscriptions" add constraint "subscriptions_systemMachineImageId_fkey" foreign key ("systemMachineImageId") references "systemMachineImages"(id) on update restrict on delete restrict;
+    end if;
+
+    -- Add systemRoles to accountTokens
+    if not exists (select 1 from information_schema.columns where table_name = 'accountTokens' and column_name = 'systemRoles') then
+      alter table "accountTokens" add column "systemRoles" text default '[]' NOT NUll;
+    end if;
+
+    -- Drop clusterNodes_jobId_fkey constraint from clusterNodes table
+    if exists (select 1 from pg_constraint where conname = 'clusterNodes_jobId_fkey') then
+      alter table "clusterNodes" drop constraint "clusterNodes_jobId_fkey";
+    end if;
+
+    -- Adds consolidateReports coloumn in projects table
+    if not exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'consolidateReports') then
+      alter table "projects" add column "consolidateReports" BOOLEAN DEFAULT false;
+    end if;
 
   end
 $$;
