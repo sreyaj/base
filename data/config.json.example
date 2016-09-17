@@ -1,11 +1,9 @@
 {
   "installerVersion": "4.0.0",
-  "shippableCustomerId" : "1234",
-  "licenseKey": "secureLicenseKey",
+  "shippableCustomerId" : "xxx",
+  "licenseKey": "xxx",
   "release": "4.0.0",
   "systemSettings": {
-    "domainProtocol": "http",
-    "domain": "myserver.com",
     "defaultMinionCount": 1,
     "defaultPipelineCount": 1,
     "serverEnabled": true,

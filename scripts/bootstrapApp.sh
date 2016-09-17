@@ -138,15 +138,7 @@ generate_system_config() {
     sed -i "s#{{AMQP_DEFAULT_EXCHANGE}}#$amqp_default_exchange#g" $system_configs_sql
 
     __process_msg "Updating : apiUrl"
-    local api_url=""
-    local domain_protocol=$(cat $STATE_FILE | jq '.systemSettings.domainProtocol')
-    local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
-    if [ "$domain" == "localhost" ]; then
-      api_url="http://$LOCAL_BRIDGE_IP:$api_port"
-    else
-      #api_url="$domainProtocol://api.$domain"
-      api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-    fi
+    local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
     sed -i "s#{{API_URL}}#$api_url#g" $system_configs_sql
 
     __process_msg "Updating : apiPort"
@@ -154,14 +146,7 @@ generate_system_config() {
     sed -i "s#{{API_PORT}}#$api_port#g" $system_configs_sql
 
     __process_msg "Updating : wwwUrl"
-    local www_url=""
-    local www_port=50001
-    if [ "$domain" == "localhost" ]; then
-      www_url="http://$LOCAL_BRIDGE_IP:$www_port"
-    else
-      #www_url="$domainProtocol://$domain"
-      www_url=$(cat $STATE_FILE | jq -r '.systemSettings.wwwUrl')
-    fi
+    local www_url=$(cat $STATE_FILE | jq -r '.systemSettings.wwwUrl')
     sed -i "s#{{WWW_URL}}#$www_url#g" $system_configs_sql
 
     __process_msg "Updating : runMode"
@@ -375,15 +360,7 @@ provision_api() {
 test_api_endpoint() {
   __process_msg "Testing API endpoint to determine API status"
 
-  local api_url=""
-  local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
-  local api_port=$(cat $STATE_FILE | jq '.systemSettings.apiPort')
-
-  if [ "$domain" == "localhost" ]; then
-    api_url="http://$LOCAL_BRIDGE_IP:$api_port"
-  else
-    api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  fi
+  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
 
   if [ $sleep_time -eq 64 ]; then
     sleep_time=2;
@@ -495,12 +472,7 @@ insert_system_integrations() {
   __process_msg "Inserting system integrations"
   local api_url=""
   local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
-  if [ "$domain" == "localhost" ]; then
-    api_url="http://$LOCAL_BRIDGE_IP:$api_port"
-  else
-    api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  fi
+  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   local system_integrations=$(cat $STATE_FILE | jq -r '.systemIntegrations')
   local system_integrations_count=$(echo $system_integrations | jq '. | length')
   local system_integration_post_endpoint="$api_url/systemIntegrations"
@@ -523,12 +495,7 @@ insert_system_machine_image() {
   __process_msg "Inserting system machine image"
   local api_url=""
   local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local domain=$(cat $STATE_FILE | jq '.systemSettings.domain')
-  if [ "$domain" == "localhost" ]; then
-    api_url="http://$LOCAL_BRIDGE_IP:$api_port"
-  else
-    api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  fi
+  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   local system_machine_image_post_endpoint="$api_url/systemMachineImages"
   local exec_image=$(cat $STATE_FILE | jq '.systemSettings.execImage')
   local run_sh_image=$(cat $STATE_FILE | jq '.systemSettings.runShImage')

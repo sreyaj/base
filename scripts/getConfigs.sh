@@ -112,8 +112,6 @@ bootstrap_state() {
     _update_state "$services_state"
   done
   __process_msg "Updated services in state.json"
-
-  __process_msg "Updated domain protocol in state.json"
 }
 
 
