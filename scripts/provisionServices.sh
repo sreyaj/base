@@ -125,15 +125,21 @@ __save_service_config() {
     __process_msg "Adding $service proxy mapping"
     http_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpProxy')
     https_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpsProxy')
+    no_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.noProxy')
 
     if [ ! -z $http_proxy ]; then
       env_values="$env_values -e http_proxy=$http_proxy -e HTTP_PROXY=$http_proxy"
-      __process_msg "Successfully updated $service http proxy mapping"
+      __process_msg "Successfully updated $service http_proxy mapping"
     fi
 
     if [ ! -z $https_proxy ]; then
       env_values="$env_values -e https_proxy=$https_proxy -e HTTPS_PROXY=$https_proxy"
-      __process_msg "Successfully updated $service https proxy mapping"
+      __process_msg "Successfully updated $service https_proxy mapping"
+    fi
+
+    if [ ! -z $no_proxy ]; then
+      env_values="$env_values -e no_proxy=$no_proxy -e NO_PROXY=$no_proxy"
+      __process_msg "Successfully updated $service no_proxy mapping"
     fi
 
     local state_env=$(cat $STATE_FILE | jq --arg service "$service" '

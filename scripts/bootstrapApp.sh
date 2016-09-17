@@ -281,15 +281,21 @@ provision_api() {
 
     http_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpProxy')
     https_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpsProxy')
+    no_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.noProxy')
 
     if [ ! -z $http_proxy ]; then
       api_env_values="$api_env_values -e http_proxy=$http_proxy -e HTTP_PROXY=$http_proxy"
-      __process_msg "Successfully updated api http proxy mapping"
+      __process_msg "Successfully updated api http_proxy mapping"
     fi
 
     if [ ! -z $https_proxy ]; then
       api_env_values="$api_env_values -e https_proxy=$https_proxy -e HTTPS_PROXY=$https_proxy"
-      __process_msg "Successfully updated api https proxy mapping"
+      __process_msg "Successfully updated api https_proxy mapping"
+    fi
+
+    if [ ! -z $no_proxy ]; then
+      api_env_values="$api_env_values -e no_proxy=$no_proxy -e NO_PROXY=$no_proxy"
+      __process_msg "Successfully updated api no_proxy mapping"
     fi
 
     __process_msg "Successfully generated api environment variables : $api_env_values"
