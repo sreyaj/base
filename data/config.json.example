@@ -53,16 +53,8 @@
           "value": "bcK34cD6y6Ixr7wtfnoZh48auegzR6oHKA0SVgmH"
         },
         {
-          "label": "hostname",
-          "value": "myserver.com"
-        },
-        {
-          "label": "port",
-          "value": "50001"
-        },
-        {
-          "label": "protocol",
-          "value": "http"
+          "label": "wwwUrl",
+          "value": "http://myserver.com"
         },
         {
           "label": "providerId",
@@ -92,16 +84,8 @@
          "value": "bcK34cD6y6Ixr7wtfnoZh48auegzR6oHKA0SVgmH"
        },
        {
-         "label": "hostname",
-         "value": "myserver.com"
-       },
-       {
-         "label": "port",
-         "value": "50001"
-       },
-       {
-         "label": "protocol",
-         "value": "http"
+         "label": "wwwUrl",
+         "value": "http://myserver.com"
        },
        {
          "label": "providerId",
@@ -200,16 +184,8 @@
           "value": "jksdnfdskjfdss"
         },
         {
-          "label": "hostname",
-          "value": "foo.com"
-        },
-        {
-          "label": "port",
-          "value": "50001"
-        },
-        {
-          "label": "protocol",
-          "value": "http"
+          "label": "wwwUrl",
+          "value": "http://myserver.com"
         },
         {
           "label": "providerId",
@@ -235,32 +211,12 @@
           "value": "private-key"
         },
         {
-          "label": "hostname",
-          "value": "foo.com"
-        },
-        {
-          "label": "port",
-          "value": "50001"
-        },
-        {
-          "label": "protocol",
-          "value": "http"
+          "label": "wwwUrl",
+          "value": "http://myserver.com"
         },
         {
           "label": "providerId",
           "value": "56334736036d220c002a3474"
-        },
-        {
-          "label": "requestTokenURL",
-          "value": "https://foo.com/plugins/servlet/oauth/request-token"
-        },
-        {
-          "label": "accessTokenURL",
-          "value": "https://foo.com/plugins/servlet/oauth/access-token"
-        },
-        {
-          "label": "userAuthorizationURL",
-          "value": "https://foo.com/plugins/servlet/shippable-oauth/authorize"
         }
       ],
       "isEnabled": true
