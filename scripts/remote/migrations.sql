@@ -1576,16 +1576,16 @@ do $$
        alter table "transactions" add column "price" float NOT NULL DEFAULT 0;
      end if;
 
-  -- Adds serviceUser token in accountTokens table for local
-    if not exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
-      insert into "accountTokens" ("id", "name", "accountId", "apiToken", "isInternal", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('540e55445e5bad6f98764522', 'serviceUser', '540e55445e5bad6f98764522', (select "serviceUserToken" from "systemConfigs" where id=1), true, '540e55445e5bad6f98764522', '540e55445e5bad6f98764522', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
-    end if;
-
   -- Adds serviceUser account details in accounts table for local
     if not exists (select 1 from "accounts" where "id" = '540e55445e5bad6f98764522' and "systemRoles" like '%serviceUser%') then
       insert into "accounts" ("id", "systemRoles", "createdAt", "updatedAt")
       values ('540e55445e5bad6f98764522', '[ "serviceUser", "superUser" ]', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
+    end if;
+
+  -- Adds serviceUser token in accountTokens table for local
+    if not exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
+      insert into "accountTokens" ("id", "name", "accountId", "apiToken", "isInternal", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('540e55445e5bad6f98764522', 'serviceUser', '540e55445e5bad6f98764522', (select "serviceUserToken" from "systemConfigs" where id=1), true, '540e55445e5bad6f98764522', '540e55445e5bad6f98764522', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
     end if;
 
   -- Update routePermissions.routePattern to use 255 characters
