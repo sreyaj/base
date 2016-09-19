@@ -236,46 +236,49 @@ install_rabbitmq() {
 }
 
 save_gitlab_state() {
-  #TODO: Get gitlab root username, password from user input
-  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local host=$(echo "$gitlab_host" | jq '.ip')
-  local gitlab_root_username="root"
-  local gitlab_root_password="shippable1234"
-  local gitlab_external_url=$(echo $host | tr -d "\"")
-  gitlab_external_url="http://$gitlab_external_url/api/v3"
+  local gitlab_sys_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select(.name=="gitlab")')
+  if [ -z "$gitlab_sys_int" ]; then
+    #TODO: Get gitlab root username, password from user input
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo "$gitlab_host" | jq '.ip')
+    local gitlab_root_username="root"
+    local gitlab_root_password="shippable1234"
+    local gitlab_external_url=$(echo $host | tr -d "\"")
+    gitlab_external_url="http://$gitlab_external_url/api/v3"
 
-  local gitlab_integration=$(cat $STATE_FILE | jq '
-    .systemIntegrations |= . + [{
-      "name": "gitlab",
-      "masterIntegrationId": "574ee696d49b091400b75f19",
-      "masterDisplayName": "Internal Gitlab Server",
-      "masterName": "Git store",
-      "masterType": "scm",
-      "isEnabled": true,
-      "formJSONValues": [
-        {
-          "label": "username",
-          "value": "'$gitlab_root_username'"
-        },
-        {
-          "label": "subscriptionProjectLimit",
-          "value": "100"
-        },
-        {
-          "label": "password",
-          "value": "'$gitlab_root_password'"
-        },
-        {
-          "label": "url",
-          "value": "'$gitlab_external_url'"
-        },
-        {
-          "label": "sshPort",
-          "value": "22"
-        }
-      ]
-    }]')
-  _update_state "$gitlab_integration"
+    local gitlab_integration=$(cat $STATE_FILE | jq '
+      .systemIntegrations |= . + [{
+        "name": "gitlab",
+        "masterIntegrationId": "574ee696d49b091400b75f19",
+        "masterDisplayName": "Internal Gitlab Server",
+        "masterName": "Git store",
+        "masterType": "scm",
+        "isEnabled": true,
+        "formJSONValues": [
+          {
+            "label": "username",
+            "value": "'$gitlab_root_username'"
+          },
+          {
+            "label": "subscriptionProjectLimit",
+            "value": "100"
+          },
+          {
+            "label": "password",
+            "value": "'$gitlab_root_password'"
+          },
+          {
+            "label": "url",
+            "value": "'$gitlab_external_url'"
+          },
+          {
+            "label": "sshPort",
+            "value": "22"
+          }
+        ]
+      }]')
+    _update_state "$gitlab_integration"
+  fi
 }
 
 install_gitlab() {
