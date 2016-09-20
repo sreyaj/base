@@ -1912,5 +1912,10 @@ do $$
       alter table "projects" add column "consolidateReports" BOOLEAN DEFAULT false;
     end if;
 
+     -- Adds externalBuildId column in builds table
+    if not exists (select 1 from information_schema.columns where table_name = 'builds' and column_name = 'externalBuildId') then
+      alter table "builds" add column "externalBuildId" varchar(255);
+    end if;
+
   end
 $$;
