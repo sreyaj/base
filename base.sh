@@ -72,6 +72,8 @@ __check_dependencies() {
 }
 
 install() {
+  local install_mode="$1"
+
   __check_dependencies
   RELEASE=$(cat $CONFIG_FILE | jq -r '.release')
   readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
@@ -99,6 +101,14 @@ __print_help_upgrade() {
   echo "
   usage: ./base.sh --upgrade <service_name> <image_name>
   This command updates the <service_name> Shippable component with image tag <image_name>
+  "
+}
+
+__print_help_install() {
+  echo "
+  usage: ./base.sh --install [local | production]
+  This command installs shippable on either localhost or production environment.
+  production environment is chosen by default
   "
 }
 
@@ -131,8 +141,18 @@ if [[ $# -gt 0 ]]; then
       shift ;;
     -v|--version) __show_version
       shift ;;
-    -i|--install) install
-      shift ;;
+    -i|--install)
+      shift
+      install_mode=production
+      if [[ $# -eq 1 ]]; then
+        install_mode=$1
+      fi
+      if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
+        install "$install_mode"
+      else
+        __print_help_install
+      fi
+      ;;
     -u|--upgrade)
       shift
       if [[ $# -ne 2 ]]; then
