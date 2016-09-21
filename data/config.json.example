@@ -297,7 +297,7 @@
     ]
   },{
     "name": "ini",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:ini.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:ini.v4.10.16",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
