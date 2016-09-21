@@ -13,7 +13,7 @@
     "defaultPrivateJobQuota": 150,
     "vaultRefreshTimeInSec": 900,
     "apiPort": 50000,
-    "rootQueueList": "www.sockets|core.iscan|iscan.isync|iscan.esync|isync.autod|core.barge|barge.acs|barge.ddc|barge.dcl|barge.ecs|barge.gke|barge.triton|core.charon|versions.trigger|core.nf|nf.email|nf.hipchat|nf.irc|nf.slack|nf.webhook|core.braintree|core.certgen|core.hubspotSync|core.marshaller|marshaller.ec2|core.sync|core.jSync|job.request|job.trigger|micro.ini|cluster.init|steps.deploy|steps.manifest|steps.rSync|steps.release",
+    "rootQueueList": "www.sockets|core.iscan|iscan.isync|iscan.esync|isync.autod|core.barge|barge.acs|barge.ddc|barge.dcl|barge.ecs|barge.gke|barge.triton|core.charon|versions.trigger|core.nf|nf.email|nf.hipchat|nf.irc|nf.slack|nf.webhook|core.braintree|core.certgen|core.hubspotSync|core.marshaller|marshaller.ec2|core.sync|job.request|job.trigger|micro.ini|cluster.init|steps.deploy|steps.manifest|steps.rSync|steps.release",
     "runMode": "dev",
     "apiUrl": "http://api.myserver.com",
     "wwwUrl": "http://myserver.com",
@@ -547,18 +547,6 @@
       "RUN_MODE",
       "COMPONENT"
     ]
-  },{
-    "name": "jsync",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:jSync.v4.10.16",
-    "replicas": 1,
-    "envs": [
-      "SHIPPABLE_ROOT_AMQP_URL",
-      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
-      "SHIPPABLE_API_URL",
-      "SHIPPABLE_API_TOKEN",
-      "RUN_MODE",
-      "COMPONENT"
-    ]
   }],
   "installStatus": {
     "machinesSSHSuccessful": false,
@@ -627,8 +615,6 @@
     "webhookInstalled": false,
     "webhookInitialized": false,
     "ecrInstalled": false,
-    "ecrInitialized": false,
-    "jsyncInstalled": false,
-    "jsyncInitialized": false
+    "ecrInitialized": false
   }
 }
