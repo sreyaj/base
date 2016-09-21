@@ -1417,7 +1417,7 @@ do $$
     --Add runShImage column to systemMachineImages
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'runShImage') then
       alter table "systemMachineImages" add column "runShImage" varchar(80);
-      update "systemMachineImages" set "runShImage"='374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.12' where "runShImage" is null;
+      update "systemMachineImages" set "runShImage"='374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13' where "runShImage" is null;
       alter table "systemMachineImages" alter column "runShImage" set not null;
     end if;
 
@@ -1431,7 +1431,7 @@ do $$
     -- Add systemMachineImages to postgres
     if not exists (select 1 from "systemMachineImages" where "systemMachineImageId" = 1) then
       insert into "systemMachineImages" ("id", "systemMachineImageId","externalId",  "provider", "name", "description", "isAvailable","isDefault","securityGroup", "keyName", "execImage", "runShImage","region","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('572c81cb39a5440c0031b61c', 1, 'ami-1015f47d', 'AWS', 'Stable-EC2', 'Stable AMI version of ec2', true, true,'"sg-89eb30f1','shippable-beta', (select "execImage" from "systemConfigs" where id=1), '374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.12', 'us-east-1','540e7734399939140041d882', '540e7734399939140041d882', '2016-05-06T11:36:43.715Z', '2016-06-11T02:33:27.469Z');
+      values ('572c81cb39a5440c0031b61c', 1, 'ami-1015f47d', 'AWS', 'Stable-EC2', 'Stable AMI version of ec2', true, true,'"sg-89eb30f1','shippable-beta', (select "execImage" from "systemConfigs" where id=1), '374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13', 'us-east-1','540e7734399939140041d882', '540e7734399939140041d882', '2016-05-06T11:36:43.715Z', '2016-06-11T02:33:27.469Z');
     end if;
 
     -- Add versionName to versions
