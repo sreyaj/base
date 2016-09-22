@@ -13,7 +13,7 @@
     "defaultPrivateJobQuota": 150,
     "vaultRefreshTimeInSec": 900,
     "apiPort": 50000,
-    "rootQueueList": "www.sockets|core.iscan|iscan.isync|iscan.esync|isync.autod|core.barge|barge.acs|barge.ddc|barge.dcl|barge.ecs|barge.gke|barge.triton|core.charon|versions.trigger|core.nf|nf.email|nf.hipchat|nf.irc|nf.slack|nf.webhook|core.braintree|core.certgen|core.hubspotSync|core.marshaller|marshaller.ec2|core.sync|job.request|job.trigger|micro.ini|cluster.init|steps.deploy|steps.manifest|steps.rSync|steps.release",
+    "rootQueueList": "www.sockets|core.iscan|iscan.isync|iscan.esync|isync.autod|core.barge|barge.acs|barge.ddc|barge.dcl|barge.ecs|barge.gke|barge.triton|core.charon|versions.trigger|core.nf|nf.email|nf.hipchat|nf.irc|nf.slack|nf.webhook|core.braintree|core.certgen|core.hubspotSync|core.marshaller|marshaller.ec2|core.sync|core.jSync|job.request|job.trigger|micro.ini|cluster.init|steps.deploy|steps.manifest|steps.rSync|steps.release",
     "runMode": "dev",
     "apiUrl": "http://api.myserver.com",
     "wwwUrl": "http://myserver.com",
