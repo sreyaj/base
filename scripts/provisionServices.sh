@@ -377,6 +377,11 @@ provision_webhook() {
   __run_service "webhook"
 }
 
+provision_jSync() {
+  __save_service_config jSync "" " --name jSync --network ingress --with-registry-auth --endpoint-mode vip" "jSync"
+  __run_service "jSync"
+}
+
 main() {
   __process_marker "Provisioning services"
   load_services
@@ -401,6 +406,7 @@ main() {
   provision_hipchat
   provision_irc
   provision_webhook
+  provision_jSync
 }
 
 main
