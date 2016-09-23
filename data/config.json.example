@@ -259,8 +259,6 @@
     "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:sync.v4.10.13",
     "replicas": 2,
     "envs": [
-      "BITBUCKET_CLIENT_ID",
-      "BITBUCKET_CLIENT_SECRET",
       "SHIPPABLE_ROOT_AMQP_URL",
       "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
       "SHIPPABLE_API_URL",
@@ -341,8 +339,6 @@
     "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:jobRequest.v4.10.13",
     "replicas": 1,
     "envs": [
-      "BITBUCKET_CLIENT_ID",
-      "BITBUCKET_CLIENT_SECRET",
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_API_URL",
       "SHIPPABLE_ROOT_AMQP_URL",
@@ -417,8 +413,6 @@
       "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
       "SHIPPABLE_API_URL",
       "SHIPPABLE_API_TOKEN",
-      "BITBUCKET_CLIENT_ID",
-      "BITBUCKET_CLIENT_SECRET",
       "JOB_TYPE",
       "RUN_MODE",
       "COMPONENT"
