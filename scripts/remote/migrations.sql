@@ -1666,6 +1666,11 @@ do $$
       alter table "subscriptions" drop column "isNewPipeline";
     end if;
 
+  -- Add externalBuildUrl in builds
+    if not exists (select 1 from information_schema.columns where table_name = 'builds' and column_name = 'externalBuildUrl') then
+      alter table "builds" add column "externalBuildUrl" varchar(510);
+    end if;
+
   -- Add projectId in builds
     if not exists (select 1 from information_schema.columns where table_name = 'builds' and column_name = 'projectId') then
       alter table "builds" add column "projectId" varchar(24);
