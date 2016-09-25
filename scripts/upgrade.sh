@@ -14,7 +14,7 @@ update_service() {
   __process_msg "Current service image : $current_service_image"
   __process_msg "Updating service $service_name with image $service_image"
 
-  local update_command="sudo docker service update \
+  local update_command="sudo docker service update --with-registry-auth\
     --image $service_image \
     $service_name"
 
@@ -23,7 +23,6 @@ update_service() {
   local host=$(echo "$swarm_host" | jq -r '.ip')
 
   __process_msg "Swarm master address: $host"
-
   _exec_remote_cmd "$host" "$update_command"
 }
 
