@@ -118,31 +118,72 @@
       "isEnabled": true
     },
     {
-      "id": "57cecf81c3d9bb72153d8247",
-      "name": "SMTP",
-      "masterDisplayName": "SMTP",
-      "masterIntegrationId": "57cea8056ce9c71800d31ab3",
-      "masterName": "SMTP",
-      "masterType": "notification",
-      "formJSONValues": [
-       {
-         "label": "emailAuthUser",
-         "value": "user@myserver.com"
-       },
-       {
-         "label": "emailAuthPassword",
-         "value": "password"
-       },
-       {
-         "label": "emailSender",
-         "value": "User <sender@myserver.com>"
-       },
-       {
-         "label": "emailServiceName",
-         "value": "Mailgun"
-       }
+      "id":"57cecf81c3d9bb72153d8247",
+      "name":"Email Notification",
+      "masterDisplayName":"SMTP",
+      "masterIntegrationId":"57cea8056ce9c71800d31ab3",
+      "masterName":"SMTP",
+      "masterType":"notification",
+      "formJSONValues":[
+        {
+          "label":"emailAuthUser",
+          "value":"user@myserver.com"
+        },
+        {
+          "label":"emailAuthPassword",
+          "value":"password"
+        },
+        {
+          "label":"emailSender",
+          "value":"User <sender@myserver.com>"
+        },
+        {
+          "label":"port",
+          "value":"587"
+        },
+        {
+          "label":"secure",
+          "value":"false"
+        }
       ],
-      "isEnabled": true
+      "isEnabled":true
+    },
+    {
+      "id":"57cecf81c3d9bb72153d8247",
+      "name":"Gmail Notification",
+      "masterDisplayName":"Gmail",
+      "masterIntegrationId":"57e8ea9c14d3ef88e56fecb4",
+      "masterName":"gmail",
+      "masterType":"notification",
+      "formJSONValues":[
+        {
+          "label":"username",
+          "value":"example@gmail.com"
+        },
+        {
+          "label":"password",
+          "value":"xxx"
+        }
+      ],
+      "isEnabled":true
+    },
+    {
+      "name":"Mailgun Notification",
+      "masterDisplayName":"Mailgun",
+      "masterIntegrationId":"57e8ea91424bff9c871d7321",
+      "masterName":"mailgun",
+      "masterType":"notification",
+      "formJSONValues":[
+        {
+          "label":"apiKey",
+          "value":"key-xxx"
+        },
+        {
+          "label":"domain",
+          "value":"example.mailgun.org"
+        }
+      ],
+      "isEnabled":true
     },
     {
       "id": "57cecf81c349bb70153d8247",
@@ -621,7 +662,6 @@
     "webhookInstalled": false,
     "webhookInitialized": false,
     "ecrInstalled": false,
-    "ecrInitialized": false
     "ecrInitialized": false,
     "jSyncInstalled": false,
     "jSyncInitialized": false
