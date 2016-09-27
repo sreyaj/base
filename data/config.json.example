@@ -594,6 +594,18 @@
       "RUN_MODE",
       "COMPONENT"
     ]
+  },{
+    "name": "timeTrigger",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:timeTrigger.v4.10.13",
+    "replicas": 1,
+    "envs": [
+      "SHIPPABLE_ROOT_AMQP_URL",
+      "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+      "SHIPPABLE_API_URL",
+      "SHIPPABLE_API_TOKEN",
+      "RUN_MODE",
+      "COMPONENT"
+    ]
   }],
   "installStatus": {
     "machinesSSHSuccessful": false,
@@ -664,6 +676,8 @@
     "ecrInstalled": false,
     "ecrInitialized": false,
     "jSyncInstalled": false,
-    "jSyncInitialized": false
+    "jSyncInitialized": false,
+    "timeTriggerInstalled": false,
+    "timeTriggerInitialized": false
   }
 }
