@@ -185,6 +185,8 @@ save_vault_credentials() {
 }
 
 install_rabbitmq() {
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq -r '.ip')
   local amqp_host=$(cat $CONFIG_FILE | jq -r '.systemSettings.amqpHost')
   local amqp_port=$(cat $CONFIG_FILE | jq -r '.systemSettings.amqpPort')
   local amqp_admin_port=$(cat $CONFIG_FILE | jq -r '.systemSettings.amqpAdminPort')
