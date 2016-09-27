@@ -382,6 +382,11 @@ provision_jSync() {
   __run_service "jSync"
 }
 
+provision_timeTrigger() {
+  __save_service_config timeTrigger "" " --name timeTrigger --network ingress --with-registry-auth --endpoint-mode vip" "timeTrigger"
+  __run_service "timeTrigger"
+}
+
 main() {
   __process_marker "Provisioning services"
   load_services
@@ -407,6 +412,7 @@ main() {
   provision_irc
   provision_webhook
   provision_jSync
+  provision_timeTrigger
 }
 
 main
