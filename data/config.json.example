@@ -23,7 +23,8 @@
     "httpsProxy": "",
     "noProxy": "",
     "execImage": "shipimg/mexec:master.3859",
-    "runShImage": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13"
+    "runShImage": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13",
+    "dynamicNodesSystemIntegrationId": "5745a34a25cf521200e83fe9"
   },
   "providers": [
     {
