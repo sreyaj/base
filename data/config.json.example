@@ -41,6 +41,25 @@
   ],
   "systemIntegrations": [
     {
+      "id": "5745a34a25cf521200e83fe9",
+      "name": "AWS-ROOT",
+      "masterDisplayName": "AWS-ROOT",
+      "masterIntegrationId": "57467326b3cbfc0c004f9110",
+      "masterName": "AWS",
+      "masterType": "cloudproviders",
+      "formJSONValues":  [
+        {
+          "value": "accesskey",
+          "label": "accessKey"
+        },
+        {
+          "value": "secretKey",
+          "label": "secretKey"
+        }
+      ],
+      "isEnabled": true
+    },
+    {
       "id": "574ee745d49b091400b76274",
       "name": "github.com",
       "formJSONValues": [
