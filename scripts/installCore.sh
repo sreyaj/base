@@ -185,8 +185,11 @@ save_vault_credentials() {
 }
 
 install_rabbitmq() {
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $db_host | jq -r '.ip')
+  local amqp_host=$(cat $CONFIG_FILE | jq -r '.systemSettings.amqpHost')
+  local amqp_port=$(cat $CONFIG_FILE | jq -r '.systemSettings.amqpPort')
+  local amqp_admin_port=$(cat $CONFIG_FILE | jq -r '.systemSettings.amqpAdminPort')
+  local amqp_protocol=$(cat $CONFIG_FILE | jq -r '.systemSettings.amqpProtocol')
+  local amqp_admin_protocol=$(cat $CONFIG_FILE | jq -r '.systemSettings.amqpAdminProtocol')
 
   skip_step=0
   _check_component_status "rabbitmqInstalled"
@@ -216,18 +219,16 @@ install_rabbitmq() {
   local amqp_user="SHIPPABLETESTUSER"
   local amqp_pass="SHIPPABLETESTPASS"
   local amqp_exchange="shippableEx"
-  local amqp_port=5672
-  local amqp_port_admin=15672
 
-  local amqp_url="amqp://$amqp_user:$amqp_pass@$host:$amqp_port/shippable"
+  local amqp_url="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippable"
   local update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrl = "'$amqp_url'"')
   update=$(echo $update | jq '.' | tee $STATE_FILE)
 
-  local amqp_url_root="amqp://$amqp_user:$amqp_pass@$host:$amqp_port/shippableRoot"
+  local amqp_url_root="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippableRoot"
   update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlRoot = "'$amqp_url_root'"')
   update=$(echo $update | jq '.' | tee $STATE_FILE)
 
-  local amqp_url_admin="http://$amqp_user:$amqp_pass@$host:$amqp_port_admin"
+  local amqp_url_admin="$amqp_admin_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_admin_port"
   update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
   update=$(echo $update | jq '.' | tee $STATE_FILE)
 
