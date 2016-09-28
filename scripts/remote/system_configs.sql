@@ -22,6 +22,7 @@ create table if not exists "systemConfigs" (
   "rootQueueList" TEXT,
   "execImage" VARCHAR(255) NOT NULL,
   "createdAt" timestamp with time zone NOT NULL,
-  "updatedAt" timestamp with time zone NOT NULL
+  "updatedAt" timestamp with time zone NOT NULL,
+  "dynamicNodesSystemIntegrationId" VARCHAR(24)
 );
 alter table "systemConfigs" owner to "apiuser";

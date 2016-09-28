@@ -168,6 +168,10 @@ generate_system_config() {
     __process_msg "Updating : updatedAt"
     sed -i "s#{{UPDATED_AT}}#$created_at#g" $system_configs_sql
 
+    __process_msg "Updating : dynamicNodesSystemIntegrationId"
+    local dynamic_nodes_system_integration_id=$(cat $STATE_FILE | jq -r '.systemSettings.dynamicNodesSystemIntegrationId')
+    sed -i "s#{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}#$dynamic_nodes_system_integration_id#g" $system_configs_sql
+
     _update_install_status "systemConfigSqlCreated"
     __process_msg "Successfully generated 'systemConfig' table data"
   else
