@@ -387,6 +387,11 @@ provision_timeTrigger() {
   __run_service "timeTrigger"
 }
 
+provision_ec2() {
+  __save_service_config ec2 "" " --name ec2 --network ingress --with-registry-auth --endpoint-mode vip" "ec2"
+  __run_service "ec2"
+}
+
 main() {
   __process_marker "Provisioning services"
   load_services
@@ -413,6 +418,7 @@ main() {
   provision_webhook
   provision_jSync
   provision_timeTrigger
+  provision_ec2
 }
 
 main
