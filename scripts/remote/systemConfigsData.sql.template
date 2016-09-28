@@ -24,7 +24,8 @@ do $$
             "runMode"='{{RUN_MODE}}',
             "rootQueueList"='{{ROOT_QUEUE_LIST}}',
             "execImage"='{{EXEC_IMAGE}}',
-            "updatedAt"='{{UPDATED_AT}}'
+            "updatedAt"='{{UPDATED_AT}}',
+            "dynamicNodesSystemIntegrationId"='{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}'
         where id=1;
     end if;
 
@@ -61,7 +62,8 @@ do $$
             "rootQueueList",
             "execImage",
             "createdAt",
-            "updatedAt"
+            "updatedAt",
+            "dynamicNodesSystemIntegrationId"
           )
         values
           (
@@ -88,7 +90,8 @@ do $$
             '{{ROOT_QUEUE_LIST}}',
             '{{EXEC_IMAGE}}',
             '{{CREATED_AT}}',
-            '{{UPDATED_AT}}'
+            '{{UPDATED_AT}}',
+            '{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}'
           );
     end if;
   end
