@@ -309,6 +309,22 @@ do $$
       values (6020, 'admin', 'roles', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    -- Codes for nodeType
+    if not exists (select 1 from "systemCodes" where code = 7000) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (7000, 'custom', 'nodeType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 7001) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (7001, 'dynamic', 'nodeType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if not exists (select 1 from "systemCodes" where code = 7002) then
+      insert into "systemCodes" ("code", "name", "group", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (7002, 'system', 'nodeType', '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
     -- insert all systemProperties
     if not exists (select 1 from "systemProperties" where "fieldName" = 'sysUserName') then
       insert into "systemProperties" ("fieldName", "createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -995,11 +1011,6 @@ do $$
       values (88, '57cea8056ce9c71800d31ab3', 'emailSender', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 89) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (89, '57cea8056ce9c71800d31ab3', 'emailServiceName', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
     if not exists (select 1 from "masterIntegrationFields" where "id" = 126) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (126, '57cea8056ce9c71800d31ab3', 'host', 'string', true, false, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
@@ -1102,25 +1113,25 @@ do $$
     end if;
 
     -- JENKINS
-    if not exists (select 1 from "masterIntegrations" where "name" = 'jenkinsJob' and "typeCode" = 5009) then
+    if not exists (select 1 from "masterIntegrations" where "name" = 'Jenkins' and "typeCode" = 5009) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57dbab5d15c59206bf4fbb50', 37, 'jenkinsJob', 'Jenkins', 'externalci', true, 'account', 5009, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57dbab5d15c59206bf4fbb50', 37, 'Jenkins', 'Jenkins', 'externalci', true, 'account', 5009, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for JENKINS
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 108) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 112) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (108, '57dbab5d15c59206bf4fbb50', 'username', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (112, '57dbab5d15c59206bf4fbb50', 'username', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 109) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 113) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (109, '57dbab5d15c59206bf4fbb50', 'password/apiToken', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (113, '57dbab5d15c59206bf4fbb50', 'password', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 110) then
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 114) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (110, '57dbab5d15c59206bf4fbb50', 'url', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (114, '57dbab5d15c59206bf4fbb50', 'url', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- artifactory
@@ -1554,7 +1565,7 @@ do $$
     --Add runShImage column to systemMachineImages
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'runShImage') then
       alter table "systemMachineImages" add column "runShImage" varchar(80);
-      update "systemMachineImages" set "runShImage"='374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13' where "runShImage" is null;
+      update "systemMachineImages" set "runShImage"='shipimg/micro50:stepExec.server.6262' where "runShImage" is null;
       alter table "systemMachineImages" alter column "runShImage" set not null;
     end if;
 
@@ -1568,7 +1579,7 @@ do $$
     -- Add systemMachineImages to postgres
     if not exists (select 1 from "systemMachineImages" where "systemMachineImageId" = 1) then
       insert into "systemMachineImages" ("id", "systemMachineImageId","externalId",  "provider", "name", "description", "isAvailable","isDefault","securityGroup", "keyName", "execImage", "runShImage","region","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('572c81cb39a5440c0031b61c', 1, 'ami-1015f47d', 'AWS', 'Stable-EC2', 'Stable AMI version of ec2', true, true,'"sg-89eb30f1','shippable-beta', (select "execImage" from "systemConfigs" where id=1), '374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13', 'us-east-1','540e7734399939140041d882', '540e7734399939140041d882', '2016-05-06T11:36:43.715Z', '2016-06-11T02:33:27.469Z');
+      values ('572c81cb39a5440c0031b61c', 1, 'ami-44d3ab53', 'AWS', 'Stable-EC2', 'Stable AMI version of ec2', true, true,'sg-89eb30f1','shippable-beta', (select "execImage" from "systemConfigs" where id=1), 'shipimg/micro50:stepExec.server.6262', 'us-east-1','540e7734399939140041d882', '540e7734399939140041d882', '2016-05-06T11:36:43.715Z', '2016-06-11T02:33:27.469Z');
     end if;
 
     -- Add versionName to versions
@@ -1714,16 +1725,16 @@ do $$
      end if;
 
   -- Adds serviceUser account details in accounts table for local
-    if not exists (select 1 from "accounts" where "id" = '540e55445e5bad6f98764522' and "systemRoles" like '%serviceUser%') then
-      insert into "accounts" ("id", "systemRoles", "createdAt", "updatedAt")
-      values ('540e55445e5bad6f98764522', '[ "serviceUser", "superUser" ]', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
-    end if;
+     if not exists (select 1 from "accounts" where "id" = '540e55445e5bad6f98764522' and "systemRoles" like '%serviceUser%') then
+       insert into "accounts" ("id", "systemRoles", "createdAt", "updatedAt")
+       values ('540e55445e5bad6f98764522', '[ "serviceUser", "superUser" ]', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
+     end if;
 
   -- Adds serviceUser token in accountTokens table for local
-    if not exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
-      insert into "accountTokens" ("id", "name", "accountId", "apiToken", "isInternal", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('540e55445e5bad6f98764522', 'serviceUser', '540e55445e5bad6f98764522', (select "serviceUserToken" from "systemConfigs" where id=1), true, '540e55445e5bad6f98764522', '540e55445e5bad6f98764522', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
-    end if;
+     if not exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
+       insert into "accountTokens" ("id", "name", "accountId", "apiToken", "isInternal", "createdBy", "updatedBy", "createdAt", "updatedAt")
+       values ('540e55445e5bad6f98764522', 'serviceUser', '540e55445e5bad6f98764522', (select "serviceUserToken" from "systemConfigs" where id=1), true, '540e55445e5bad6f98764522', '540e55445e5bad6f98764522', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
+     end if;
 
   -- Update routePermissions.routePattern to use 255 characters
     if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'routePattern') then
@@ -1792,8 +1803,24 @@ do $$
       alter table "systemConfigs" add column "serverEnabled" boolean NOT NULL DEFAULT true;
     end if;
 
-  -- Update subscriptions to set "isCustomHost"=true
-    UPDATE "subscriptions" SET "isUsingCustomHost" = true where "isUsingCustomHost" = false;
+    -- Add column nodeTypeCode to subscriptions table
+    if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'nodeTypeCode') then
+      alter table "subscriptions" add column "nodeTypeCode" integer;
+      update "subscriptions" set "nodeTypeCode" = 7000 where "isUsingCustomHost" = true;
+      update "subscriptions" set "nodeTypeCode" = 7001 where "isUsingCustomHost" = false;
+      alter table "subscriptions" add constraint "subscriptions_nodeTypeCode_fkey" foreign key("nodeTypeCode") references "systemCodes"(code) on update restrict on delete restrict;
+    end if;
+
+    -- Add column nodeTypeCode to clusterNodes table
+    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodes' and column_name = 'nodeTypeCode') then
+      alter table "clusterNodes" add column "nodeTypeCode" integer;
+      alter table "clusterNodes" add constraint "clusterNodes_nodeTypeCode_fkey" foreign key("nodeTypeCode") references "systemCodes"(code) on update restrict on delete restrict;
+    end if;
+
+    -- Remove isUsingCustomHost from subscriptions
+    if exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'isUsingCustomHost') then
+      alter table "subscriptions" drop column "isUsingCustomHost";
+    end if;
 
     -- username is no longer a required field for bitbucketServer account integrations
     update "masterIntegrationFields" set "isRequired" = false where "id" = 54;
@@ -2054,9 +2081,62 @@ do $$
       alter table "projects" add column "consolidateReports" BOOLEAN DEFAULT false;
     end if;
 
-     -- Adds externalBuildId column in builds table
+    -- Adds externalBuildId column in builds table
     if not exists (select 1 from information_schema.columns where table_name = 'builds' and column_name = 'externalBuildId') then
       alter table "builds" add column "externalBuildId" varchar(255);
+    end if;
+
+    -- Adds roleCode column in routePermissions table
+    if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'roleCode') then
+      alter table "routePermissions" add column "roleCode" integer;
+      alter table "routePermissions" add constraint "routePermissions_systemCode_fkey" foreign key ("roleCode") references "systemCodes"(code) on update restrict on delete restrict;
+    end if;
+
+    -- Adds isPublic column in routePermissions table
+    if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'isPublic') then
+      alter table "routePermissions" add column "isPublic" BOOLEAN;
+    end if;
+
+    -- Reindex routePermissionRoutePatternHttpVerbU to routePermissionRoutePatternHttpVerbRoleCodeU in routePermissions table
+    drop index if exists "routePermissionRoutePatternHttpVerbU";
+    create unique index if not exists "routePermissionRoutePatternHttpVerbRoleCodeU" on "routePermissions" using btree("routePattern", "httpVerb", "roleCode");
+
+    -- Reindex projAccAccIdProjIdU to projAccAccIdProjIdRoleCodeU in projectAccounts table
+    drop index if exists "projAccAccIdProjIdU";
+    create unique index if not exists "projAccAccIdProjIdRoleCodeU" on "projectAccounts" using btree("accountId", "projectId", "roleCode");
+
+    -- Reindex subsAccSubsIdAccIdU to subsAccSubsIdAccIdRoleCodeU in subscriptionAccounts table
+    drop index if exists "subsAccSubsIdAccIdU";
+    create unique index if not exists "subsAccSubsIdAccIdRoleCodeU" on "subscriptionAccounts" using btree("accountId", "subscriptionId", "roleCode");
+
+    -- add constraint to isPublic column to set not null in routePermissions table
+    if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'isPublic' and column_default is null) then
+      alter table "routePermissions" alter column "isPublic" set not null;
+    end if;
+
+    -- drop coloumn isShippableNode from clusterNodes table
+    if exists (select 1 from information_schema.columns where table_name = 'clusterNodes' and column_name = 'isShippableNode') then
+      alter table "clusterNodes" drop column "isShippableNode";
+    end if;
+
+    --adds column dynamicNodesSystemIntegrationId in systemConfigs table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'dynamicNodesSystemIntegrationId') then
+      alter table "systemConfigs" add column "dynamicNodesSystemIntegrationId" varchar(24);
+    end if;
+
+    -- Adds systemNodePrivateKey column in systemConfigs table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePrivateKey') then
+      alter table "systemConfigs" add column "systemNodePrivateKey" TEXT ;
+    end if;
+
+    -- Adds systemNodePublicKey column in systemConfigs table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePublicKey') then
+      alter table "systemConfigs" add column "systemNodePublicKey" varchar(1020) ;
+    end if;
+
+    -- Adds isSuperUser column in routePermissions table
+    if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'isSuperUser') then
+      alter table "routePermissions" add column "isSuperUser" BOOLEAN default false not null;
     end if;
 
   end
