@@ -23,6 +23,8 @@ create table if not exists "systemConfigs" (
   "execImage" VARCHAR(255) NOT NULL,
   "createdAt" timestamp with time zone NOT NULL,
   "updatedAt" timestamp with time zone NOT NULL,
-  "dynamicNodesSystemIntegrationId" VARCHAR(24)
+  "dynamicNodesSystemIntegrationId" VARCHAR(24),
+  "systemNodePrivateKey" TEXT,
+  "systemNodePublicKey" VARCHAR(1020)
 );
 alter table "systemConfigs" owner to "apiuser";
