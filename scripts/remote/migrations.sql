@@ -1137,7 +1137,7 @@ do $$
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 116) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (116, '57dbab5d15c59206bf4fbb51', 'API_key', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values (116, '57dbab5d15c59206bf4fbb51', 'password', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "masterIntegrationFields" where "id" = 117) then
