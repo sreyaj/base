@@ -38,7 +38,7 @@ install_postgres() {
     wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
 
     apt-get update -y
-    apt-get install -y postgresql postgresql-contrib
+    apt-get install -y postgresql-$PG_VERSION postgresql-contrib-$PG_VERSION
 
   else
     echo "|_########## Postgres already installed, skipping"
