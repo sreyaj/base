@@ -27,8 +27,8 @@
     "httpProxy": "",
     "httpsProxy": "",
     "noProxy": "",
-    "execImage": "shipimg/mexec:master.3859",
-    "runShImage": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13",
+    "execImage": "shipimg/mexec:master.10846",
+    "runShImage": "374168611083.dkr.ecr.us-east-1.amazonaws.com/runsh:v4.10.23",
     "dynamicNodesSystemIntegrationId": "5745a34a25cf521200e83fe9"
   },
   "providers": [
@@ -290,7 +290,7 @@
   ],
   "services": [{
     "name": "api",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/api50:v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/api50:v4.10.23",
     "envs": [
       "DBNAME",
       "DBUSERNAME",
@@ -303,7 +303,7 @@
     ]
   },{
     "name": "www",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/www50:v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/www50:v4.10.23",
     "envs": [
       "SHIPPABLE_API_TOKEN",
       "SHIPPABLE_VORTEX_URL",
@@ -322,7 +322,7 @@
     ]
   },{
     "name": "sync",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:sync.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:sync.v4.10.23",
     "replicas": 2,
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
@@ -334,7 +334,7 @@
     ]
   },{
     "name": "ec2",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:ec2.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:ec2.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
@@ -348,7 +348,7 @@
     ]
   },{
     "name": "versionTrigger",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:versionTrigger.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:versionTrigger.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
@@ -377,7 +377,7 @@
     ]
   },{
     "name": "nexec",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/nexec:v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/nexec:v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -389,7 +389,7 @@
     ]
   },{
     "name": "cron",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:cron.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:cron.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -402,7 +402,7 @@
     ]
   },{
     "name": "jobrequest",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:jobRequest.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:jobRequest.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -417,7 +417,7 @@
     ]
   },{
     "name": "jobtrigger",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:jobTrigger.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:jobTrigger.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -431,7 +431,7 @@
     ]
   },{
     "name": "marshaller",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:marshaller.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:marshaller.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -446,7 +446,7 @@
     ]
   },{
     "name": "deploy",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.23",
     "replicas": 3,
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
@@ -459,7 +459,7 @@
     ]
   },{
     "name": "release",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.23",
     "replicas": 2,
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
@@ -472,7 +472,7 @@
     ]
   },{
     "name": "rSync",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.23",
     "replicas": 2,
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
@@ -485,7 +485,7 @@
     ]
   },{
     "name": "manifest",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:stepExec.v4.10.23",
     "replicas": 2,
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
@@ -498,7 +498,7 @@
     ]
   },{
     "name": "certgen",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:certgen.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:certgen.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -511,7 +511,7 @@
     ]
   },{
     "name": "charon",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:charon.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:charon.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -524,7 +524,7 @@
     ]
   },{
     "name": "nf",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:nf.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:nf.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -538,7 +538,7 @@
     ]
   },{
     "name": "email",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:email.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:email.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -552,7 +552,7 @@
     ]
   },{
     "name": "slack",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:slack.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:slack.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -566,7 +566,7 @@
     ]
   },{
     "name": "hipchat",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:hipchat.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:hipchat.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -580,7 +580,7 @@
     ]
   },{
     "name": "irc",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:irc.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:irc.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -595,7 +595,7 @@
     ]
   },{
     "name": "webhook",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:webhook.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:webhook.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_API_TOKEN",
@@ -621,7 +621,7 @@
     ]
   },{
     "name": "timeTrigger",
-    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:timeTrigger.v4.10.13",
+    "image": "374168611083.dkr.ecr.us-east-1.amazonaws.com/micro50:timeTrigger.v4.10.23",
     "replicas": 1,
     "envs": [
       "SHIPPABLE_ROOT_AMQP_URL",
