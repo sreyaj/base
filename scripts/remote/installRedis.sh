@@ -2,7 +2,7 @@
 
 install_redis() {
   echo "installing redis"
-  apt-get update && apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y redis-server
+  apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y redis-server
 }
 
 main() {
