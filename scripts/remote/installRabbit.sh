@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 install_log_rotate() {
-  apt-get update
   apt-get -y -q install wget logrotate
 }
 
@@ -10,8 +9,6 @@ install_rabbitmq() {
   apt-key add rabbitmq-signing-key-public.asc
 
   # Install
-  echo "deb http://www.rabbitmq.com/debian/ testing main" >> /etc/apt/sources.list
-  apt-get update
   apt-get -y --force-yes install rabbitmq-server
 }
 

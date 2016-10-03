@@ -34,10 +34,8 @@ install_postgres() {
 
   if [ -z "$pg_path" ]; then
     echo "|_########## Postgres not installed, installing"
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee -a /etc/apt/sources.list.d/pgdg.list
     wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
 
-    apt-get update -y
     apt-get install -y postgresql-$PG_VERSION postgresql-contrib-$PG_VERSION
 
   else
