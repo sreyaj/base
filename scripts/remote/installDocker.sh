@@ -7,11 +7,7 @@ readonly DOCKER_VERSION=1.12.1-0~trusty
 docker_install() {
   echo "Installing docker"
 
-  apt-get install -y apt-transport-https ca-certificates
-
   apt-get install -y linux-image-extra-`uname -r` linux-image-extra-virtual
-
-  apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
   apt-get install -y docker-engine=$DOCKER_VERSION
 }

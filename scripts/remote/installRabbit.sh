@@ -5,10 +5,6 @@ install_log_rotate() {
 }
 
 install_rabbitmq() {
-  wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
-  apt-key add rabbitmq-signing-key-public.asc
-
-  # Install
   apt-get -y --force-yes install rabbitmq-server
 }
 

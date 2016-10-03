@@ -34,10 +34,7 @@ install_postgres() {
 
   if [ -z "$pg_path" ]; then
     echo "|_########## Postgres not installed, installing"
-    wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
-
     apt-get install -y postgresql-$PG_VERSION postgresql-contrib-$PG_VERSION
-
   else
     echo "|_########## Postgres already installed, skipping"
   fi
