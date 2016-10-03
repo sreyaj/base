@@ -25,7 +25,9 @@ do $$
             "rootQueueList"='{{ROOT_QUEUE_LIST}}',
             "execImage"='{{EXEC_IMAGE}}',
             "updatedAt"='{{UPDATED_AT}}',
-            "dynamicNodesSystemIntegrationId"='{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}'
+            "dynamicNodesSystemIntegrationId"='{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}',
+            "systemNodePrivateKey"='{{SYSTEM_NODE_PRIVATE_KEY}}',
+            "systemNodePublicKey"='{{SYSTEM_NODE_PUBLIC_KEY}}'
         where id=1;
     end if;
 
@@ -63,7 +65,9 @@ do $$
             "execImage",
             "createdAt",
             "updatedAt",
-            "dynamicNodesSystemIntegrationId"
+            "dynamicNodesSystemIntegrationId",
+            "systemNodePrivateKey",
+            "systemNodePublicKey"
           )
         values
           (
@@ -91,7 +95,9 @@ do $$
             '{{EXEC_IMAGE}}',
             '{{CREATED_AT}}',
             '{{UPDATED_AT}}',
-            '{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}'
+            '{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}',
+            '{{SYSTEM_NODE_PRIVATE_KEY}}',
+            '{{SYSTEM_NODE_PUBLIC_KEY}}'
           );
     end if;
   end

@@ -172,6 +172,14 @@ generate_system_config() {
     local dynamic_nodes_system_integration_id=$(cat $STATE_FILE | jq -r '.systemSettings.dynamicNodesSystemIntegrationId')
     sed -i "s#{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}#$dynamic_nodes_system_integration_id#g" $system_configs_sql
 
+    __process_msg "Updating : systemNodePrivateKey"
+    local system_node_private_key=$(cat $STATE_FILE | jq -r '.systemSettings.systemNodePrivateKey')
+    sed -i "s#{{SYSTEM_NODE_PRIVATE_KEY}}#$system_node_private_key#g" $system_configs_sql
+
+    __process_msg "Updating : systemNodePublicKey"
+    local system_node_public_key=$(cat $STATE_FILE | jq -r '.systemSettings.systemNodePublicKey')
+    sed -i "s#{{SYSTEM_NODE_PUBLIC_KEY}}#$system_node_public_key#g" $system_configs_sql
+
     _update_install_status "systemConfigSqlCreated"
     __process_msg "Successfully generated 'systemConfig' table data"
   else
