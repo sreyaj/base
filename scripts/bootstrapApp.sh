@@ -380,7 +380,7 @@ test_api_endpoint() {
     sleep_time=$(( $sleep_time * 2 ))
   fi
 
-  api_response=$(curl -s -o /dev/null -w "%{http_code}" $api_url)
+  api_response=$(curl -s -o /dev/null -w "%{http_code}" $api_url) || true
 
   if [ "$api_response" == "200" ]; then
     __process_msg "API is up and running proceeding with other steps"
