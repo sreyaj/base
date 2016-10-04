@@ -903,9 +903,6 @@ do $$
       values (70, '576ce63321333398d11a35ab', 'validityPeriod', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-    if exists (select 1 from "systemMachineImages" where "provider" = 'AWS') then
-      update "systemMachineImages" set "systemIntegrationId" = NULL where "provider" = 'AWS';
-    end if;
 
     if exists (select 1 from "masterIntegrationFields" where "id" = 71 and "isRequired" = true) then
       update "masterIntegrationFields" set "isRequired" = false where "id" = 71;
@@ -1890,11 +1887,6 @@ do $$
       alter table "accountIntegrations" add constraint "accountIntegrations_masterIntegrationId_fkey" foreign key ("masterIntegrationId") references "masterIntegrations"(id) on update restrict on delete restrict;
     end if;
 
-  --Adds foreign key relationships for systemMachineImages
-    if not exists (select 1 from pg_constraint where conname = 'systemMachineImages_systemIntegrationId_fkey') then
-      alter table "systemMachineImages" add constraint "systemMachineImages_systemIntegrationId_fkey" foreign key ("systemIntegrationId") references "systemIntegrations"(id) on update restrict on delete restrict;
-    end if;
-
   -- Adds foreign key relationships for accountTokens
     if not exists (select 1 from pg_constraint where conname = 'accountTokens_accountId_fkey') then
       alter table "accountTokens" add constraint "accountTokens_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
@@ -2139,5 +2131,9 @@ do $$
       alter table "routePermissions" add column "isSuperUser" BOOLEAN default false not null;
     end if;
 
+    -- Drop systemIntegrationId from systemMachineImages
+    if exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'systemIntegrationId') then
+      alter table "systemMachineImages" drop column "systemIntegrationId";
+    end if;
   end
 $$;
