@@ -27,7 +27,10 @@ do $$
             "updatedAt"='{{UPDATED_AT}}',
             "dynamicNodesSystemIntegrationId"='{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}',
             "systemNodePrivateKey"='{{SYSTEM_NODE_PRIVATE_KEY}}',
-            "systemNodePublicKey"='{{SYSTEM_NODE_PUBLIC_KEY}}'
+            "systemNodePublicKey"='{{SYSTEM_NODE_PUBLIC_KEY}}',
+            "allowSystemNodes"={{ALLOW_SYSTEM_NODES}},
+            "allowDynamicNodes"={{ALLOW_DYNAMIC_NODES}},
+            "allowCustomNodes"={{ALLOW_CUSTOM_NODES}}
         where id=1;
     end if;
 
@@ -67,7 +70,10 @@ do $$
             "updatedAt",
             "dynamicNodesSystemIntegrationId",
             "systemNodePrivateKey",
-            "systemNodePublicKey"
+            "systemNodePublicKey",
+            "allowSystemNodes",
+            "allowDynamicNodes",
+            "allowCustomNodes"
           )
         values
           (
@@ -97,7 +103,10 @@ do $$
             '{{UPDATED_AT}}',
             '{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}',
             '{{SYSTEM_NODE_PRIVATE_KEY}}',
-            '{{SYSTEM_NODE_PUBLIC_KEY}}'
+            '{{SYSTEM_NODE_PUBLIC_KEY}}',
+            {{ALLOW_SYSTEM_NODES}},
+            {{ALLOW_DYNAMIC_NODES}},
+            {{ALLOW_CUSTOM_NODES}}
           );
     end if;
   end
