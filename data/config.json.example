@@ -32,7 +32,9 @@
     "dynamicNodesSystemIntegrationId": "5745a34a25cf521200e83fe9",
     "allowSystemNodes": true,
     "allowDynamicNodes": false,
-    "allowCustomNodes": false
+    "allowCustomNodes": false,
+    "systemNodePrivateKey": "",
+    "systemNodePublicKey": ""
   },
   "providers": [
     {
