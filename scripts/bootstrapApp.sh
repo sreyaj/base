@@ -180,6 +180,18 @@ generate_system_config() {
     local system_node_public_key=$(cat $STATE_FILE | jq -r '.systemSettings.systemNodePublicKey')
     sed -i "s#{{SYSTEM_NODE_PUBLIC_KEY}}#$system_node_public_key#g" $system_configs_sql
 
+    __process_msg "Updating : allowSystemNodes"
+    local allow_system_nodes=$(cat $STATE_FILE | jq -r '.systemSettings.allowSystemNodes')
+    sed -i "s#{{ALLOW_SYSTEM_NODES}}#$allow_system_nodes#g" $system_configs_sql
+
+    __process_msg "Updating : allowDynamicNodes"
+    local allow_dynamic_nodes=$(cat $STATE_FILE | jq -r '.systemSettings.allowDynamicNodes')
+    sed -i "s#{{ALLOW_DYNAMIC_NODES}}#$allow_dynamic_nodes#g" $system_configs_sql
+
+    __process_msg "Updating : allowCustomNodes"
+    local allow_custom_nodes=$(cat $STATE_FILE | jq -r '.systemSettings.allowCustomNodes')
+    sed -i "s#{{ALLOW_CUSTOM_NODES}}#$allow_custom_nodes#g" $system_configs_sql
+
     _update_install_status "systemConfigSqlCreated"
     __process_msg "Successfully generated 'systemConfig' table data"
   else

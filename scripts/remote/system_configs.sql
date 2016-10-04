@@ -39,6 +39,19 @@ do $$
       alter table "systemConfigs" add column "systemNodePublicKey" VARCHAR(1020);
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowSystemNodes') then
+      alter table "systemConfigs" add column "allowSystemNodes" BOOLEAN default false;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowDynamicNodes') then
+      alter table "systemConfigs" add column "allowDynamicNodes" BOOLEAN default false;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowCustomNodes') then
+      alter table "systemConfigs" add column "allowCustomNodes" BOOLEAN default false;
+    end if;
+
+
     alter table "systemConfigs" owner to "apiuser";
   end
 $$;

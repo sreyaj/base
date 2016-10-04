@@ -29,7 +29,10 @@
     "noProxy": "",
     "execImage": "shipimg/mexec:master.10846",
     "runShImage": "374168611083.dkr.ecr.us-east-1.amazonaws.com/runsh:v4.10.23",
-    "dynamicNodesSystemIntegrationId": "5745a34a25cf521200e83fe9"
+    "dynamicNodesSystemIntegrationId": "5745a34a25cf521200e83fe9",
+    "allowSystemNodes": true,
+    "allowDynamicNodes": false,
+    "allowCustomNodes": false
   },
   "providers": [
     {
