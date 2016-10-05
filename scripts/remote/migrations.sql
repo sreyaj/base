@@ -1562,7 +1562,7 @@ do $$
     --Add runShImage column to systemMachineImages
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'runShImage') then
       alter table "systemMachineImages" add column "runShImage" varchar(80);
-      update "systemMachineImages" set "runShImage"='374168611083.dkr.ecr.us-east-1.amazonaws.com/runsh:v4.10.23' where "runShImage" is null;
+      update "systemMachineImages" set "runShImage"='374168611083.dkr.ecr.us-east-1.amazonaws.com/runsh:v4.10.26' where "runShImage" is null;
       alter table "systemMachineImages" alter column "runShImage" set not null;
     end if;
 
@@ -1576,7 +1576,7 @@ do $$
     -- Add systemMachineImages to postgres
     if not exists (select 1 from "systemMachineImages" where "systemMachineImageId" = 1) then
       insert into "systemMachineImages" ("id", "systemMachineImageId","externalId",  "provider", "name", "description", "isAvailable","isDefault","securityGroup", "keyName", "execImage", "runShImage","region","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('572c81cb39a5440c0031b61c', 1, 'ami-44d3ab53', 'AWS', 'Stable-EC2', 'Stable AMI version of ec2', true, true,'sg-89eb30f1','shippable-beta', (select "execImage" from "systemConfigs" where id=1), '374168611083.dkr.ecr.us-east-1.amazonaws.com/runsh:v4.10.23', 'us-east-1','540e7734399939140041d882', '540e7734399939140041d882', '2016-05-06T11:36:43.715Z', '2016-06-11T02:33:27.469Z');
+      values ('572c81cb39a5440c0031b61c', 1, 'ami-44d3ab53', 'AWS', 'Stable-EC2', 'Stable AMI version of ec2', true, true,'sg-89eb30f1','shippable-beta', (select "execImage" from "systemConfigs" where id=1), '374168611083.dkr.ecr.us-east-1.amazonaws.com/runsh:v4.10.26', 'us-east-1','540e7734399939140041d882', '540e7734399939140041d882', '2016-05-06T11:36:43.715Z', '2016-06-11T02:33:27.469Z');
     end if;
 
     -- Add versionName to versions
@@ -1640,6 +1640,11 @@ do $$
     -- Drop not null constraint on formJSONValues for accountIntegrations
     if exists (select 1 from information_schema.columns where table_name = 'accountIntegrations' and column_name = 'formJSONValues') then
       alter table "accountIntegrations" alter column "formJSONValues" drop not null;
+    end if;
+
+    -- Update the name for masterIntegrationFields
+    if exists (select 1 from "masterIntegrationFields" where "id" = 116) then
+      update "masterIntegrationFields" set "name"='password' where "id"= 116;
     end if;
 
     -- Remove unused systemCodes
@@ -1905,20 +1910,6 @@ do $$
       alter table "systemIntegrations" add constraint "systemIntegrations_masterIntegrationId_fkey" foreign key ("masterIntegrationId") references "masterIntegrations"(id) on update restrict on delete restrict;
     end if;
 
-  -- Adds foreign key relationships for projectPermissions
-    if not exists (select 1 from pg_constraint where conname = 'projectPermissions_accountId_fkey') then
-      alter table "projectPermissions" add constraint "projectPermissions_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
-    end if;
-    if not exists (select 1 from pg_constraint where conname = 'projectPermissions_providerId_fkey') then
-      alter table "projectPermissions" add constraint "projectPermissions_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
-    end if;
-    if not exists (select 1 from pg_constraint where conname = 'projectPermissions_projectId_fkey') then
-      alter table "projectPermissions" add constraint "projectPermissions_projectId_fkey" foreign key ("projectId") references "projects"(id) on update restrict on delete restrict;
-    end if;
-    if not exists (select 1 from pg_constraint where conname = 'projectPermissions_subscriptionId_fkey') then
-      alter table "projectPermissions" add constraint "projectPermissions_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
-    end if;
-
   -- Adds foreign key relationships for subscriptionIntegrations
     if not exists (select 1 from pg_constraint where conname = 'subscriptionIntegrations_subscriptionId_fkey') then
       alter table "subscriptionIntegrations" add constraint "subscriptionIntegrations_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
@@ -1926,17 +1917,6 @@ do $$
 
     if not exists (select 1 from pg_constraint where conname = 'subscriptionIntegrations_accountIntegrationId_fkey') then
       alter table "subscriptionIntegrations" add constraint "subscriptionIntegrations_accountIntegrationId_fkey" foreign key ("accountIntegrationId") references "accountIntegrations"(id) on update restrict on delete restrict;
-    end if;
-
-  -- Adds foreign key relationships for subscriptionPermissions
-    if not exists (select 1 from pg_constraint where conname = 'subscriptionPermissions_accountId_fkey') then
-      alter table "subscriptionPermissions" add constraint "subscriptionPermissions_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
-    end if;
-    if not exists (select 1 from pg_constraint where conname = 'subscriptionPermissions_providerId_fkey') then
-      alter table "subscriptionPermissions" add constraint "subscriptionPermissions_providerId_fkey" foreign key ("providerId") references "providers"(id) on update restrict on delete restrict;
-    end if;
-    if not exists (select 1 from pg_constraint where conname = 'subscriptionPermissions_subscriptionId_fkey') then
-      alter table "subscriptionPermissions" add constraint "subscriptionPermissions_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
     end if;
 
   --Adds foreign key relationships for projects
@@ -2116,6 +2096,11 @@ do $$
       alter table "systemConfigs" add column "dynamicNodesSystemIntegrationId" varchar(24);
     end if;
 
+    -- Adds isShippableInitialized coloumn in systemNodes table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemNodes' and column_name = 'isShippableInitialized') then
+      alter table "systemNodes" add column "isShippableInitialized" BOOLEAN;
+    end if;
+
     -- Adds systemNodePrivateKey column in systemConfigs table
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePrivateKey') then
       alter table "systemConfigs" add column "systemNodePrivateKey" TEXT ;
@@ -2131,9 +2116,50 @@ do $$
       alter table "routePermissions" add column "isSuperUser" BOOLEAN default false not null;
     end if;
 
+    -- Deletes entry for duplicate routePattern for /projects/postScm in routePermissions
+    if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'allowedRoles') then
+      delete from "routePermissions" where "httpVerb" = 'POST' and "routePattern" = '/projects/postScm' and "allowedRoles" = '["superUser","owner"]' and "roleCode" = 6020;
+    end if;
+
+    -- Removes type column from routePermissions table
+    if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'type') then
+      alter table "routePermissions" drop column "type";
+    end if;
+
+    -- Drop allowedRoles column from routePermissions table
+    if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'allowedRoles') then
+      alter table "routePermissions" drop column "allowedRoles";
+    end if;
+
     -- Drop systemIntegrationId from systemMachineImages
     if exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'systemIntegrationId') then
       alter table "systemMachineImages" drop column "systemIntegrationId";
     end if;
+
+    -- Adds allowSystemNodes column in systemConfigs table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowSystemNodes') then
+      alter table "systemConfigs" add column "allowSystemNodes" BOOLEAN default false;
+    end if;
+
+    -- Adds allowDynamicNodes column in systemConfigs table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowDynamicNodes') then
+      alter table "systemConfigs" add column "allowDynamicNodes" BOOLEAN default false;
+    end if;
+
+    -- Adds allowCustomNodes column in systemConfigs table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowCustomNodes') then
+      alter table "systemConfigs" add column "allowCustomNodes" BOOLEAN default false;
+    end if;
+
+    -- Drop projectPermissions
+    drop table if exists "projectPermissions";
+
+    -- Drop subscriptionPermissions
+    drop table if exists "subscriptionPermissions";
+
+    -- Remove unused route permissions
+    delete from "routePermissions" where "routePattern" = '/projectPermissions';
+    delete from "routePermissions" where "routePattern" = '/subscriptionPermissions';
+
   end
 $$;
