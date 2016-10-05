@@ -173,7 +173,7 @@ generate_system_config() {
     sed -i "s#{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}#$dynamic_nodes_system_integration_id#g" $system_configs_sql
 
     __process_msg "Updating : systemNodePrivateKey"
-    local system_node_private_key=$(cat $STATE_FILE | jq -r '.systemSettings.systemNodePrivateKey')
+    local system_node_private_key=$(cat $STATE_FILE | jq '.systemSettings.systemNodePrivateKey' | sed s/\"//g)
     sed -i "s#{{SYSTEM_NODE_PRIVATE_KEY}}#$system_node_private_key#g" $system_configs_sql
 
     __process_msg "Updating : systemNodePublicKey"
