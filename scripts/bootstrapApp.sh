@@ -566,10 +566,11 @@ restart_api() {
 
   local rm_api_cmd="docker service rm api || true"
 
-  __process_msg "Waiting 30s for API to restart..."
+  _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
+
+  __process_msg "Waiting 30s before API restart..."
   sleep 30
 
-  _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
 }
 
