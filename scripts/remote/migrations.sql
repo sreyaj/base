@@ -903,7 +903,6 @@ do $$
       values (70, '576ce63321333398d11a35ab', 'validityPeriod', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
-
     if exists (select 1 from "masterIntegrationFields" where "id" = 71 and "isRequired" = true) then
       update "masterIntegrationFields" set "isRequired" = false where "id" = 71;
     end if;
@@ -2160,6 +2159,61 @@ do $$
     -- Remove unused route permissions
     delete from "routePermissions" where "routePattern" = '/projectPermissions';
     delete from "routePermissions" where "routePattern" = '/subscriptionPermissions';
+    delete from "routePermissions" where "routePattern"='/buildJobs'                              and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/buildJobs/:id'                          and "httpVerb"='PUT'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/buildJobs/:id'                          and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/buildJobConsoles'                       and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/buildJobConsoles/:buildJobId'           and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/builds'                                 and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/builds/:id'                             and "httpVerb"='PUT'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/builds/:id'                             and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/clusterNodes'                           and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/clusterNodes/:id/status'                and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/clusterNodes/:id/triggerDelete'         and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/clusterNodes/:id'                       and "httpVerb"='PUT'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/clusterNodes/:id'                       and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/clusterNodes/:id/clusterNodeConsoles'   and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/clusterNodeStats'                       and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/clusterNodeStats/:id'                   and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/clusterNodes/:id/clusterNodeStats'      and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/jobs/:id/postConsoles'                  and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/jobs/:jobId/consoles'                   and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/jobCoverageReports/:id'                 and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/jobCoverageReports'                     and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/jobs/:jobId'                            and "httpVerb"='PUT'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/jobs/:jobId'                            and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/jobTestReports'                         and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/jobTestReports/:id'                     and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/projects/:projectId/reset'              and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/projects/:projectId/disable'            and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/projects/:projectId/enable'             and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/projects/:projectId'                    and "httpVerb"='PUT'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/resources/:id'                          and "httpVerb"='PUT'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/resources/:id'                          and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/resources'                              and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/resources/syncRepo'                     and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/resources/:id/files'                    and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/runs'                                   and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/runs/:runId'                            and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptions/:id/reset'                and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptions/:subscriptionId/billing'  and "httpVerb"='GET'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptions/:subscriptionId'          and "httpVerb"='PUT'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptions/:id/encrypt'              and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptions/:id/decrypt'              and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptionIntegrations/:id'           and "httpVerb"='PUT'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptionIntegrations'               and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptionIntegrations/:id'           and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptionIntegrationPermissions'     and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/subscriptionIntegrationPermissions/:id' and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/transactions/:id'                       and "httpVerb"='GET'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/transactions/:id/receipt'               and "httpVerb"='GET'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/transactions'                           and "httpVerb"='GET'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/versions'                               and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/versions/:id'                           and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='POST'   and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='POST'   and "roleCode"=6020;
+    delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6020;
 
   end
 $$;

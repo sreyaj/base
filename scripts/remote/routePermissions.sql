@@ -578,14 +578,6 @@ do $$
     perform set_route_permission(
       routePattern := '/buildJobs',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/buildJobs',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -602,14 +594,6 @@ do $$
     perform set_route_permission(
       routePattern := '/buildJobs/:id',
       httpVerb := 'PUT',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/buildJobs/:id',
-      httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -619,14 +603,6 @@ do $$
       routePattern := '/buildJobs/:id',
       httpVerb := 'PUT',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/buildJobs/:id',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -676,14 +652,6 @@ do $$
     perform set_route_permission(
       routePattern := '/buildJobConsoles',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/buildJobConsoles',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -693,14 +661,6 @@ do $$
       routePattern := '/buildJobConsoles',
       httpVerb := 'POST',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/buildJobConsoles/:buildJobId',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -774,14 +734,6 @@ do $$
     perform set_route_permission(
       routePattern := '/builds',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/builds',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -798,14 +750,6 @@ do $$
     perform set_route_permission(
       routePattern := '/builds/:id',
       httpVerb := 'PUT',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/builds/:id',
-      httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -815,14 +759,6 @@ do $$
       routePattern := '/builds/:id',
       httpVerb := 'PUT',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/builds/:id',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -944,14 +880,6 @@ do $$
     perform set_route_permission(
       routePattern := '/clusterNodes',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/clusterNodes',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -968,14 +896,6 @@ do $$
     perform set_route_permission(
       routePattern := '/clusterNodes/:id/status',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/clusterNodes/:id/status',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -992,14 +912,6 @@ do $$
     perform set_route_permission(
       routePattern := '/clusterNodes/:id/triggerDelete',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/clusterNodes/:id/triggerDelete',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -1016,14 +928,6 @@ do $$
     perform set_route_permission(
       routePattern := '/clusterNodes/:id',
       httpVerb := 'PUT',
-      roleCode := 6000,
-      isPublic := true,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/clusterNodes/:id',
-      httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := true,
       isSuperUser := false
@@ -1034,14 +938,6 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/clusterNodes/:id',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
-      isPublic := false,
       isSuperUser := false
     );
 
@@ -1098,14 +994,6 @@ do $$
     perform set_route_permission(
       routePattern := '/clusterNodes/:id/clusterNodeConsoles',
       httpVerb := 'DELETE',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/clusterNodes/:id/clusterNodeConsoles',
-      httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -1148,14 +1036,6 @@ do $$
     perform set_route_permission(
       routePattern := '/clusterNodeStats',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/clusterNodeStats',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -1172,14 +1052,6 @@ do $$
     perform set_route_permission(
       routePattern := '/clusterNodeStats/:id',
       httpVerb := 'DELETE',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/clusterNodeStats/:id',
-      httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -1189,14 +1061,6 @@ do $$
       routePattern := '/clusterNodeStats/:id',
       httpVerb := 'DELETE',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/clusterNodes/:id/clusterNodeStats',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -1272,14 +1136,6 @@ do $$
     perform set_route_permission(
       routePattern := '/jobs/:id/postConsoles',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/jobs/:id/postConsoles',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -1289,14 +1145,6 @@ do $$
       routePattern := '/jobs/:id/postConsoles',
       httpVerb := 'POST',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/jobs/:jobId/consoles',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -1346,14 +1194,6 @@ do $$
     perform set_route_permission(
       routePattern := '/jobCoverageReports/:id',
       httpVerb := 'DELETE',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/jobCoverageReports/:id',
-      httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -1363,14 +1203,6 @@ do $$
       routePattern := '/jobCoverageReports/:id',
       httpVerb := 'DELETE',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/jobCoverageReports',
-      httpVerb := 'POST',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -1452,14 +1284,6 @@ do $$
     perform set_route_permission(
       routePattern := '/jobs/:jobId',
       httpVerb := 'PUT',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/jobs/:jobId',
-      httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -1469,14 +1293,6 @@ do $$
       routePattern := '/jobs/:jobId',
       httpVerb := 'PUT',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/jobs/:jobId',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -1517,7 +1333,7 @@ do $$
 
     perform set_route_permission(
       routePattern := '/jobDependencies/:id',
-      httpVerb := 'DELETE',
+      httpVerb := 'PUT',
       roleCode := 6000,
       isPublic := false,
       isSuperUser := false
@@ -1525,21 +1341,13 @@ do $$
 
     perform set_route_permission(
       routePattern := '/jobDependencies/:id',
-      httpVerb := 'PUT',
+      httpVerb := 'DELETE',
       roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
 
     -- set jobTestReports routePermissions
-
-    perform set_route_permission(
-      routePattern := '/jobTestReports',
-      httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
 
     perform set_route_permission(
       routePattern := '/jobTestReports',
@@ -1553,14 +1361,6 @@ do $$
       routePattern := '/jobTestReports',
       httpVerb := 'POST',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/jobTestReports/:id',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -1822,14 +1622,6 @@ do $$
     perform set_route_permission(
       routePattern := '/projects/:projectId/reset',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/projects/:projectId/reset',
-      httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
       isSuperUser := false
@@ -1838,23 +1630,7 @@ do $$
     perform set_route_permission(
       routePattern := '/projects/:projectId/disable',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/projects/:projectId/disable',
-      httpVerb := 'POST',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/projects/:projectId/enable',
-      httpVerb := 'POST',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -1895,14 +1671,6 @@ do $$
       routePattern := '/projects/:projectId/newBuild',
       httpVerb := 'POST',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/projects/:projectId',
-      httpVerb := 'PUT',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -2011,48 +1779,6 @@ do $$
       routePattern := '/projectAccounts/:id',
       httpVerb := 'DELETE',
       roleCode := null,
-      isPublic := false,
-      isSuperUser := true
-    );
-
-    -- set projectPermissions routePermissions
-
-    perform set_route_permission(
-      routePattern := '/projectPermissions',
-      httpVerb := 'GET',
-      roleCode := 6000,
-      isPublic := true,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/projectPermissions',
-      httpVerb := 'GET',
-      roleCode := 6010,
-      isPublic := true,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/projectPermissions',
-      httpVerb := 'GET',
-      roleCode := 6020,
-      isPublic := true,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/projectPermissions/scmPerm',
-      httpVerb := 'POST',
-      roleCode := 6020,
-      isPublic := false,
-      isSuperUser := true
-    );
-
-    perform set_route_permission(
-      routePattern := '/projectPermissions/:id',
-      httpVerb := 'DELETE',
-      roleCode := 6020,
       isPublic := false,
       isSuperUser := true
     );
@@ -2184,14 +1910,6 @@ do $$
     perform set_route_permission(
       routePattern := '/resources/:id',
       httpVerb := 'PUT',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/resources/:id',
-      httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2208,14 +1926,6 @@ do $$
     perform set_route_permission(
       routePattern := '/resources/:id',
       httpVerb := 'DELETE',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/resources/:id',
-      httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2232,14 +1942,6 @@ do $$
     perform set_route_permission(
       routePattern := '/resources',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/resources',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2256,14 +1958,6 @@ do $$
     perform set_route_permission(
       routePattern := '/resources/syncRepo',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/resources/syncRepo',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2273,14 +1967,6 @@ do $$
       routePattern := '/resources/syncRepo',
       httpVerb := 'POST',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/resources/:id/files',
-      httpVerb := 'POST',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -2305,6 +1991,14 @@ do $$
       routePattern := '/resources/:id/files',
       httpVerb := 'GET',
       roleCode := 6020,
+      isPublic := false,
+      isSuperUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/resources/:id/files',
+      httpVerb := 'POST',
+      roleCode := 6010,
       isPublic := false,
       isSuperUser := false
     );
@@ -2434,14 +2128,6 @@ do $$
     perform set_route_permission(
       routePattern := '/runs',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/runs',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2485,14 +2171,6 @@ do $$
       roleCode := null,
       isPublic := false,
       isSuperUser := true
-    );
-
-    perform set_route_permission(
-      routePattern := '/runs/:runId',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
     );
 
     perform set_route_permission(
@@ -2614,14 +2292,6 @@ do $$
     perform set_route_permission(
       routePattern := '/subscriptions/:id/reset',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptions/:id/reset',
-      httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
       isSuperUser := false
@@ -2630,23 +2300,7 @@ do $$
     perform set_route_permission(
       routePattern := '/subscriptions/:subscriptionId/billing',
       httpVerb := 'GET',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptions/:subscriptionId/billing',
-      httpVerb := 'GET',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptions/:subscriptionId',
-      httpVerb := 'PUT',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -2686,14 +2340,6 @@ do $$
     perform set_route_permission(
       routePattern := '/subscriptions/:id/encrypt',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptions/:id/encrypt',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2710,7 +2356,7 @@ do $$
     perform set_route_permission(
       routePattern := '/subscriptions/:id/decrypt',
       httpVerb := 'POST',
-      roleCode := 6000,
+      roleCode := 6020,
       isPublic := false,
       isSuperUser := false
     );
@@ -2808,14 +2454,6 @@ do $$
     perform set_route_permission(
       routePattern := '/subscriptionIntegrations/:id',
       httpVerb := 'PUT',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptionIntegrations/:id',
-      httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2832,14 +2470,6 @@ do $$
     perform set_route_permission(
       routePattern := '/subscriptionIntegrations',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptionIntegrations',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2849,14 +2479,6 @@ do $$
       routePattern := '/subscriptionIntegrations',
       httpVerb := 'POST',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptionIntegrations/:id',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -2906,14 +2528,6 @@ do $$
     perform set_route_permission(
       routePattern := '/subscriptionIntegrationPermissions',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptionIntegrationPermissions',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2930,14 +2544,6 @@ do $$
     perform set_route_permission(
       routePattern := '/subscriptionIntegrationPermissions/:id',
       httpVerb := 'DELETE',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptionIntegrationPermissions/:id',
-      httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -2949,48 +2555,6 @@ do $$
       roleCode := 6020,
       isPublic := false,
       isSuperUser := false
-    );
-
-    -- set subscriptionPermissions routePermissions
-
-    perform set_route_permission(
-      routePattern := '/subscriptionPermissions',
-      httpVerb := 'GET',
-      roleCode := 6000,
-      isPublic := true,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptionPermissions',
-      httpVerb := 'GET',
-      roleCode := 6010,
-      isPublic := true,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptionPermissions',
-      httpVerb := 'GET',
-      roleCode := 6020,
-      isPublic := true,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptionPermissions/scmPerm',
-      httpVerb := 'POST',
-      roleCode := null,
-      isPublic := false,
-      isSuperUser := true
-    );
-
-    perform set_route_permission(
-      routePattern := '/subscriptionPermissions/:id',
-      httpVerb := 'DELETE',
-      roleCode := null,
-      isPublic := false,
-      isSuperUser := true
     );
 
     -- set superUsers routePermissions
@@ -3346,14 +2910,6 @@ do $$
     perform set_route_permission(
       routePattern := '/transactions/:id',
       httpVerb := 'GET',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/transactions/:id',
-      httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
       isSuperUser := false
@@ -3362,23 +2918,7 @@ do $$
     perform set_route_permission(
       routePattern := '/transactions/:id/receipt',
       httpVerb := 'GET',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/transactions/:id/receipt',
-      httpVerb := 'GET',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/transactions',
-      httpVerb := 'GET',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -3460,14 +3000,6 @@ do $$
     perform set_route_permission(
       routePattern := '/versions',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/versions',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
@@ -3477,14 +3009,6 @@ do $$
       routePattern := '/versions',
       httpVerb := 'POST',
       roleCode := 6020,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/versions/:id',
-      httpVerb := 'DELETE',
-      roleCode := 6000,
       isPublic := false,
       isSuperUser := false
     );
@@ -3510,15 +3034,7 @@ do $$
     perform set_route_permission(
       routePattern := '/vortex',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/vortex',
-      httpVerb := 'POST',
-      roleCode := 6020,
+      roleCode := null,
       isPublic := false,
       isSuperUser := false
     );
@@ -3534,15 +3050,7 @@ do $$
     perform set_route_permission(
       routePattern := '/vortex',
       httpVerb := 'GET',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/vortex',
-      httpVerb := 'GET',
-      roleCode := 6020,
+      roleCode := null,
       isPublic := false,
       isSuperUser := false
     );
