@@ -1555,7 +1555,7 @@ do $$
     --Add execImage column to systemMachineImages
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'execImage') then
       alter table "systemMachineImages" add column "execImage" varchar(80);
-      update "systemMachineImages" set "execImage"='shipimg/mexec:master.10846' where "execImage" is null;
+      update "systemMachineImages" set "execImage"='shipimg/mexec:master.11241' where "execImage" is null;
       alter table "systemMachineImages" alter column "execImage" set not null;
     end if;
 
@@ -1569,7 +1569,7 @@ do $$
     --Add execImage column to systemConfigs
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'execImage') then
       alter table "systemConfigs" add column "execImage" varchar(255);
-      update "systemConfigs" set "execImage"='shipimg/mexec:master.10846' where "execImage" is null;
+      update "systemConfigs" set "execImage"='shipimg/mexec:master.11241' where "execImage" is null;
       alter table "systemConfigs" alter column "execImage" set not null;
     end if;
 
