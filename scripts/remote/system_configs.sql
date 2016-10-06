@@ -55,6 +55,10 @@ do $$
       alter table "systemConfigs" add column "consoleMaxLifespan" INT default 0;
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'consoleCleanupHour') then
+      alter table "systemConfigs" add column "consoleCleanupHour" INT default 0;
+    end if;
+
     alter table "systemConfigs" owner to "apiuser";
   end
 $$;
