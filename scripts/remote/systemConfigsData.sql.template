@@ -31,7 +31,8 @@ do $$
             "allowSystemNodes"={{ALLOW_SYSTEM_NODES}},
             "allowDynamicNodes"={{ALLOW_DYNAMIC_NODES}},
             "allowCustomNodes"={{ALLOW_CUSTOM_NODES}},
-            "consoleMaxLifespan"={{CONSOLE_MAX_LIFESPAN}}
+            "consoleMaxLifespan"={{CONSOLE_MAX_LIFESPAN}},
+            "consoleCleanupHour"={{CONSOLE_CLEANUP_HOUR}}
         where id=1;
     end if;
 
@@ -75,7 +76,8 @@ do $$
             "allowSystemNodes",
             "allowDynamicNodes",
             "allowCustomNodes",
-            "consoleMaxLifespan"
+            "consoleMaxLifespan",
+            "consoleCleanupHour"
           )
         values
           (
@@ -109,7 +111,8 @@ do $$
             {{ALLOW_SYSTEM_NODES}},
             {{ALLOW_DYNAMIC_NODES}},
             {{ALLOW_CUSTOM_NODES}},
-            {{CONSOLE_MAX_LIFESPAN}}
+            {{CONSOLE_MAX_LIFESPAN}},
+            {{CONSOLE_CLEANUP_HOUR}}
           );
     end if;
   end

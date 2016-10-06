@@ -2155,6 +2155,11 @@ do $$
       alter table "systemConfigs" add column "consoleMaxLifespan" INTEGER default 0;
     end if;
 
+    -- Adds consoleCleanupHour column in systemConfigs table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'consoleCleanupHour') then
+      alter table "systemConfigs" add column "consoleCleanupHour" INTEGER default 0;
+    end if;
+
     -- Drop projectPermissions
     drop table if exists "projectPermissions";
 
