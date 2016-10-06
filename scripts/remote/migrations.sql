@@ -2196,6 +2196,7 @@ do $$
     delete from "routePermissions" where "routePattern"='/resources/:id/files'                    and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/runs'                                   and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/runs/:runId'                            and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/runs/:runId/cancel'                     and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/subscriptions/:id/reset'                and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/subscriptions/:subscriptionId/billing'  and "httpVerb"='GET'    and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/subscriptions/:subscriptionId'          and "httpVerb"='PUT'    and "roleCode"=6000;
