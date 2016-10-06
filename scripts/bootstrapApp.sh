@@ -192,6 +192,10 @@ generate_system_config() {
     local allow_custom_nodes=$(cat $STATE_FILE | jq -r '.systemSettings.allowCustomNodes')
     sed -i "s#{{ALLOW_CUSTOM_NODES}}#$allow_custom_nodes#g" $system_configs_sql
 
+    __process_msg "Updating : consoleMaxLifespan"
+    local console_max_lifespan=$(cat $STATE_FILE | jq -r '.systemSettings.consoleMaxLifespan')
+    sed -i "s#{{CONSOLE_MAX_LIFESPAN}}#console_max_lifespan#g" $system_configs_sql
+
     _update_install_status "systemConfigSqlCreated"
     __process_msg "Successfully generated 'systemConfig' table data"
   else
