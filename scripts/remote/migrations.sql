@@ -2188,6 +2188,7 @@ do $$
     delete from "routePermissions" where "routePattern"='/projects/:projectId/disable'            and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/projects/:projectId/enable'             and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/projects/:projectId'                    and "httpVerb"='PUT'    and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/projects/:projectId/newBuild'           and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/resources/:id'                          and "httpVerb"='PUT'    and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/resources/:id'                          and "httpVerb"='DELETE' and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/resources'                              and "httpVerb"='POST'   and "roleCode"=6000;

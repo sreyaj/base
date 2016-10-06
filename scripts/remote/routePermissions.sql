@@ -1654,14 +1654,6 @@ do $$
     perform set_route_permission(
       routePattern := '/projects/:projectId/newBuild',
       httpVerb := 'POST',
-      roleCode := 6000,
-      isPublic := false,
-      isSuperUser := false
-    );
-
-    perform set_route_permission(
-      routePattern := '/projects/:projectId/newBuild',
-      httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
       isSuperUser := false
