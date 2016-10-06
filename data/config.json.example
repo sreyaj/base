@@ -352,8 +352,7 @@
       "SHIPPABLE_API_TOKEN",
       "RUN_MODE",
       "COMPONENT",
-      "SHIPPABLE_VORTEX_URL",
-      "TRUCK"
+      "SHIPPABLE_VORTEX_URL"
     ]
   },{
     "name": "versionTrigger",
