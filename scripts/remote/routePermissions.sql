@@ -1995,6 +1995,22 @@ do $$
       isSuperUser := false
     );
 
+    perform set_route_permission(
+      routePattern := '/resources/:id/triggerNewBuildRequest',
+      httpVerb := 'POST',
+      roleCode := 6010,
+      isPublic := false,
+      isSuperUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/resources/:id/triggerNewBuildRequest',
+      httpVerb := 'POST',
+      roleCode := 6020,
+      isPublic := false,
+      isSuperUser := false
+    );
+
     -- set runs routePermissions
 
     perform set_route_permission(
