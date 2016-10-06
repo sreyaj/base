@@ -2150,6 +2150,11 @@ do $$
       alter table "systemConfigs" add column "allowCustomNodes" BOOLEAN default false;
     end if;
 
+    -- Adds consoleMaxLifespan column in systemConfigs table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'consoleMaxLifespan') then
+      alter table "systemConfigs" add column "consoleMaxLifespan" INTEGER default 0;
+    end if;
+
     -- Drop projectPermissions
     drop table if exists "projectPermissions";
 

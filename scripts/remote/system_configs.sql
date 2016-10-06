@@ -51,6 +51,9 @@ do $$
       alter table "systemConfigs" add column "allowCustomNodes" BOOLEAN default false;
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'consoleMaxLifespan') then
+      alter table "systemConfigs" add column "consoleMaxLifespan" INT default 0;
+    end if;
 
     alter table "systemConfigs" owner to "apiuser";
   end

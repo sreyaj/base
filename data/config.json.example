@@ -34,7 +34,8 @@
     "allowDynamicNodes": false,
     "allowCustomNodes": false,
     "systemNodePrivateKey": "",
-    "systemNodePublicKey": ""
+    "systemNodePublicKey": "",
+    "consoleMaxLifespan": 0
   },
   "providers": [
     {
