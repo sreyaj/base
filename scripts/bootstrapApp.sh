@@ -194,11 +194,11 @@ generate_system_config() {
 
     __process_msg "Updating : consoleMaxLifespan"
     local console_max_lifespan=$(cat $STATE_FILE | jq -r '.systemSettings.consoleMaxLifespan')
-    sed -i "s#{{CONSOLE_MAX_LIFESPAN}}#console_max_lifespan#g" $system_configs_sql
+    sed -i "s#{{CONSOLE_MAX_LIFESPAN}}#$console_max_lifespan#g" $system_configs_sql
 
     __process_msg "Updating : consoleCleanupHour"
     local console_cleanup_hour=$(cat $STATE_FILE | jq -r '.systemSettings.consoleCleanupHour')
-    sed -i "s#{{CONSOLE_CLEANUP_HOUR}}#console_cleanup_hour#g" $system_configs_sql
+    sed -i "s#{{CONSOLE_CLEANUP_HOUR}}#$console_cleanup_hour#g" $system_configs_sql
 
     _update_install_status "systemConfigSqlCreated"
     __process_msg "Successfully generated 'systemConfig' table data"
