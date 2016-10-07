@@ -30,7 +30,9 @@ do $$
             "systemNodePublicKey"='{{SYSTEM_NODE_PUBLIC_KEY}}',
             "allowSystemNodes"={{ALLOW_SYSTEM_NODES}},
             "allowDynamicNodes"={{ALLOW_DYNAMIC_NODES}},
-            "allowCustomNodes"={{ALLOW_CUSTOM_NODES}}
+            "allowCustomNodes"={{ALLOW_CUSTOM_NODES}},
+            "consoleMaxLifespan"={{CONSOLE_MAX_LIFESPAN}},
+            "consoleCleanupHour"={{CONSOLE_CLEANUP_HOUR}}
         where id=1;
     end if;
 
@@ -73,7 +75,9 @@ do $$
             "systemNodePublicKey",
             "allowSystemNodes",
             "allowDynamicNodes",
-            "allowCustomNodes"
+            "allowCustomNodes",
+            "consoleMaxLifespan",
+            "consoleCleanupHour"
           )
         values
           (
@@ -106,7 +110,9 @@ do $$
             '{{SYSTEM_NODE_PUBLIC_KEY}}',
             {{ALLOW_SYSTEM_NODES}},
             {{ALLOW_DYNAMIC_NODES}},
-            {{ALLOW_CUSTOM_NODES}}
+            {{ALLOW_CUSTOM_NODES}},
+            {{CONSOLE_MAX_LIFESPAN}},
+            {{CONSOLE_CLEANUP_HOUR}}
           );
     end if;
   end

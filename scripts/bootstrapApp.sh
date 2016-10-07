@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-export skip_step=0
+export SKIP_STEP=false
 export sleep_time=1
 
 _update_install_status() {
@@ -11,14 +11,14 @@ _update_install_status() {
 _check_component_status() {
   local status=$(cat $STATE_FILE | jq '.installStatus.'"$1"'')
   if [ "$status" = true ]; then
-    skip_step=1;
+    SKIP_STEP=true;
   fi
 }
 
 generate_serviceuser_token() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "serviceuserTokenGenerated"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Generating random token for serviceuser"
     local token=$(cat /proc/sys/kernel/random/uuid)
     local stateToken=$(cat $STATE_FILE | jq '.systemSettings.serviceUserToken="'$token'"')
@@ -30,9 +30,9 @@ generate_serviceuser_token() {
 }
 
 update_docker_creds() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "dockerCredsUpdated"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Updating docker credentials to pull shippable images"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo "$gitlab_host" | jq '.ip')
@@ -63,9 +63,9 @@ update_docker_creds() {
 }
 
 generate_system_config() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "systemConfigSqlCreated"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Inserting data into systemConfigs Table"
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
     local host=$(echo $db_host | jq '.ip')
@@ -192,6 +192,14 @@ generate_system_config() {
     local allow_custom_nodes=$(cat $STATE_FILE | jq -r '.systemSettings.allowCustomNodes')
     sed -i "s#{{ALLOW_CUSTOM_NODES}}#$allow_custom_nodes#g" $system_configs_sql
 
+    __process_msg "Updating : consoleMaxLifespan"
+    local console_max_lifespan=$(cat $STATE_FILE | jq -r '.systemSettings.consoleMaxLifespan')
+    sed -i "s#{{CONSOLE_MAX_LIFESPAN}}#$console_max_lifespan#g" $system_configs_sql
+
+    __process_msg "Updating : consoleCleanupHour"
+    local console_cleanup_hour=$(cat $STATE_FILE | jq -r '.systemSettings.consoleCleanupHour')
+    sed -i "s#{{CONSOLE_CLEANUP_HOUR}}#$console_cleanup_hour#g" $system_configs_sql
+
     _update_install_status "systemConfigSqlCreated"
     __process_msg "Successfully generated 'systemConfig' table data"
   else
@@ -216,9 +224,9 @@ create_system_config() {
 }
 
 insert_system_config() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "systemConfigUpdated"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     # TODO: This should ideally check if the API is _actually_ up and running.
     __process_msg "Inserting data into systemConfigs Table"
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -237,9 +245,9 @@ insert_system_config() {
 }
 
 provision_api() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "apiProvisioned"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Provisioning api"
     local api_service_image=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .image')
     __process_msg "Successfully read from state.json: api.image ($api_service_image)"
@@ -404,9 +412,9 @@ test_api_endpoint() {
 }
 
 run_migrations() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "migrationsUpdated"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Running migrations.sql"
 
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -423,9 +431,9 @@ run_migrations() {
 }
 
 insert_route_permissions() {
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "routePermissionsUpdated"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Running routePermissions.sql"
 
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
