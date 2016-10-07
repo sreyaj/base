@@ -22,19 +22,6 @@ _check_component_status() {
   fi
 }
 
-validate_core_config() {
-  # TODO: check if components.json has all the require components
-  __process_msg "Validating core config"
-  CORE_COMPONENTS_LIST=$(cat "$CORE_CONFIG" | jq '.')
-  local component_count=$(echo $CORE_COMPONENTS_LIST | jq '. | length')
-  if [[ $component_count -lt 1 ]]; then
-    __process_msg "5 components required to set up Shippable, $component_count provided"
-    exit 1
-  else
-    __process_msg "Component count: $component_count"
-  fi
-}
-
 install_database() {
   skip_step=0
   _check_component_status "databaseInitialized"
@@ -448,20 +435,10 @@ install_redis() {
   update=$(echo $result | jq '.' | tee $STATE_FILE)
 }
 
-install_rp() {
-  __process_msg "Installing reverse proxy"
-  # TODO:
-  # - read domain name
-  # - on the first services node,
-  # - update nginx config file
-  # - update docker file
-  # - run docker build
-  # - run rp on first services
-}
-
 main() {
   __process_marker "Installing core"
-  validate_core_config
+  install_docker
+  install_swarm
   install_database
   save_db_credentials_in_statefile
   save_db_credentials
@@ -470,12 +447,9 @@ main() {
   install_rabbitmq
   save_gitlab_state
   install_gitlab
-  install_docker
   install_ecr
-  install_swarm
   initialize_workers
   install_redis
-  install_rp
 }
 
 main

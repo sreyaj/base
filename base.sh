@@ -11,6 +11,7 @@
 # Global variables ########################################
 ###########################################################
 readonly INSTALLER_VERSION=4.0.0
+export INSTALL_MODE=production
 readonly IFS=$'\n\t'
 readonly ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
@@ -72,16 +73,27 @@ __check_dependencies() {
 }
 
 install() {
-  local install_mode="$1"
-
   __check_dependencies
-  RELEASE=$(cat $CONFIG_FILE | jq -r '.release')
-  readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
-  source "$SCRIPTS_DIR/getConfigs.sh"
-  source "$SCRIPTS_DIR/bootstrapMachines.sh"
-  source "$SCRIPTS_DIR/installCore.sh"
-  source "$SCRIPTS_DIR/bootstrapApp.sh"
-  source "$SCRIPTS_DIR/provisionServices.sh"
+  if [ "$INSTALL_MODE" == "production" ]; then
+    RELEASE=$(cat $CONFIG_FILE | jq -r '.release')
+    readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
+    source "$SCRIPTS_DIR/getConfigs.sh"
+    source "$SCRIPTS_DIR/bootstrapMachines.sh"
+    source "$SCRIPTS_DIR/installCore.sh"
+    source "$SCRIPTS_DIR/bootstrapApp.sh"
+    source "$SCRIPTS_DIR/provisionServices.sh"
+  else
+    ## commit a file called localConfig.json in /usr
+    ## copy services.yml from installer to here
+    ##  |_ remove consul from it
+    ## fill up statefile system config using localConfig.json
+    ## skip bootstrap machines part
+    ## in installcore, check and install required docker version 
+    ##  |_ update docker config to connect to right ip ad bip
+    ## otherwise, just start services for each component
+    ## installCore  
+
+  fi
 }
 
 upgrade() {
@@ -143,12 +155,12 @@ if [[ $# -gt 0 ]]; then
       shift ;;
     -i|--install)
       shift
-      install_mode=production
       if [[ $# -eq 1 ]]; then
         install_mode=$1
       fi
       if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
-        install "$install_mode"
+        export INSTALL_MODE="$install_mode"
+        install
       else
         __print_help_install
       fi
