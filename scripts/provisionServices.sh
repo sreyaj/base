@@ -2,7 +2,7 @@
 
 readonly SERVICE_CONFIG="$DATA_DIR/config.json"
 
-export skip_step=0
+export SKIP_STEP=false
 
 load_services() {
   # TODO: load service configuration from `config.json`
@@ -86,7 +86,7 @@ __map_env_vars() {
 _check_component_status() {
   local status=$(cat $STATE_FILE | jq '.installStatus.'"$1"'')
   if [ "$status" = true ]; then
-    skip_step=1;
+    SKIP_STEP=true;
   fi
 }
 
@@ -97,9 +97,9 @@ _update_install_status() {
 
 __save_service_config() {
   local service=$1
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "${service}Initialized"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     local ports=$2
     local opts=$3
     local component=$4
@@ -144,7 +144,7 @@ __save_service_config() {
 
     local state_env=$(cat $STATE_FILE | jq --arg service "$service" '
       .services  |=
-      map(if .name==$service then
+      map(if .name == $service then
           .env = "'$env_values'"
         else
           .
@@ -219,10 +219,9 @@ __save_service_config() {
 
 __run_service() {
   service=$1
-  service=$1
-  skip_step=0
+  SKIP_STEP=false
   _check_component_status "${service}Initialized"
-  if [ $skip_step -eq 0 ]; then
+  if [ "$SKIP_STEP" = false ]; then
     __process_msg "Provisioning $service on swarm cluster"
     local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
