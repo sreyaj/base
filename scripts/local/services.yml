@@ -1,0 +1,49 @@
+redis:
+  image: shipimg/rdsbase:master.698
+  privileged: true
+  net: "host"
+  ports:
+    - "6379:6379"
+message:
+  image: shipimg/msgbase:latest
+  privileged: true
+  net: "bridge"
+  ports:
+    - "5672:5672"
+    - "15672:15672"
+postgres:
+  image: postgres:9.5
+  privileged: true
+  net: "host"
+  ports:
+    - 5432:5432
+  environment:
+    - POSTGRES_PASSWORD=testing1234
+    - POSTGRES_USER=apiuser
+    - POSTGRES_DB=shipdb
+  volumes:
+    - ./data:/tmp/data
+gitlab:
+  image: gitlab/gitlab-ce:8.9.6-ce.0
+  privileged: true
+  hostname: "localhost"
+  ports:
+    - "443:443"
+    - "80:80"
+    - "22:22"
+  environment:
+    - GITLAB_ROOT_PASSWORD=shippable1234
+  volumes:
+    - ./gitlab/config:/etc/gitlab:rw
+    - ./gitlab/logs:/var/log/gitlab:rw
+    - ./gitlab/data:/var/opt/gitlab:rw
+vault:
+  image: library/vault:0.6.0
+  privileged: true
+  hostname: "host"
+  ports:
+    - "8200:8200"
+  command:
+    - "server"
+  volumes:
+    - ./vault:/vault/config

@@ -17,8 +17,136 @@ _update_install_status() {
 
 _check_component_status() {
   local status=$(cat $STATE_FILE | jq '.installStatus.'"$1"'')
-  if [ "$status" = true ]; then
+  if [ "$status" == true ]; then
     SKIP_STEP=true;
+  fi
+}
+
+install_docker() {
+  SKIP_STEP=false
+  _check_component_status "dockerInitialized"
+  if [ "$SKIP_STEP" == false ]; then
+    __process_msg "Installing Docker on management machine"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host | jq '.ip')
+    _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
+
+    __process_msg "Installing Docker on service machines"
+    local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
+    local service_machines_count=$(echo $service_machines_list | jq '. | length')
+    for i in $(seq 1 $service_machines_count); do
+      local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
+      local host=$(echo $machine | jq '.ip')
+      _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
+      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
+    done
+    __process_msg "Please configure http_proxy in /etc/default/docker, if proxy needs to be configured. Press any button to continue, once this is done..."
+    read response
+    _update_install_status "dockerInstalled"
+    _update_install_status "dockerInitialized"
+  else
+    __process_msg "Docker already installed, skipping"
+    __process_msg "Docker already initialized, skipping"
+  fi
+}
+
+install_docker_local() {
+  SKIP_STEP=false
+  _check_component_status "dockerInitialized"
+  if [ "$SKIP_STEP" == false ]; then
+    __process_msg "Installing Docker on localhost"
+    source "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$INSTALL_MODE"
+
+    _update_install_status "dockerInstalled"
+    _update_install_status "dockerInitialized"
+  else
+    __process_msg "Docker already installed, skipping"
+    __process_msg "Docker already initialized, skipping"
+  fi
+}
+
+install_swarm() {
+  SKIP_STEP=false
+  _check_component_status "swarmInstalled"
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Installing Swarm"
+    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host | jq '.ip')
+    _copy_script_remote $host "installSwarm.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
+
+    __process_msg "Initializing docker swarm master"
+    _exec_remote_cmd "$host" "docker swarm leave --force || true"
+    local swarm_init_cmd="docker swarm init --advertise-addr $host"
+    _exec_remote_cmd "$host" "$swarm_init_cmd"
+
+    local swarm_worker_token="swarm_worker_token.txt"
+    local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
+    _exec_remote_cmd "$host" "'docker swarm join-token -q worker > $swarm_worker_token_remote'"
+    _copy_script_local $host "$swarm_worker_token_remote"
+
+    local script_dir_local="/tmp/shippable"
+    local swarm_worker_token_local="$script_dir_local/$swarm_worker_token"
+    local swarm_worker_token=$(cat $swarm_worker_token_local)
+
+    local swarm_worker_token_update=$(cat $STATE_FILE | jq '
+      .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
+    update=$(echo $swarm_worker_token_update | jq '.' | tee $STATE_FILE)
+
+    __process_msg "Running Swarm in drain mode"
+    local swarm_master_host_name="swarm_master_host_name.txt"
+    local swarm_master_host_name_remote="$SCRIPT_DIR_REMOTE/$swarm_master_host_name"
+    _exec_remote_cmd "$host" "'docker node inspect self | jq -r '.[0].Description.Hostname' > $swarm_master_host_name_remote'"
+    _copy_script_local $host "$swarm_master_host_name_remote"
+
+    local swarm_master_host_name_remote="$script_dir_local/$swarm_master_host_name"
+    local swarm_master_host_name=$(cat $swarm_master_host_name_remote)
+    _exec_remote_cmd "$host" "docker node update  --availability drain $swarm_master_host_name"
+
+    _update_install_status "swarmInstalled"
+  else
+    __process_msg "Swarm already installed, skipping"
+  fi
+}
+
+install_swarm_local() {
+  SKIP_STEP=false
+  _check_component_status "swarmInstalled"
+  if [ "$SKIP_STEP" == false ]; then
+    __process_msg "Installing Swarm on localhost"
+    source "$REMOTE_SCRIPTS_DIR/installSwarm.sh" "$INSTALL_MODE"
+    _update_install_status "swarmInstalled"
+  else
+    __process_msg "Swarm already installed, skipping"
+  fi
+
+  SKIP_STEP=false
+  _check_component_status "swarmInitialized"
+  if [ "$SKIP_STEP" == false ]; then
+    __process_msg "Initializing docker swarm"
+    sudo docker swarm leave --force || true
+    docker swarm init --advertise-addr 127.0.0.1
+    _update_install_status "swarmInitialized"
+  else
+    __process_msg "Swarm already initialized, skipping"
+  fi
+}
+
+install_compose(){
+  if ! type "docker-compose" > /dev/null; then
+    echo "Downloading docker compose"
+    local download_compose_exc=$(wget https://github.com/docker/compose/releases/download/1.8.1/docker-compose-`uname -s`-`uname -m` -O /tmp/docker-compose)
+    echo "$download_compose_exc"
+
+    sudo chmod +x /tmp/docker-compose
+    local extract_compose_exc=$(sudo mv /tmp/docker-compose /usr/local/bin/)
+    echo "$extract_compose_exc"
+
+    sudo docker-compose --version
+  else
+    __process_msg "Docker compose already, installed, skipping"
+    sudo docker-compose --version
   fi
 }
 
@@ -43,6 +171,23 @@ install_database() {
   else
     __process_msg "Database already installed, skipping"
     __process_msg "Database already initialized, skipping"
+  fi
+}
+
+install_database_local() {
+  SKIP_STEP=false
+  _check_component_status "databaseInstalled"
+
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Installing Database"
+
+    sudo docker-compose -f $LOCAL_SCRIPTS_DIR/services.yml up -d postgres
+    __process_msg "Waiting 30s for postgres to boot"
+    sleep 30s
+
+    _update_install_status "databaseInstalled"
+  else
+    __process_msg "Database already installed, skipping"
   fi
 }
 
@@ -80,14 +225,71 @@ save_db_credentials_in_statefile() {
   update=$(echo $result | jq '.' | tee $STATE_FILE)
 }
 
+save_db_credentials_in_statefile_local() {
+  __process_msg "Saving database credentials in state file local"
+  local db_ip=172.17.42.1
+  local db_port=5432
+  local db_address=$db_ip":"$db_port
+
+  db_name="shipdb"
+  db_username="apiuser"
+  db_password="testing1234"
+  db_dialect="postgres"
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbHost = "'$db_ip'"')
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbDialect = "'$db_dialect'"')
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbPort = "'$db_port'"')
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbname = "'$db_name'"')
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbUsername = "'$db_username'"')
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbPassword = "'$db_password'"')
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+  result=$(cat $STATE_FILE | jq '.systemSettings.dbUrl = "'$db_address'"')
+  update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+}
+
+initialize_database_local() {
+  SKIP_STEP=false
+  _check_component_status "databaseInitialized"
+
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Initializing Database"
+    local db_ip=172.17.42.1
+    local db_port=5432
+    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+    local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
+
+    local vault_migrations_file="$REMOTE_SCRIPTS_DIR/vault_kv_store.sql"
+    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
+
+    sudo cp -vr $vault_migrations_file $db_mount_dir
+    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/vault_kv_store.sql
+
+    _update_install_status "databaseInitialized"
+  else
+    __process_msg "Database already initialized, skipping"
+  fi
+}
+
 save_db_credentials() {
   __process_msg "Saving database credentials"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
   local host=$(echo $db_host | jq '.ip')
   local db_ip=$(echo $db_host | jq '.ip')
   local db_port=5432
-  local db_username=$(cat $STATE_FILE | jq '.systemSettings.dbUsername')
-  local db_password=$(cat $STATE_FILE | jq '.systemSettings.dbPassword')
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  local db_password=$(cat $STATE_FILE | jq -r '.systemSettings.dbPassword')
   local db_address=$db_ip:$db_port
 
   #TODO: fetch db_name from state.json
@@ -146,6 +348,45 @@ install_vault() {
 
     _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd_proxyless "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
+    _update_install_status "vaultInitialized"
+  else
+    __process_msg "Vault already initialized, skipping"
+  fi
+}
+
+install_vault_local() {
+  SKIP_STEP=false
+  _check_component_status "vaultInstalled"
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Installing Vault"
+
+    sudo docker-compose -f $LOCAL_SCRIPTS_DIR/services.yml up -d vault
+
+    _update_install_status "vaultInstalled"
+  else
+    __process_msg "Vault already installed, skipping"
+  fi
+}
+
+initialize_vault_local() {
+  SKIP_STEP=false
+  _check_component_status "vaultInitialized"
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Initializing Vault"
+    docker exec -it local_vault_1 sh -c '/vault/config/scripts/bootstrap.sh'
+    local vault_config_dir="$LOCAL_SCRIPTS_DIR/vault"
+    local vault_token_file="$vault_config_dir/scripts/vaultToken.json"
+    local vault_token=$(cat "$vault_token_file" | jq -r '.vaultToken')
+    __process_msg "Generated vault token $vault_token"
+
+
+    result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultToken = "'$vault_token'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+    local vault_url="http://172.17.42.1:8200"
+    result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultUrl = "'$vault_url'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
+
     _update_install_status "vaultInitialized"
   else
     __process_msg "Vault already initialized, skipping"
@@ -225,6 +466,35 @@ install_rabbitmq() {
   update=$(echo $update | jq '.' | tee $STATE_FILE)
 }
 
+install_rabbitmq_local() {
+  SKIP_STEP=false
+  _check_component_status "rabbitmqInstalled"
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Installing rabbitmq"
+
+    sudo docker-compose -f $LOCAL_SCRIPTS_DIR/services.yml up -d message
+
+    __process_msg "rabbitmq successfully installed"
+    _update_install_status "rabbitmqInstalled"
+  else
+    __process_msg "rabbitmq already installed, skipping"
+  fi
+}
+
+initialize_rabbitmq_local() {
+  SKIP_STEP=false
+  _check_component_status "rabbitmqInitialized"
+  if [ "$SKIP_STEP" = false ]; then
+
+    source "$LOCAL_SCRIPTS_DIR/bootstrapRabbit.sh"
+    __process_msg "rabbitmq successfully initialized"
+
+    _update_install_status "rabbitmqInitialized"
+  else
+    __process_msg "RabbitMQ already initialized, skipping"
+  fi
+}
+
 save_gitlab_state() {
   local gitlab_sys_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select(.name=="gitlab")')
   if [ -z "$gitlab_sys_int" ]; then
@@ -297,32 +567,17 @@ install_gitlab() {
   fi
 }
 
-install_docker() {
+install_gitlab_local() {
   SKIP_STEP=false
-  _check_component_status "dockerInitialized"
+  _check_component_status "gitlabInstalled"
   if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Installing Docker on management machine"
-    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-    local host=$(echo $gitlab_host | jq '.ip')
-    _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
+    __process_msg "Installing Gitlab"
 
-    __process_msg "Installing Docker on service machines"
-    local service_machines_list=$(cat $STATE_FILE | jq '[ .machines[] | select(.group=="services") ]')
-    local service_machines_count=$(echo $service_machines_list | jq '. | length')
-    for i in $(seq 1 $service_machines_count); do
-      local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
-      local host=$(echo $machine | jq '.ip')
-      _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
-      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
-    done
-    __process_msg "Please configure http_proxy in /etc/default/docker, if proxy needs to be configured. Press any button to continue, once this is done..."
-    read response
-    _update_install_status "dockerInstalled"
-    _update_install_status "dockerInitialized"
+    sudo docker-compose -f $LOCAL_SCRIPTS_DIR/services.yml up -d gitlab
+
+    _update_install_status "gitlabInstalled"
   else
-    __process_msg "Docker already installed, skipping"
-    __process_msg "Docker already initialized, skipping"
+    __process_msg "Gitlab already installed, skipping"
   fi
 }
 
@@ -343,49 +598,22 @@ install_ecr() {
   fi
 }
 
-install_swarm() {
+install_ecr_local() {
   SKIP_STEP=false
-  _check_component_status "swarmInstalled"
+  _check_component_status "ecrInitialized"
   if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Installing Swarm"
-    local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-    local host=$(echo $gitlab_host | jq '.ip')
-    _copy_script_remote $host "installSwarm.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
+    __process_msg "Installing ECR on local machine"
 
-    __process_msg "Initializing docker swarm master"
-    _exec_remote_cmd "$host" "docker swarm leave --force || true"
-    local swarm_init_cmd="docker swarm init --advertise-addr $host"
-    _exec_remote_cmd "$host" "$swarm_init_cmd"
+    sudo apt-get -y install python-pip
+    sudo pip install awscli==1.10.63
 
-    local swarm_worker_token="swarm_worker_token.txt"
-    local swarm_worker_token_remote="$SCRIPT_DIR_REMOTE/$swarm_worker_token"
-    _exec_remote_cmd "$host" "'docker swarm join-token -q worker > $swarm_worker_token_remote'"
-    _copy_script_local $host "$swarm_worker_token_remote"
-
-    local script_dir_local="/tmp/shippable"
-    local swarm_worker_token_local="$script_dir_local/$swarm_worker_token"
-    local swarm_worker_token=$(cat $swarm_worker_token_local)
-
-    local swarm_worker_token_update=$(cat $STATE_FILE | jq '
-      .systemSettings.swarmWorkerToken = "'$swarm_worker_token'"')
-    update=$(echo $swarm_worker_token_update | jq '.' | tee $STATE_FILE)
-
-    __process_msg "Running Swarm in drain mode"
-    local swarm_master_host_name="swarm_master_host_name.txt"
-    local swarm_master_host_name_remote="$SCRIPT_DIR_REMOTE/$swarm_master_host_name"
-    _exec_remote_cmd "$host" "'docker node inspect self | jq -r '.[0].Description.Hostname' > $swarm_master_host_name_remote'"
-    _copy_script_local $host "$swarm_master_host_name_remote"
-
-    local swarm_master_host_name_remote="$script_dir_local/$swarm_master_host_name"
-    local swarm_master_host_name=$(cat $swarm_master_host_name_remote)
-    _exec_remote_cmd "$host" "docker node update  --availability drain $swarm_master_host_name"
-
-    _update_install_status "swarmInstalled"
+    _update_install_status "ecrInstalled"
+    _update_install_status "ecrInitialized"
   else
-    __process_msg "Swarm already installed, skipping"
+    __process_msg "ECR already installed, skipping"
+    __process_msg "ECR already initialized, skipping"
   fi
- }
+}
 
 initialize_workers() {
   SKIP_STEP=false
@@ -435,21 +663,57 @@ install_redis() {
   update=$(echo $result | jq '.' | tee $STATE_FILE)
 }
 
+install_redis_local() {
+  SKIP_STEP=false
+  _check_component_status "redisInstalled"
+
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Installing Redis"
+
+    sudo docker-compose -f $LOCAL_SCRIPTS_DIR/services.yml up -d redis
+
+    local redis_url="172.17.42.1:6379"
+    result=$(cat $STATE_FILE | jq -r '.systemSettings.redisUrl = "'$redis_url'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+    __process_msg "Redis successfully intalled"
+    _update_install_status "redisInstalled"
+  else
+    __process_msg "Redis already installed, skipping"
+  fi
+}
+
 main() {
   __process_marker "Installing core"
-  install_docker
-  install_swarm
-  install_database
-  save_db_credentials_in_statefile
-  save_db_credentials
-  install_vault
-  save_vault_credentials
-  install_rabbitmq
-  save_gitlab_state
-  install_gitlab
-  install_ecr
-  initialize_workers
-  install_redis
+  if [ "$INSTALL_MODE" == "production" ]; then
+    install_docker
+    install_swarm
+    install_database
+    save_db_credentials_in_statefile
+    save_db_credentials
+    install_vault
+    save_vault_credentials
+    install_rabbitmq
+    save_gitlab_state
+    install_gitlab
+    install_ecr
+    initialize_workers
+    install_redis
+  else
+    install_docker_local
+    install_swarm_local
+    install_compose
+    install_database_local
+    save_db_credentials_in_statefile_local
+    initialize_database_local
+    install_vault_local
+    initialize_vault_local
+    install_rabbitmq_local
+    initialize_rabbitmq_local
+    install_gitlab_local
+    install_ecr_local
+    install_redis_local
+  fi
 }
 
 main

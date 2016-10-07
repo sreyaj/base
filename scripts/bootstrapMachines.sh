@@ -120,6 +120,15 @@ bootstrap() {
   _update_state "$update"
 }
 
+bootstrap_local() {
+  __process_msg "Installing core components on machines"
+
+  source "$REMOTE_SCRIPTS_DIR/installBase.sh" "$INSTALL_MODE"
+
+  local update=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped='true'')
+  _update_state "$update"
+}
+
 update_state() {
   # TODO: update state.json with the results
   __process_msg "updating state file with machine status"
@@ -139,14 +148,26 @@ update_state() {
 
 main() {
   __process_marker "Bootstrapping machines"
-  validate_machines_config
-  create_ssh_keys
-  update_ssh_key
-  check_connection
-  check_requirements
-  export_language
-  bootstrap
-  #update_state
+  local machines_bootstrap_status=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped')
+  if [ $machines_bootstrap_status == true ]; then
+    __process_msg "Machines already bootstrapped"
+  else
+    if [ "$INSTALL_MODE" == "production" ]; then
+      validate_machines_config
+      create_ssh_keys
+      update_ssh_key
+      check_connection
+      check_requirements
+      export_language
+      bootstrap
+      #update_state
+    else
+      bootstrap_local
+    fi
+
+    local update=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped=true')
+    _update_state "$update"
+  fi
 }
 
 main
