@@ -1561,7 +1561,7 @@ do $$
     --Add runShImage column to systemMachineImages
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'runShImage') then
       alter table "systemMachineImages" add column "runShImage" varchar(80);
-      update "systemMachineImages" set "runShImage"='374168611083.dkr.ecr.us-east-1.amazonaws.com/runsh:v4.10.26' where "runShImage" is null;
+      update "systemMachineImages" set "runShImage"='374168611083.dkr.ecr.us-east-1.amazonaws.com/runsh:v4.10.28' where "runShImage" is null;
       alter table "systemMachineImages" alter column "runShImage" set not null;
     end if;
 
