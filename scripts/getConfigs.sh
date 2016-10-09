@@ -114,7 +114,11 @@ bootstrap_state_old() {
     '{
       "release": "'$release'",
       "systemSettings": {},
-      "services": [],
+      "services": [
+        {
+          "name": "api"
+        }
+      ],
       "machines": [],
       "systemIntegrations": [],
       "core": [],

@@ -58,6 +58,7 @@
     }
   ],
   "systemSettings": {
+    "systemImagesRegistry": "374168611083.dkr.ecr.us-east-1.amazonaws.com",
     "serviceUserToken": "",
     "swarmWorkerToken": "",
     "vaultToken": "",
@@ -158,6 +159,7 @@
     "dockerCredsUpdated": false,
     "systemConfigSqlCreated": false,
     "apiProvisioned": false,
+    "apiConfigured": false,
     "systemConfigUpdated": false,
     "migrationsUpdated": false,
     "masterIntegrationsConfigured": false,
