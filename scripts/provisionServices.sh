@@ -233,29 +233,50 @@ __run_service() {
     local image=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .image')
     local replicas=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .replicas')
 
-    local boot_cmd="docker service create"
+    if [ "$INSTALL_MODE" == "production" ]; then
+      local boot_cmd="docker service create"
 
-    if [ $port_mapping != "null" ]; then
-      boot_cmd="$boot_cmd $port_mapping"
-    fi
+      if [ $port_mapping != "null" ]; then
+        boot_cmd="$boot_cmd $port_mapping"
+      fi
 
-    if [ $env_variables != "null" ]; then
-      boot_cmd="$boot_cmd $env_variables"
-    fi
+      if [ $env_variables != "null" ]; then
+        boot_cmd="$boot_cmd $env_variables"
+      fi
 
-    if [ $replicas != "null" ]; then
-      boot_cmd="$boot_cmd --replicas $replicas"
+      if [ $replicas != "null" ]; then
+        boot_cmd="$boot_cmd --replicas $replicas"
+      else
+        boot_cmd="$boot_cmd --mode global"
+      fi
+
+      if [ $opts != "null" ]; then
+        boot_cmd="$boot_cmd $opts"
+      fi
+
+      boot_cmd="$boot_cmd $image"
+      _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
+      _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
     else
-      boot_cmd="$boot_cmd --mode global"
-    fi
+      sudo docker rm -f $service || true
 
-    if [ $opts != "null" ]; then
-      boot_cmd="$boot_cmd $opts"
-    fi
+      boot_cmd="sudo docker run -d "
 
-    boot_cmd="$boot_cmd $image"
-    _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
-    _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
+      if [ $port_mapping != "null" ]; then
+        boot_cmd="$boot_cmd $port_mapping"
+      fi
+
+      if [ $env_variables != "null" ]; then
+        boot_cmd="$boot_cmd $env_variables"
+      fi
+
+      boot_cmd="$boot_cmd \
+        --net host \
+        --name $service \
+        $image"
+
+      eval $boot_cmd
+    fi
     _update_install_status "${service}Installed"
     _update_install_status "${service}Initialized"
     __process_msg "Successfully provisioned $service"

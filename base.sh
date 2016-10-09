@@ -11,11 +11,13 @@
 # Global variables ########################################
 ###########################################################
 readonly INSTALLER_VERSION=4.0.0
+export INSTALL_MODE=production
 readonly IFS=$'\n\t'
 readonly ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
 readonly DATA_DIR="$ROOT_DIR/data"
 readonly REMOTE_SCRIPTS_DIR="$ROOT_DIR/scripts/remote"
+readonly LOCAL_SCRIPTS_DIR="$ROOT_DIR/scripts/local"
 readonly STATE_FILE="$DATA_DIR/state.json"
 readonly STATE_FILE_BACKUP="$DATA_DIR/state.json.backup"
 readonly CONFIG_FILE="$DATA_DIR/config.json"
@@ -72,8 +74,6 @@ __check_dependencies() {
 }
 
 install() {
-  local install_mode="$1"
-
   __check_dependencies
   RELEASE=$(cat $CONFIG_FILE | jq -r '.release')
   readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
@@ -143,12 +143,12 @@ if [[ $# -gt 0 ]]; then
       shift ;;
     -i|--install)
       shift
-      install_mode=production
       if [[ $# -eq 1 ]]; then
         install_mode=$1
       fi
       if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
-        install "$install_mode"
+        export INSTALL_MODE="$install_mode"
+        install
       else
         __print_help_install
       fi

@@ -1,14 +1,10 @@
 #!/bin/bash -e
 
-update_sources() {
-  update_sources_docker
-  update_sources_rabbitmq
-  update_sources_postgresql
-}
+export INSTALL_MODE="$1"
 
 update_sources_docker() {
-  apt-get install -y apt-transport-https ca-certificates
-  apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+  sudo apt-get install -y apt-transport-https ca-certificates
+  sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
   docker_deb="deb https://apt.dockerproject.org/repo ubuntu-trusty main"
   docker=$(cat /etc/apt/sources.list.d/docker.list 2>/dev/null | grep "$docker_deb") || true
@@ -38,13 +34,17 @@ update_sources_postgresql() {
 }
 
 install_base_binaries() {
-  apt-get -y update
-  apt-get install -y jq vim git-core
+  sudo apt-get -y update
+  sudo apt-get install -y jq vim git-core
 }
 
 main() {
-  update_sources
-  install_base_binaries
+  update_sources_docker
+  if [ "$INSTALL_MODE" == "production" ]; then
+    update_sources_rabbitmq
+    update_sources_postgresql
+    install_base_binaries
+  fi
 }
 
 main

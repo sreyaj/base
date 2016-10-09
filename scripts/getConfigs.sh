@@ -69,13 +69,19 @@ validate_config() {
 
 check_state_backup_exists() {
   export INIT_STATE_FILE=1
-  # if [ -f "$STATE_FILE_BACKUP" ]; then
-  #   __process_msg "A state.json.backup file exists, do you want to use the backup to initialize state.json? (y/n)"
-  #   read response
-  #   if [[ "$response" =~ "y" ]]; then
-  #     INIT_STATE_FILE=0
-  #   fi
-  # fi
+  if [ -f "$STATE_FILE" ]; then
+    __process_msg "A state file exists, do you want to use existing state.json? (y/n)"
+    read response
+    if [[ "$response" =~ "y" ]]; then
+       INIT_STATE_FILE=0
+    fi
+  elif [ -f "$STATE_FILE_BACKUP" ]; then
+    __process_msg "A state.json.backup file exists, do you want to use the backup to initialize state.json? (y/n)"
+    read response
+    if [[ "$response" =~ "y" ]]; then
+       INIT_STATE_FILE=0
+    fi
+  fi
 }
 
 bootstrap_state() {
@@ -186,9 +192,18 @@ update_system_integrations() {
 }
 
 restore_state() {
-  cp $STATE_FILE_BACKUP $STATE_FILE
-  update=$(cat $STATE_FILE | jq '.machines='[]'')
-  _update_state "$update"
+  if [ -f "$STATE_FILE_BACKUP" ] && [ ! -f "$STATE_FILE" ]; then
+    cp $STATE_FILE_BACKUP $STATE_FILE
+    update=$(cat $STATE_FILE | jq '.machines='[]'')
+    _update_state "$update"
+  fi
+}
+
+update_local_settings() {
+  local local_system_settings_file="$LOCAL_SCRIPTS_DIR/systemSettings.json"
+  local local_system_settings=$(cat $local_system_settings_file | jq '.')
+  local update=$(cat $STATE_FILE | jq '.systemSettings='"$local_system_settings"'')
+  update=$(echo $update | jq '.' | tee $STATE_FILE)
 }
 
 main() {
@@ -203,9 +218,14 @@ main() {
     update_install_status
     update_providers
     update_system_integrations
+
+    if [ "$INSTALL_MODE" == "local" ]; then
+      update_local_settings
+    fi
   else
     restore_state
   fi
+
 }
 
 main
