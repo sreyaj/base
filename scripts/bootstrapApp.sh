@@ -560,7 +560,7 @@ run_migrations_local() {
     ##TODO: this should be the latest release file
     ##TODO update the version in state after migration is run
     local migrations_file="$MIGRATIONS_DIR/$RELEASE_VERSION".sql
-    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
+    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data/migrations.sql"
 
     sudo cp -vr $migrations_file $db_mount_dir
     sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/migrations.sql
