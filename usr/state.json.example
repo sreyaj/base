@@ -149,6 +149,7 @@
     "gitlabInitialized": false,
     "dockerInstalled": false,
     "dockerInitialized": false,
+    "composeInstalled": false,
     "swarmInstalled": false,
     "swarmInitialized": false,
     "redisInstalled": false,

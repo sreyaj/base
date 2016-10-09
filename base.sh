@@ -75,11 +75,11 @@ __check_dependencies() {
 install() {
   __check_dependencies
   source "$SCRIPTS_DIR/getConfigs.sh"
-  ##TODO: set remote scripts directory path based on release from statefile
-  #readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
+  local release=$(cat $STATE_FILE | jq -r '.release')
+  readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$release"
+  source "$SCRIPTS_DIR/bootstrapMachines.sh"
+  source "$SCRIPTS_DIR/installCore.sh"
 
-  #source "$SCRIPTS_DIR/bootstrapMachines.sh"
-  #source "$SCRIPTS_DIR/installCore.sh"
   #source "$SCRIPTS_DIR/bootstrapApp.sh"
   #source "$SCRIPTS_DIR/provisionServices.sh"
 }

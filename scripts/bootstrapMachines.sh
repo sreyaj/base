@@ -129,23 +129,6 @@ bootstrap_local() {
   _update_state "$update"
 }
 
-update_state() {
-  # TODO: update state.json with the results
-  __process_msg "updating state file with machine status"
-  ## for all the machines in the list, update ip address
-  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
-  for i in $(seq 1 $machine_count); do
-    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
-    local host=$(echo $machine | jq '.ip')
-    cat $STATE_FILE | jq \
-      '.machines |=
-      map(if .name == "github.com" then
-        .name = "asdfasfasdfa"
-      else .
-        end)'
-  done
-}
-
 main() {
   __process_marker "Bootstrapping machines"
   local machines_bootstrap_status=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped')
@@ -160,7 +143,6 @@ main() {
       check_requirements
       export_language
       bootstrap
-      #update_state
     else
       bootstrap_local
     fi
