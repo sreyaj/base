@@ -590,28 +590,6 @@ insert_route_permissions() {
   fi
 }
 
-insert_route_permissions_local() {
-  SKIP_STEP=false
-  _check_component_status "routePermissionsUpdated"
-  if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Running routePermissions.sql"
-
-    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-    local db_name="shipdb"
-
-    local routepermissions_file=$REMOTE_SCRIPTS_DIR/routePermissions.sql
-    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
-
-    sudo cp -vr $routepermissions_file $db_mount_dir
-    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/routePermissions.sql
-
-    _update_install_status "routePermissionsUpdated"
-  else
-    __process_msg "Route permissions already updated, skipping"
-  fi
-
-}
-
 insert_providers() {
   __process_msg "Inserting data into Providers"
   local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -807,7 +785,6 @@ main() {
     provision_api_local
     test_api_endpoint
     run_migrations_local
-    #insert_route_permissions_local
     #generate_providers
     #insert_system_integrations
     #restart_api_local
