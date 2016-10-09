@@ -1,5 +1,6 @@
 {
   "release": "v4.10.24",
+  "migrations": "v4.10.24",
   "masterIntegrations": [
     {
       "name": "braintree",
