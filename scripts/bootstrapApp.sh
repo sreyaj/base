@@ -106,13 +106,10 @@ generate_system_config() {
   _check_component_status "systemConfigSqlCreated"
   if [ "$SKIP_STEP" = false ]; then
     __process_msg "Inserting data into systemConfigs Table"
-    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-    local host=$(echo $db_host | jq '.ip')
-    local db_ip=$(echo $db_host | jq '.ip')
 
     #TODO: put sed update into a function and call it for each variable
-    local system_configs_template="$REMOTE_SCRIPTS_DIR/systemConfigsData.sql.template"
-    local system_configs_sql="$REMOTE_SCRIPTS_DIR/system_configs_data.sql"
+    local system_configs_template="$DATA_DIR/system_configs.sql.template"
+    local system_configs_sql="$DATA_DIR/system_configs.sql"
 
     # NOTE:
     # "sed" is using '#' as a separator in following statements
@@ -263,15 +260,22 @@ create_system_config() {
 }
 
 create_system_config_local() {
-  __process_msg "Creating systemConfigs table on local db"
+  SKIP_STEP=false
+  _check_component_status "systemConfigUpdated"
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Creating systemConfigs table on local db"
 
-  local system_configs_file="$REMOTE_SCRIPTS_DIR/system_configs.sql"
-  local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
+    local system_configs_file="$DATA_DIR/system_configs.sql"
+    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
 
-  sudo cp -vr $system_configs_file $db_mount_dir
-  sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/system_configs.sql
+    sudo cp -vr $system_configs_file $db_mount_dir
+    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/system_configs.sql
 
-  __process_msg "Successfully created systemConfigs table on local db"
+    _update_install_status "systemConfigUpdated"
+    __process_msg "Successfully created systemConfigs table on local db"
+  else
+    __process_msg "system configs already updated, skipping"
+  fi
 }
 
 insert_system_config() {
@@ -289,28 +293,6 @@ insert_system_config() {
 
     _copy_script_remote $db_ip "system_configs_data.sql" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs_data.sql"
-    _update_install_status "systemConfigUpdated"
-  else
-    __process_msg "System config already updated, skipping"
-  fi
-}
-
-insert_system_configs_local() {
-  SKIP_STEP=false
-  _check_component_status "systemConfigUpdated"
-  if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Inserting data into systemConfigs Table"
-    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-
-    #TODO: fetch db_name from state.json
-    local db_name="shipdb"
-
-    local system_configs_data_file="$REMOTE_SCRIPTS_DIR/system_configs_data.sql"
-    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
-
-    sudo cp -vr $system_configs_data_file $db_mount_dir
-    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/system_configs_data.sql
-
     _update_install_status "systemConfigUpdated"
   else
     __process_msg "System config already updated, skipping"
@@ -785,18 +767,17 @@ main() {
     insert_system_machine_image
     restart_api
   else
-    update_docker_creds_local
+    #update_docker_creds_local
     generate_system_config
     create_system_config_local
-    insert_system_configs_local
-    generate_api_config
-    provision_api_local
-    test_api_endpoint
-    run_migrations_local
-    insert_route_permissions_local
-    generate_providers
-    insert_system_integrations
-    restart_api_local
+    #generate_api_config
+    #provision_api_local
+    #test_api_endpoint
+    #run_migrations_local
+    #insert_route_permissions_local
+    #generate_providers
+    #insert_system_integrations
+    #restart_api_local
   fi
 }
 
