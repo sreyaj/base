@@ -1,3 +1,5 @@
+usr/machines.json
+usr/state.json
 scripts/local/data
 scripts/local/gitlab
 scripts/local/vault/scripts/keys.txt
