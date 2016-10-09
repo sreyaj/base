@@ -1,38 +1,8 @@
 #!/bin/bash -e
 
-readonly SERVICES_CONFIG="$DATA_DIR/config.json"
-
 ###########################################################
-#s3 access
-readonly CONFIG_ACCESS_KEY="test"
-#s3 secret
-readonly CONFIG_SECRET_KEY="test"
-#s3 bucket
-readonly CONFIG_FOLDER="test"
-
-PROVIDER_ID=3
-
-
-get_system_config() {
-  #TODO: curl into s3 using the keys to get the config
-  __process_msg "Fetched config from s3 and wrote it to config.json"
-}
-
-validate_config() {
-  if [ -z "$RELEASE" ]; then
-    echo "Cannot find release version, exiting..."
-    exit 1
-  else
-    __process_msg "Installing Shippable release : $RELEASE"
-  fi
-
-  if [ ! -f "$DATA_DIR/config.json" ]; then
-    echo "Cannot find config.json, exiting..."
-    exit 1
-  else
-    __process_msg "Found config.json"
-  fi
-
+validate_version() {
+  __process_msg "validating version"
   if [ ! -f "$DATA_DIR/machines.json" ]; then
     echo "Cannot find machines.json, exiting..."
     exit 1
@@ -40,52 +10,104 @@ validate_config() {
     __process_msg "Found machines.json"
   fi
 
-  if [ ! -f "$DATA_DIR/core.json" ]; then
-    echo "Cannot find core.json, exiting..."
-    exit 1
-  else
-    __process_msg "Found core.json"
-  fi
-
-  if [ ! -f "$DATA_DIR/state.json" ]; then
-    __process_msg "No state.json exists, creating..."
-    touch "$STATE_FILE"
-  else
-    __process_msg "state.json exists"
-  fi
-
-  local customer_id=$(cat $CONFIG_FILE | jq '.shippableCustomerId')
-  if [ -z "$customer_id" ]; then
-    echo "Cannot find customer id in config.json, exiting..."
-    exit 1
-  fi
-
-  local license_key=$(cat $CONFIG_FILE | jq '.licenseKey')
-  if [ -z "$license_key" ]; then
-    echo "Cannot find customer id in config.json, exiting..."
-    exit 1
-  fi
+  #TODO check versions directory, error if empty
+  #TODO check migrations directory, error if empty
 }
 
-check_state_backup_exists() {
-  export INIT_STATE_FILE=1
-  if [ -f "$STATE_FILE" ]; then
-    __process_msg "A state file exists, do you want to use existing state.json? (y/n)"
-    read response
-    if [[ "$response" =~ "y" ]]; then
-       INIT_STATE_FILE=0
+generate_state() {
+  if [ ! -f "$DATA_DIR/state.json" ]; then
+    if [ -f "$DATA_DIR/state.json.backup" ]; then
+      __process_msg "A state.json.backup file exists, do you want to use the backup? (yes/no)"
+      read response
+      if [[ "$response" == "yes" ]]; then
+        cp -vr $DATA_DIR/state.json.backup $DATA_DIR/state.json
+        rm $DATA_DIR/state.json.backup || true
+      else
+        __process_msg "Dicarding backup, creating a new state.json from state.json.example"
+        cp -vr $DATA_DIR/state.json.example $DATA_DIR/state.json
+        rm $DATA_DIR/state.json.backup || true
+      fi
+    else
+      __process_msg "No state.json exists, creating a new state.json from state.json.example."
+      cp -vr $DATA_DIR/state.json.example $DATA_DIR/state.json
+      rm $DATA_DIR/state.json.backup || true
     fi
-  elif [ -f "$STATE_FILE_BACKUP" ]; then
-    __process_msg "A state.json.backup file exists, do you want to use the backup to initialize state.json? (y/n)"
-    read response
-    if [[ "$response" =~ "y" ]]; then
-       INIT_STATE_FILE=0
-    fi
+  else
+    __process_msg "using existing state.json"
   fi
 }
 
 bootstrap_state() {
+  local release_version=$(cat $STATE_FILE | jq -r '.release')
+  if [ -z "$release_version" ]; then
+    __process_msg "bootstrapping state.json for latest release"
+
+    ##TODO parse this from versions file
+    __process_msg "updating release version"
+    release_version="v4.10.24"
+    local release=$(cat $STATE_FILE | jq '.release="'"$release_version"'"')
+    update=$(echo $release | jq '.' | tee $STATE_FILE)
+
+    __process_msg "injecting empty machines array"
+    local machines=$(cat $STATE_FILE | \
+      jq '.machines=[]')
+    update=$(echo $machines | jq '.' | tee $STATE_FILE)
+
+    __process_msg "injecting empty master integrations"
+    local master_integrations=$(cat $STATE_FILE | \
+      jq '.masterIntegrations=[]')
+    update=$(echo $master_integrations | jq '.' | tee $STATE_FILE)
+
+    __process_msg "injecting empty providers"
+    local providers=$(cat $STATE_FILE | \
+      jq '.masterIntegrationProviders=[]')
+    update=$(echo $providers | jq '.' | tee $STATE_FILE)
+
+    __process_msg "injecting empty system integrations"
+    local system_integrations=$(cat $STATE_FILE | \
+      jq '.systemIntegrations=[]')
+    update=$(echo $system_integrations | jq '.' | tee $STATE_FILE)
+
+    __process_msg "injecting empty services array"
+    local services=$(cat $STATE_FILE | \
+      jq '.services=[]')
+    update=$(echo $services | jq '.' | tee $STATE_FILE)
+
+    __process_msg "state.json bootstrapped with default values"
+  else
+    __process_msg "using existing state.json for version $release_version"
+  fi
+}
+
+validate_state() {
+  __process_msg "validating state.json"
+  # parse from jq
+  local release_version=$(cat $STATE_FILE | jq -r '.release')
+  # check if version exists
+  # check if installer array exists
+  # check if systemconfig object exists
+  # check if masterIntegration exist
+  # check if providers exit
+  # check if systemIntegrations exist
+  # check if systemImages exist
+  # check if systemMachineImages exist
+  # check if services exist
+  __process_msg "state.json valid, proceeding with installation"
+}
+
+bootstrap_state_old() {
   __process_msg "Bootstrapping state.json"
+   local bootstrap_state=$(jq -n --arg v "$initial_obj" \
+      '{
+        "release": "'$release_version'",
+        "masterIntegrations": [],
+        "masterIntegrationProviders": [],
+        "systemIntegrations": [],
+        "services": [],
+        "machines": [],
+        "inProgress": "true",
+      }' \
+    | tee $STATE_FILE)
 
  local release=$(cat $CONFIG_FILE | jq -r '.release')
  local bootstrap_state=$(jq -n --arg v "$initial_obj" \
@@ -120,112 +142,12 @@ bootstrap_state() {
   __process_msg "Updated services in state.json"
 }
 
-
-update_system_settings() {
-  __process_msg "Updating system settings in state.json from config.json"
-  local system_settings=$(cat $CONFIG_FILE | jq '.systemSettings')
-  local update=$(cat $STATE_FILE | jq '.systemSettings='"$system_settings"'')
-  _update_state "$update"
-  __process_msg "Succcessfully updated state.json with systemSettings"
-}
-
-update_ecr_system_integration() {
-  __process_msg "Updating ecr system integration in state.json"
-  local system_integrations_length_state=$(cat $STATE_FILE | jq '.systemIntegrations | length')
-  local installer_access_key=$(cat $CONFIG_FILE | jq '.systemSettings.installerAccessKey')
-  local installer_secret_key=$(cat $CONFIG_FILE | jq '.systemSettings.installerSecretKey')
-  local ecr_system_integration='{
-    "id": "57cecf81c349bb70153d8250",
-    "name": "Internal Shippable ECR",
-    "masterDisplayName": "hub",
-    "masterIntegrationId": "5673c6561895ca4474669507",
-    "masterName": "ECR",
-    "masterType": "hub",
-    "formJSONValues": [
-     {
-       "label": "aws_access_key_id",
-       "value": '$installer_access_key'
-     },
-     {
-       "label": "aws_secret_access_key",
-       "value": '$installer_secret_key'
-     }
-    ],
-    "isEnabled": true
-  }'
-  local update=$(cat $STATE_FILE | jq '.systemIntegrations['"$system_integrations_length_state"']='"$ecr_system_integration"'')
-  update=$(echo $update | jq '.' | tee $STATE_FILE)
-}
-
-update_install_status() {
-  __process_msg "Updating install status in state.json from config.json"
-  local install_status=$(cat $CONFIG_FILE | jq '.installStatus')
-  local update=$(cat $STATE_FILE | jq '.installStatus='"$install_status"'')
-  _update_state "$update"
-  __process_msg "Succcessfully updated state.json with installStatus"
-}
-
-update_providers() {
-  __process_msg "Updating providers in state.json from config.json"
-  local providers_length_config=$(cat $CONFIG_FILE | jq '.providers | length')
-  local providers_length_state=$(cat $STATE_FILE | jq '.providers | length')
-
-  for i in $(seq 1 $providers_length_config); do
-    local provider=$(cat $CONFIG_FILE | jq '.providers['"$i-1"']')
-    local update=$(cat $STATE_FILE | jq '.providers['"$providers_length_state + $i -1"']='"$provider"'')
-    update=$(echo $update | jq '.' | tee $STATE_FILE)
-  done
-  __process_msg "Succcessfully updated state.json with providers"
-}
-
-update_system_integrations() {
-  __process_msg "Updating system integrations in state.json from config.json"
-  local system_integrations_length_config=$(cat $CONFIG_FILE | jq '.systemIntegrations | length')
-  local system_integrations_length_state=$(cat $STATE_FILE | jq '.systemIntegrations | length')
-
-  for i in $(seq 1 $system_integrations_length_config); do
-    local system_integration=$(cat $CONFIG_FILE | jq '.systemIntegrations['"$i-1"']')
-    local update=$(cat $STATE_FILE | jq '.systemIntegrations['"$system_integrations_length_state + $i -1"']='"$system_integration"'')
-    update=$(echo $update | jq '.' | tee $STATE_FILE)
-  done
-  __process_msg "Succcessfully updated state.json with systemIntegrations"
-}
-
-restore_state() {
-  if [ -f "$STATE_FILE_BACKUP" ] && [ ! -f "$STATE_FILE" ]; then
-    cp $STATE_FILE_BACKUP $STATE_FILE
-    update=$(cat $STATE_FILE | jq '.machines='[]'')
-    _update_state "$update"
-  fi
-}
-
-update_local_settings() {
-  local local_system_settings_file="$LOCAL_SCRIPTS_DIR/systemSettings.json"
-  local local_system_settings=$(cat $local_system_settings_file | jq '.')
-  local update=$(cat $STATE_FILE | jq '.systemSettings='"$local_system_settings"'')
-  update=$(echo $update | jq '.' | tee $STATE_FILE)
-}
-
 main() {
-  __process_marker "Getting config"
-  get_system_config
-  validate_config
-  check_state_backup_exists
-  if [ $INIT_STATE_FILE -eq 1 ]; then
-    bootstrap_state
-    update_system_settings
-    update_ecr_system_integration
-    update_install_status
-    update_providers
-    update_system_integrations
-
-    if [ "$INSTALL_MODE" == "local" ]; then
-      update_local_settings
-    fi
-  else
-    restore_state
-  fi
-
+  __process_marker "Configuring installer"
+  validate_version
+  generate_state
+  bootstrap_state
+  validate_state
 }
 
 main

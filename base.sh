@@ -15,12 +15,11 @@ export INSTALL_MODE=production
 readonly IFS=$'\n\t'
 readonly ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
-readonly DATA_DIR="$ROOT_DIR/data"
+readonly DATA_DIR="$ROOT_DIR/usr"
 readonly REMOTE_SCRIPTS_DIR="$ROOT_DIR/scripts/remote"
 readonly LOCAL_SCRIPTS_DIR="$ROOT_DIR/scripts/local"
 readonly STATE_FILE="$DATA_DIR/state.json"
 readonly STATE_FILE_BACKUP="$DATA_DIR/state.json.backup"
-readonly CONFIG_FILE="$DATA_DIR/config.json"
 readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$DATA_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$DATA_DIR/machinekey.pub
@@ -75,13 +74,14 @@ __check_dependencies() {
 
 install() {
   __check_dependencies
-  RELEASE=$(cat $CONFIG_FILE | jq -r '.release')
-  readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
   source "$SCRIPTS_DIR/getConfigs.sh"
-  source "$SCRIPTS_DIR/bootstrapMachines.sh"
-  source "$SCRIPTS_DIR/installCore.sh"
-  source "$SCRIPTS_DIR/bootstrapApp.sh"
-  source "$SCRIPTS_DIR/provisionServices.sh"
+  ##TODO: set remote scripts directory path based on release from statefile
+  #readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$RELEASE"
+
+  #source "$SCRIPTS_DIR/bootstrapMachines.sh"
+  #source "$SCRIPTS_DIR/installCore.sh"
+  #source "$SCRIPTS_DIR/bootstrapApp.sh"
+  #source "$SCRIPTS_DIR/provisionServices.sh"
 }
 
 upgrade() {

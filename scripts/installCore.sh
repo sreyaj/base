@@ -1,4 +1,3 @@
-readonly CORE_CONFIG="$DATA_DIR/core.json"
 readonly CORE_COMPONENTS="postgresql \
   vault \
   gitlab \
