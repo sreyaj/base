@@ -144,11 +144,61 @@ enable_masterIntegrations() {
 }
 
 disable_masterIntegrations() {
-  __process_msg "disabling redundant master integrations"
-  # for all integrations in available list,
-  # if the integration is not in enabled list,
+  # for all integrations in db enabled list,
+  # if the integration is not in state enabled list,
   # PUT on db with enabled=false
-  true
+  __process_msg "disabling redundant master integrations"
+  local db_enabled_master_integrations=$(echo $AVAILABLE_MASTER_INTEGRATIONS | jq '[ .[] | select (.isEnabled==true) ]')
+  local db_enabled_master_integrations_length=$(echo $db_enabled_master_integrations \
+    | jq -r '. | length')
+
+  local enabled_master_integrations=$(echo $STATE_FILE \
+    | jq -r '.masterIntegrations')
+  local enabled_master_integrations_length=$(echo $enabled_master_integrations \
+    | jq -r '. | length')
+
+  for i in $(seq 1 $db_enabled_master_integrations_length); do
+    local db_enabled_master_integration=$(echo $db_enabled_master_integrations \
+      | jq '.['"$i-1"']')
+    local db_enabled_master_integration_name=$(echo $db_enabled_master_integration \
+      | jq -r '.name')
+    local db_enabled_master_integration_type=$(echo $db_enabled_master_integration \
+      | jq -r '.type')
+    local db_enabled_master_integration_id=$(echo $db_enabled_master_integration \
+      | jq -r '.id')
+    local is_valid_db_master_integration=false
+
+    for j in $(seq 1 $enabled_master_integrations_length); do
+      local enabled_master_integration=$(echo $enabled_master_integrations \
+        | jq '.['"$j-1"']')
+      local enabled_master_integration_name=$(echo $enabled_master_integration \
+        | jq -r '.name')
+      local enabled_master_integration_type=$(echo $enabled_master_integration \
+        | jq -r '.type')
+
+
+      if [ "$db_enabled_master_integration_name" == "$enabled_master_integration_name"  ] && \
+        [ "$db_enabled_master_integration_type" == "$enabled_master_integration_type" ]; then
+        is_valid_db_master_integration=true
+        break
+      fi
+    done
+
+    if [ "$is_valid_db_master_integration" == false ]; then
+      local updated_master_integration=$(echo $available_master_integration | jq '.isEnabled=false')
+
+      local master_integration_put_endpoint="$api_url/masterIntegrations/$db_enabled_master_integration_id"
+      local put_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
+        -X POST -d "$updated_master_integration" $master_integration_put_endpoint \
+          --write-out "%{http_code}\n" --silent --output /dev/null)
+      if [ "$put_call_resp_code" -gt "299" ]; then
+        echo "Error disabling integration $available_master_integration_name(status code $put_call_resp_code)"
+      else
+        echo "Sucessfully disabled master integration $db_enabled_master_integration_name"
+      fi
+    fi
+
+  done
 }
 
 main() {
@@ -156,7 +206,7 @@ main() {
   get_available_masterIntegrations
   validate_masterIntegrations
   #enable_masterIntegrations
-  disable_masterIntegrations
+  #disable_masterIntegrations
 }
 
 main
