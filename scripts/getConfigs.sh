@@ -44,7 +44,7 @@ bootstrap_state() {
 
     ##TODO parse this from versions file
     __process_msg "updating release version"
-    release_version="v4.10.24"
+    release_version="v4.10.28"
     local release=$(cat $STATE_FILE | jq '.release="'"$release_version"'"')
     update=$(echo $release | jq '.' | tee $STATE_FILE)
 
