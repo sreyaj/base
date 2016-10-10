@@ -73,11 +73,19 @@ update_docker_creds_local() {
 
     __process_msg "Updating : installerAccessKey"
     local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
+    if [ -z "$aws_access_key" ]; then
+      __process_msg "Please update 'systemSettings.installerAccessKey' in state.json and run installer again"
+      exit 1
+    fi
 
     sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
 
     __process_msg "Updating : installerSecretKey"
     local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
+    if [ -z "$aws_secret_key" ]; then
+      __process_msg "Please update 'systemSettings.installerSecretKey' in state.json and run installer again"
+      exit 1
+    fi
     sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
 
     cp -vr $credentials_file $HOME/.aws/
@@ -98,13 +106,10 @@ generate_system_config() {
   _check_component_status "systemConfigSqlCreated"
   if [ "$SKIP_STEP" = false ]; then
     __process_msg "Inserting data into systemConfigs Table"
-    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-    local host=$(echo $db_host | jq '.ip')
-    local db_ip=$(echo $db_host | jq '.ip')
 
     #TODO: put sed update into a function and call it for each variable
-    local system_configs_template="$REMOTE_SCRIPTS_DIR/systemConfigsData.sql.template"
-    local system_configs_sql="$REMOTE_SCRIPTS_DIR/system_configs_data.sql"
+    local system_configs_template="$DATA_DIR/system_configs.sql.template"
+    local system_configs_sql="$DATA_DIR/system_configs.sql"
 
     # NOTE:
     # "sed" is using '#' as a separator in following statements
@@ -255,15 +260,22 @@ create_system_config() {
 }
 
 create_system_config_local() {
-  __process_msg "Creating systemConfigs table on local db"
+  SKIP_STEP=false
+  _check_component_status "systemConfigUpdated"
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Creating systemConfigs table on local db"
 
-  local system_configs_file="$REMOTE_SCRIPTS_DIR/system_configs.sql"
-  local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
+    local system_configs_file="$DATA_DIR/system_configs.sql"
+    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
 
-  sudo cp -vr $system_configs_file $db_mount_dir
-  sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/system_configs.sql
+    sudo cp -vr $system_configs_file $db_mount_dir
+    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/system_configs.sql
 
-  __process_msg "Successfully created systemConfigs table on local db"
+    _update_install_status "systemConfigUpdated"
+    __process_msg "Successfully created systemConfigs table on local db"
+  else
+    __process_msg "system configs already updated, skipping"
+  fi
 }
 
 insert_system_config() {
@@ -287,143 +299,152 @@ insert_system_config() {
   fi
 }
 
-insert_system_configs_local() {
-  SKIP_STEP=false
-  _check_component_status "systemConfigUpdated"
-  if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Inserting data into systemConfigs Table"
-    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-
-    #TODO: fetch db_name from state.json
-    local db_name="shipdb"
-
-    local system_configs_data_file="$REMOTE_SCRIPTS_DIR/system_configs_data.sql"
-    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
-
-    sudo cp -vr $system_configs_data_file $db_mount_dir
-    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/system_configs_data.sql
-
-    _update_install_status "systemConfigUpdated"
-  else
-    __process_msg "System config already updated, skipping"
-  fi
-}
-
 generate_api_config() {
-  __process_msg "Generating api confi"
-  local api_service_image=$(cat $STATE_FILE | jq '.services[] | select (.name=="api") | .image')
-  __process_msg "Successfully read from state.json: api.image ($api_service_image)"
+  SKIP_STEP=false
+  _check_component_status "apiConfigured"
+  if [ "$SKIP_STEP" = false ]; then
 
-  local api_env_vars=$(cat $CONFIG_FILE | jq '
-    .services[] |
-    select (.name=="api") | .envs')
-  echo $api_env_vars
-
-  local api_env_vars_count=$(echo $api_env_vars | jq '. | length')
-  __process_msg "Successfully read from config.json: api.envs ($api_env_vars_count)"
-
-  __process_msg "Generating api environment variables"
-
-  local api_env_values=""
-  for i in $(seq 1 $api_env_vars_count); do
-    local env_var=$(echo $api_env_vars | jq -r '.['"$i-1"']')
-
-    if [ "$env_var" == "DBNAME" ]; then
-      local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
-      api_env_values="$api_env_values -e $env_var=$db_name"
-    elif [ "$env_var" == "DBUSERNAME" ]; then
-      local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-      api_env_values="$api_env_values -e $env_var=$db_username"
-    elif [ "$env_var" == "DBPASSWORD" ]; then
-      local db_password=$(cat $STATE_FILE | jq -r '.systemSettings.dbPassword')
-      api_env_values="$api_env_values -e $env_var=$db_password"
-    elif [ "$env_var" == "DBHOST" ]; then
-      local db_host=$(cat $STATE_FILE | jq -r '.systemSettings.dbHost')
-      api_env_values="$api_env_values -e $env_var=$db_host"
-    elif [ "$env_var" == "DBPORT" ]; then
-      local db_port=$(cat $STATE_FILE | jq -r '.systemSettings.dbPort')
-      api_env_values="$api_env_values -e $env_var=$db_port"
-    elif [ "$env_var" == "DBDIALECT" ]; then
-      local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.dbDialect')
-      api_env_values="$api_env_values -e $env_var=$db_dialect"
-    elif [ "$env_var" == "SHIPPABLE_API_URL" ]; then
-      local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-      api_env_values="$api_env_values -e $env_var=$db_dialect"
-    elif [ "$env_var" == "RUN_MODE" ]; then
-      local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
-      api_env_values="$api_env_values -e $env_var=$db_dialect"
-    else
-      echo "No handler for API env : $env_var, exiting"
+    __process_msg "Generating api config"
+    local release_file="$VERSIONS_DIR/$RELEASE_VERSION".json
+    local api_service=$(cat $release_file | jq '.serviceConfigs[] | select (.name=="api")')
+    
+    if [ -z "$api_service" ]; then
+      __process_msg "Incorrect release version, missing api configuration"
       exit 1
     fi
-  done
 
-  http_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpProxy')
-  https_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpsProxy')
-  no_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.noProxy')
+    local system_images_registry=$(cat $STATE_FILE | jq -r '.systemSettings.systemImagesRegistry')
+    local api_service_repository=$(echo $api_service | jq -r '.repository')
+    local api_service_tag=$RELEASE_VERSION
+    local api_service_image="$system_images_registry/$api_service_repository:$RELEASE_VERSION"
+    __process_msg "Successfully read from state.json: api.image ($api_service_image)"
 
-  if [ ! -z $http_proxy ]; then
-    api_env_values="$api_env_values -e http_proxy=$http_proxy -e HTTP_PROXY=$http_proxy"
-    __process_msg "Successfully updated api http_proxy mapping"
-  fi
+    local api_env_vars=$(cat $release_file | jq '.serviceConfigs[] | select (.name=="api") | .envs')
+    echo $api_env_vars
 
-  if [ ! -z $https_proxy ]; then
-    api_env_values="$api_env_values -e https_proxy=$https_proxy -e HTTPS_PROXY=$https_proxy"
-    __process_msg "Successfully updated api https_proxy mapping"
-  fi
+    local api_env_vars_count=$(echo $api_env_vars | jq '. | length')
+    __process_msg "Successfully read from config.json: api.envs ($api_env_vars_count)"
 
-  if [ ! -z $no_proxy ]; then
-    api_env_values="$api_env_values -e no_proxy=$no_proxy -e NO_PROXY=$no_proxy"
-    __process_msg "Successfully updated api no_proxy mapping"
-  fi
+    __process_msg "Generating api environment variables"
 
-  __process_msg "Successfully generated api environment variables : $api_env_values"
+    local api_env_values=""
+    for i in $(seq 1 $api_env_vars_count); do
+      local env_var=$(echo $api_env_vars | jq -r '.['"$i-1"']')
 
-  local api_state_env=$(cat $STATE_FILE | jq '
-    .services  |=
-    map(if .name == "api" then
-        .env = "'$api_env_values'"
+      if [ "$env_var" == "DBNAME" ]; then
+        local db_name=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
+        api_env_values="$api_env_values -e $env_var=$db_name"
+      elif [ "$env_var" == "DBUSERNAME" ]; then
+        local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+        api_env_values="$api_env_values -e $env_var=$db_username"
+      elif [ "$env_var" == "DBPASSWORD" ]; then
+        local db_password=$(cat $STATE_FILE | jq -r '.systemSettings.dbPassword')
+        api_env_values="$api_env_values -e $env_var=$db_password"
+      elif [ "$env_var" == "DBHOST" ]; then
+        local db_host=$(cat $STATE_FILE | jq -r '.systemSettings.dbHost')
+        api_env_values="$api_env_values -e $env_var=$db_host"
+      elif [ "$env_var" == "DBPORT" ]; then
+        local db_port=$(cat $STATE_FILE | jq -r '.systemSettings.dbPort')
+        api_env_values="$api_env_values -e $env_var=$db_port"
+      elif [ "$env_var" == "DBDIALECT" ]; then
+        local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.dbDialect')
+        api_env_values="$api_env_values -e $env_var=$db_dialect"
+      elif [ "$env_var" == "SHIPPABLE_API_URL" ]; then
+        local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+        api_env_values="$api_env_values -e $env_var=$db_dialect"
+      elif [ "$env_var" == "RUN_MODE" ]; then
+        local db_dialect=$(cat $STATE_FILE | jq -r '.systemSettings.runMode')
+        api_env_values="$api_env_values -e $env_var=$db_dialect"
       else
-        .
-      end
-    )'
-  )
-  update=$(echo $api_state_env | jq '.' | tee $STATE_FILE)
-  __process_msg "Successfully generated  api environment variables"
+        echo "No handler for API env : $env_var, exiting"
+        exit 1
+      fi
+    done
 
-  __process_msg "Generating api port mapping"
-  local api_port=$(cat $STATE_FILE | jq -r '.systemSettings.apiPort')
-  local api_port_mapping=" --publish $api_port:$api_port/tcp"
-  __process_msg "api port mapping : $api_port_mapping"
+    http_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpProxy')
+    https_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.httpsProxy')
+    no_proxy=$(cat $STATE_FILE | jq -r '.systemSettings.noProxy')
 
-  local api_port_update=$(cat $STATE_FILE | jq '
-    .services  |=
-    map(if .name == "api" then
-        .port = "'$api_port_mapping'"
-      else
-        .
-      end
-    )'
-  )
-  update=$(echo $api_port_update | jq '.' | tee $STATE_FILE)
-  __process_msg "Successfully updated api port mapping"
+    if [ ! -z $http_proxy ]; then
+      api_env_values="$api_env_values -e http_proxy=$http_proxy -e HTTP_PROXY=$http_proxy"
+      __process_msg "Successfully updated api http_proxy mapping"
+    fi
 
-  __process_msg "Generating api service config"
-  local api_service_opts=" --name api --mode global --network ingress --with-registry-auth --endpoint-mode vip"
-  __process_msg "api service config : $api_service_opts"
+    if [ ! -z $https_proxy ]; then
+      api_env_values="$api_env_values -e https_proxy=$https_proxy -e HTTPS_PROXY=$https_proxy"
+      __process_msg "Successfully updated api https_proxy mapping"
+    fi
 
-  local api_service_update=$(cat $STATE_FILE | jq '
-    .services  |=
-    map(
-      if .name == "api" then
-        .opts = "'$api_service_opts'"
-      else
-        .
-      end
-    )'
-  )
-  update=$(echo $api_service_update | jq '.' | tee $STATE_FILE)
-  __process_msg "Successfully generated api service config"
+    if [ ! -z $no_proxy ]; then
+      api_env_values="$api_env_values -e no_proxy=$no_proxy -e NO_PROXY=$no_proxy"
+      __process_msg "Successfully updated api no_proxy mapping"
+    fi
+
+    __process_msg "Successfully generated api environment variables : $api_env_values"
+
+
+    local api_service=$(cat $STATE_FILE | jq '.services[] | select (.name=="api")')
+    if [ -z "$api_service" ]; then
+      __process_msg "no api service in state.json, creating new one"
+      api_service=$(cat $STATE_FILE |  \
+        jq '.services=[
+              {
+                "name": "api",
+                "image": "'$api_service_image'"
+              }
+            ]')
+      update=$(echo $api_service | jq '.' | tee $STATE_FILE)
+    fi
+
+    local api_state_env=$(cat $STATE_FILE | jq '
+      .services  |=
+      map(if .name == "api" then
+          .env = "'$api_env_values'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $api_state_env | jq '.' | tee $STATE_FILE)
+    __process_msg "Successfully generated  api environment variables"
+
+    __process_msg "Generating api port mapping"
+    local api_port=$(cat $STATE_FILE | jq -r '.systemSettings.apiPort')
+    local api_port_mapping=" --publish $api_port:$api_port/tcp"
+    __process_msg "api port mapping : $api_port_mapping"
+
+    local api_port_update=$(cat $STATE_FILE | jq '
+      .services  |=
+      map(if .name == "api" then
+          .port = "'$api_port_mapping'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $api_port_update | jq '.' | tee $STATE_FILE)
+    __process_msg "Successfully updated api port mapping"
+
+    __process_msg "Generating api service config"
+    local api_service_opts=" --name api --mode global --network ingress --with-registry-auth --endpoint-mode vip"
+    __process_msg "api service config : $api_service_opts"
+
+    local api_service_update=$(cat $STATE_FILE | jq '
+      .services  |=
+      map(
+        if .name == "api" then
+          .opts = "'$api_service_opts'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $api_service_update | jq '.' | tee $STATE_FILE)
+    _update_install_status "apiConfigured"
+    __process_msg "Successfully generated api service config"
+  else
+    __process_msg "api already configured, skipping"
+  fi
 }
 
 provision_api() {
@@ -536,8 +557,10 @@ run_migrations_local() {
     local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
     local db_name="shipdb"
 
-    local migrations_file=$REMOTE_SCRIPTS_DIR/migrations.sql
-    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
+    ##TODO: this should be the latest release file
+    ##TODO update the version in state after migration is run
+    local migrations_file="$MIGRATIONS_DIR/$RELEASE_VERSION".sql
+    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data/migrations.sql"
 
     sudo cp -vr $migrations_file $db_mount_dir
     sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/migrations.sql
@@ -565,28 +588,6 @@ insert_route_permissions() {
   else
     __process_msg "Route permissions already updated, skipping"
   fi
-}
-
-insert_route_permissions_local() {
-  SKIP_STEP=false
-  _check_component_status "routePermissionsUpdated"
-  if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Running routePermissions.sql"
-
-    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-    local db_name="shipdb"
-
-    local routepermissions_file=$REMOTE_SCRIPTS_DIR/routePermissions.sql
-    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
-
-    sudo cp -vr $routepermissions_file $db_mount_dir
-    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/routePermissions.sql
-
-    _update_install_status "routePermissionsUpdated"
-  else
-    __process_msg "Route permissions already updated, skipping"
-  fi
-
 }
 
 insert_providers() {
@@ -777,18 +778,16 @@ main() {
     insert_system_machine_image
     restart_api
   else
-    update_docker_creds_local
+    #update_docker_creds_local
     generate_system_config
     create_system_config_local
-    insert_system_configs_local
     generate_api_config
     provision_api_local
     test_api_endpoint
     run_migrations_local
-    insert_route_permissions_local
-    generate_providers
-    insert_system_integrations
-    restart_api_local
+    #generate_providers
+    #insert_system_integrations
+    #restart_api_local
   fi
 }
 

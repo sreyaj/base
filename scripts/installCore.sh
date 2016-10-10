@@ -1,4 +1,3 @@
-readonly CORE_CONFIG="$DATA_DIR/core.json"
 readonly CORE_COMPONENTS="postgresql \
   vault \
   gitlab \
@@ -134,16 +133,21 @@ install_swarm_local() {
 }
 
 install_compose(){
-  if ! type "docker-compose" > /dev/null; then
-    echo "Downloading docker compose"
-    local download_compose_exc=$(wget https://github.com/docker/compose/releases/download/1.8.1/docker-compose-`uname -s`-`uname -m` -O /tmp/docker-compose)
-    echo "$download_compose_exc"
+  SKIP_STEP=false
+  _check_component_status "composeInstalled"
+  if [ "$SKIP_STEP" == false ]; then
+    if ! type "docker-compose" > /dev/null; then
+      echo "Downloading docker compose"
+      local download_compose_exc=$(wget https://github.com/docker/compose/releases/download/1.8.1/docker-compose-`uname -s`-`uname -m` -O /tmp/docker-compose)
+      echo "$download_compose_exc"
 
-    sudo chmod +x /tmp/docker-compose
-    local extract_compose_exc=$(sudo mv /tmp/docker-compose /usr/local/bin/)
-    echo "$extract_compose_exc"
+      sudo chmod +x /tmp/docker-compose
+      local extract_compose_exc=$(sudo mv /tmp/docker-compose /usr/local/bin/)
+      echo "$extract_compose_exc"
 
-    sudo docker-compose --version
+      sudo docker-compose --version
+    fi
+    _update_install_status "composeInstalled"
   else
     __process_msg "Docker compose already, installed, skipping"
     sudo docker-compose --version
@@ -362,6 +366,9 @@ install_vault_local() {
 
     sudo docker-compose -f $LOCAL_SCRIPTS_DIR/services.yml up -d vault
 
+    __process_msg "Waiting 10s for vault to boot"
+    sleep 10s
+
     _update_install_status "vaultInstalled"
   else
     __process_msg "Vault already installed, skipping"
@@ -475,6 +482,8 @@ install_rabbitmq_local() {
     sudo docker-compose -f $LOCAL_SCRIPTS_DIR/services.yml up -d message
 
     __process_msg "rabbitmq successfully installed"
+    __process_msg "Waiting 10s for rabbitmq to boot"
+    sleep 10s
     _update_install_status "rabbitmqInstalled"
   else
     __process_msg "rabbitmq already installed, skipping"

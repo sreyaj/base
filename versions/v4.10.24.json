@@ -1,0 +1,126 @@
+{
+  "integrationServices": [
+    {
+      "name": "braintree",
+      "services": [
+        "api",
+        "braintree"
+      ]
+    },
+    {
+      "name": "github",
+      "services": [
+        "api",
+        "www",
+        "sync"
+      ]
+    },
+    {
+      "name": "github",
+      "type": "scm",
+      "services": [
+        "api",
+        "www",
+        "jobTrigger",
+        "jobRequest",
+        "cron"
+      ]
+    }
+  ],
+  "serviceConfigs": [
+    {
+      "name": "api",
+      "repository": "api50",
+      "envs": [
+        "DBNAME",
+        "DBUSERNAME",
+        "DBHOST",
+        "DBPORT",
+        "DBPASSWORD",
+        "DBDIALECT",
+        "SHIPPABLE_API_URL"
+      ],
+      "replicas": 2
+    },
+    {
+      "name": "www",
+      "repository": "www50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_VORTEX_URL",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_WWW_PORT",
+        "SHIPPABLE_WWW_URL",
+        "SHIPPABLE_FE_URL",
+        "SHIPPABLE_RDS_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_AWS_ACCOUNT_ID",
+        "GITHUB_LINK_SYSINT_ID",
+        "BITBUCKET_LINK_SYSINT_ID"
+      ]
+    },
+    {
+      "name": "sync",
+      "repository": "micro50",
+      "replias": 2,
+      "envs": [
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_API_TOKEN",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "cron",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "DEFAULT_CRON_LOOP_HOURS",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "versionTrigger",
+      "replicas": 1,
+      "repository": "micro50",
+      "envs": [
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_API_TOKEN",
+        "RUN_MODE",
+        "COMPONENT",
+        "SHIPPABLE_VORTEX_URL"
+      ]
+    }
+  ],
+  "systemImages": [
+    {
+      "name": "drydock/u14nod",
+      "isActive": true
+    }
+  ],
+  "systemMachineImages": [
+    {
+      "externalId": "ami-abcdefgh",
+      "provider": "AWS",
+      "name": "Stable",
+      "isAvailable": true,
+      "isDefault": true,
+      "region": "us-east-1",
+      "keyName": "shippable-beta",
+      "execImage": "shipimg/mexec:master.11241",
+      "runShImage": "shipimg/runSh:v4.10.24",
+      "securityGroup": "sg-123456"
+    }
+  ]
+}

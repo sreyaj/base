@@ -1,0 +1,192 @@
+do $$
+  begin
+    create table if not exists "systemConfigs" (
+      "id" INT  PRIMARY KEY NOT NULL,
+      "defaultMinionCount" INT DEFAULT 1 NOT NULL,
+      "defaultPipelineCount" INT DEFAULT 1 NOT NULL,
+      "serverEnabled" BOOLEAN NOT NULL,
+      "cachingEnabled" BOOLEAN DEFAULT TRUE NOT NULL,
+      "hubspotEnabled" BOOLEAN DEFAULT TRUE NOT NULL,
+      "buildTimeoutMS" INT DEFAULT 3600000 NOT NULL,
+      "defaultPrivateJobQuota" INT DEFAULT 150 NOT NULL,
+      "serviceUserToken" VARCHAR(36) NOT NULL,
+      "vaultUrl" VARCHAR(255),
+      "vaultToken" VARCHAR(45),
+      "vaultRefreshTimeInSec" INT,
+      "amqpUrl" VARCHAR(255),
+      "amqpUrlRoot" VARCHAR(255),
+      "amqpUrlAdmin" VARCHAR(255),
+      "amqpDefaultExchange" VARCHAR(255),
+      "apiUrl" VARCHAR(255),
+      "apiPort" INT,
+      "wwwUrl" VARCHAR(255),
+      "runMode" VARCHAR(255) DEFAULT 'debug' NOT NULL,
+      "rootQueueList" TEXT,
+      "execImage" VARCHAR(255) NOT NULL,
+      "createdAt" timestamp with time zone NOT NULL,
+      "updatedAt" timestamp with time zone NOT NULL
+    );
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'dynamicNodesSystemIntegrationId') then
+      alter table "systemConfigs" add column "dynamicNodesSystemIntegrationId" VARCHAR(24);
+      -- add default value
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePrivateKey') then
+      alter table "systemConfigs" add column "systemNodePrivateKey" TEXT;
+      -- add default value
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePublicKey') then
+      alter table "systemConfigs" add column "systemNodePublicKey" VARCHAR(1020);
+      -- add default value
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowSystemNodes') then
+      alter table "systemConfigs" add column "allowSystemNodes" BOOLEAN default false;
+      -- add default value
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowDynamicNodes') then
+      alter table "systemConfigs" add column "allowDynamicNodes" BOOLEAN default false;
+      -- add default value
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowCustomNodes') then
+      alter table "systemConfigs" add column "allowCustomNodes" BOOLEAN default false;
+      -- add default value
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'consoleMaxLifespan') then
+      alter table "systemConfigs" add column "consoleMaxLifespan" INT default 0;
+      -- add default value
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'consoleCleanupHour') then
+      alter table "systemConfigs" add column "consoleCleanupHour" INT default 0;
+      -- add default value
+    end if;
+
+    alter table "systemConfigs" owner to "apiuser";
+  end
+$$;
+
+do $$
+  begin
+    --Update values in systemConfigs
+    if exists (select 1 from "systemConfigs" where "id" = 1) then
+        update "systemConfigs" SET
+            "defaultMinionCount"={{DEFAULT_MINION_COUNT}},
+            "defaultPipelineCount"={{DEFAULT_PIPELINE_COUNT}},
+            "serverEnabled"="serverEnabled",
+            "buildTimeoutMS"={{BUILD_TIMEOUT_MS}},
+            "defaultPrivateJobQuota"={{DEFAULT_PRIVATE_JOB_QUOTA}},
+            "serviceUserToken"='{{SERVICE_USER_TOKEN}}',
+            "vaultUrl"='{{VAULT_URL}}',
+            "vaultToken"='{{VAULT_TOKEN}}',
+            "vaultRefreshTimeInSec"={{VAULT_REFRESH_TIME_SEC}},
+            "cachingEnabled"={{CACHING_ENABLED}},
+            "hubspotEnabled"={{HUBSPOT_ENABLED}},
+            "amqpUrl"='{{AMQP_URL}}',
+            "amqpUrlRoot"='{{AMQP_URL_ROOT}}',
+            "amqpUrlAdmin"='{{AMQP_URL_ADMIN}}',
+            "amqpDefaultExchange"='{{AMQP_DEFAULT_EXCHANGE}}',
+            "apiUrl"='{{API_URL}}',
+            "apiPort"={{API_PORT}},
+            "wwwUrl"='{{WWW_URL}}',
+            "runMode"='{{RUN_MODE}}',
+            "rootQueueList"='{{ROOT_QUEUE_LIST}}',
+            "execImage"='{{EXEC_IMAGE}}',
+            "updatedAt"='{{UPDATED_AT}}',
+            "dynamicNodesSystemIntegrationId"='{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}',
+            "systemNodePrivateKey"='{{SYSTEM_NODE_PRIVATE_KEY}}',
+            "systemNodePublicKey"='{{SYSTEM_NODE_PUBLIC_KEY}}',
+            "allowSystemNodes"={{ALLOW_SYSTEM_NODES}},
+            "allowDynamicNodes"={{ALLOW_DYNAMIC_NODES}},
+            "allowCustomNodes"={{ALLOW_CUSTOM_NODES}},
+            "consoleMaxLifespan"={{CONSOLE_MAX_LIFESPAN}},
+            "consoleCleanupHour"={{CONSOLE_CLEANUP_HOUR}}
+        where id=1;
+    end if;
+
+    --Update token in accounts if serviceUser is already created
+    if exists (select 1 from information_schema.columns where table_name = 'accountTokens') then
+        if exists (select 1 from "accountTokens" where "name" = 'serviceUser' and "isInternal" = true) then
+          update "accountTokens" set "apiToken"='{{SERVICE_USER_TOKEN}}' where "name" = 'serviceUser' and "isInternal" = true;
+        end if;
+    end if;
+
+    if not exists (select 1 from "systemConfigs" where "id" = 1) then
+        insert into "systemConfigs"
+          (
+            "id",
+            "defaultMinionCount",
+            "defaultPipelineCount",
+            "serverEnabled",
+            "buildTimeoutMS",
+            "defaultPrivateJobQuota",
+            "serviceUserToken",
+            "vaultUrl",
+            "vaultToken",
+            "vaultRefreshTimeInSec",
+            "cachingEnabled",
+            "hubspotEnabled",
+            "amqpUrl",
+            "amqpUrlRoot",
+            "amqpUrlAdmin",
+            "amqpDefaultExchange",
+            "apiUrl",
+            "apiPort",
+            "wwwUrl",
+            "runMode",
+            "rootQueueList",
+            "execImage",
+            "createdAt",
+            "updatedAt",
+            "dynamicNodesSystemIntegrationId",
+            "systemNodePrivateKey",
+            "systemNodePublicKey",
+            "allowSystemNodes",
+            "allowDynamicNodes",
+            "allowCustomNodes",
+            "consoleMaxLifespan",
+            "consoleCleanupHour"
+          )
+        values
+          (
+            1,
+            {{DEFAULT_MINION_COUNT}},
+            {{DEFAULT_PIPELINE_COUNT}},
+            {{SERVER_ENABLED}},
+            {{BUILD_TIMEOUT_MS}},
+            {{DEFAULT_PRIVATE_JOB_QUOTA}},
+            '{{SERVICE_USER_TOKEN}}',
+            '{{VAULT_URL}}',
+            '{{VAULT_TOKEN}}',
+            {{VAULT_REFRESH_TIME_SEC}},
+            {{CACHING_ENABLED}},
+            {{HUBSPOT_ENABLED}},
+            '{{AMQP_URL}}',
+            '{{AMQP_URL_ROOT}}',
+            '{{AMQP_URL_ADMIN}}',
+            '{{AMQP_DEFAULT_EXCHANGE}}',
+            '{{API_URL}}',
+            {{API_PORT}},
+            '{{WWW_URL}}',
+            '{{RUN_MODE}}',
+            '{{ROOT_QUEUE_LIST}}',
+            '{{EXEC_IMAGE}}',
+            '{{CREATED_AT}}',
+            '{{UPDATED_AT}}',
+            '{{DYNAMIC_NODES_SYSTEM_INTEGRATION_ID}}',
+            '{{SYSTEM_NODE_PRIVATE_KEY}}',
+            '{{SYSTEM_NODE_PUBLIC_KEY}}',
+            {{ALLOW_SYSTEM_NODES}},
+            {{ALLOW_DYNAMIC_NODES}},
+            {{ALLOW_CUSTOM_NODES}},
+            {{CONSOLE_MAX_LIFESPAN}},
+            {{CONSOLE_CLEANUP_HOUR}}
+          );
+    end if;
+  end
+$$;
