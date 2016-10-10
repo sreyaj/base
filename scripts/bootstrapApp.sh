@@ -778,7 +778,7 @@ main() {
     insert_system_machine_image
     restart_api
   else
-    #update_docker_creds_local
+    update_docker_creds_local
     generate_system_config
     create_system_config_local
     generate_api_config
