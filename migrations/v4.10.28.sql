@@ -405,7 +405,7 @@ do $$
     -- Git Store
     if not exists (select 1 from "masterIntegrations" where "name" = 'Git store' and "typeCode" = 5000) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('574ee696d49b091400b75f19', 1, 'Git store', 'Internal Gitlab Server', 'scm', true, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('574ee696d49b091400b75f19', 1, 'Git store', 'Internal Gitlab Server', 'scm', false, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Git Store
@@ -427,7 +427,7 @@ do $$
     -- Docker
     if not exists (select 1 from "masterIntegrations" where "name" = 'Docker' and "typeCode" = 5001) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5553a7ac3566980c00a3bf0e', 2, 'Docker', 'Docker', 'hub', true, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('5553a7ac3566980c00a3bf0e', 2, 'Docker', 'Docker', 'hub', false, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Docker
@@ -449,7 +449,7 @@ do $$
     -- Private Docker Registry
     if not exists (select 1 from "masterIntegrations" where "name" = 'Private Docker Registry' and "typeCode" = 5001) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('559e8f3e90252e0c00672376', 3, 'Private Docker Registry', 'Private Docker Registry', 'hub', true, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('559e8f3e90252e0c00672376', 3, 'Private Docker Registry', 'Private Docker Registry', 'hub', false, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Private Docker Registry
@@ -476,7 +476,7 @@ do $$
     -- slack
     if not exists (select 1 from "masterIntegrations" where "name" = 'Slack' and "typeCode" = 5003) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('55bba7932c6c780b00e4426c', 4, 'Slack', 'Slack', 'notification', true, 'account', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('55bba7932c6c780b00e4426c', 4, 'Slack', 'Slack', 'notification', false, 'account', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Slack
@@ -488,7 +488,7 @@ do $$
     -- webhook
     if not exists (select 1 from "masterIntegrations" where "name" = 'webhook' and "typeCode" = 5003) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('573aab7c5419f10f00bef322', 5, 'webhook', 'Event Trigger', 'notification', true, 'account', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('573aab7c5419f10f00bef322', 5, 'webhook', 'Event Trigger', 'notification', false, 'account', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for webhook
@@ -510,12 +510,12 @@ do $$
     -- GCR
     if not exists (select 1 from "masterIntegrations" where "name" = 'GCR' and "typeCode" = 5001) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5553a8333566980c00a3bf1b', 6, 'GCR', 'GCR', 'hub', true, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('5553a8333566980c00a3bf1b', 6, 'GCR', 'GCR', 'hub', false, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     if not exists (select 1 from "masterIntegrations" where "name" = 'braintree' and "typeCode" = 5008) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57aafd0673ea26cb053fe1ca', 32, 'braintree', 'braintree', 'payment', true, 'system', 5008, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57aafd0673ea26cb053fe1ca', 32, 'braintree', 'braintree', 'payment', false, 'system', 5008, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for GCR
@@ -527,7 +527,7 @@ do $$
     -- ECR
     if not exists (select 1 from "masterIntegrations" where "name" = 'ECR' and "typeCode" = 5001) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5673c6561895ca4474669507', 7, 'ECR', 'Amazon ECR', 'hub', true, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('5673c6561895ca4474669507', 7, 'ECR', 'Amazon ECR', 'hub', false, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for ECR
@@ -544,7 +544,7 @@ do $$
     -- AWS
     if not exists (select 1 from "masterIntegrations" where "name" = 'AWS' and "typeCode" = 5002) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('55c8d2333399590c007982f8', 8, 'AWS', 'AWS', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('55c8d2333399590c007982f8', 8, 'AWS', 'AWS', 'deploy', false, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for AWS
@@ -566,7 +566,7 @@ do $$
     -- AWS_IAM
     if not exists (select 1 from "masterIntegrations" where "name" = 'AWS_IAM' and "typeCode" = 5002) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('571032a897aadea0ee186900', 9, 'AWS_IAM', 'Amazon Web Services (IAM)', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-23', '2016-06-23');
+      values ('571032a897aadea0ee186900', 9, 'AWS_IAM', 'Amazon Web Services (IAM)', 'deploy', false, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-23', '2016-06-23');
     end if;
 
     -- masterIntegrationFields for AWS_IAM
@@ -587,7 +587,7 @@ do $$
     -- AWS-ROOT
     if not exists (select 1 from "masterIntegrations" where "name" = 'AWS' and "typeCode" = 5005) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57467326b3cbfc0c004f9110', 10, 'AWS', 'AWS-ROOT', 'cloudproviders', true, 'system', 5005, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57467326b3cbfc0c004f9110', 10, 'AWS', 'AWS-ROOT', 'cloudproviders', false, 'system', 5005, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for AWS-ROOT
@@ -604,7 +604,7 @@ do $$
     -- GKE
     if not exists (select 1 from "masterIntegrations" where "name" = 'GKE' and "typeCode" = 5002) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('56d417653270aa438861cf65', 11, 'GKE', 'Google Container Engine', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('56d417653270aa438861cf65', 11, 'GKE', 'Google Container Engine', 'deploy', false, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
      -- masterIntegrationFields for GKE
@@ -621,7 +621,7 @@ do $$
     -- DCL
     if not exists (select 1 from "masterIntegrations" where "name" = 'DCL' and "typeCode" = 5002) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('570651b5f028a50b008bd955', 12, 'DCL', 'Docker Cloud', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('570651b5f028a50b008bd955', 12, 'DCL', 'Docker Cloud', 'deploy', false, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
      -- masterIntegrationFields for DCL
@@ -643,7 +643,7 @@ do $$
     -- ACS
     if not exists (select 1 from "masterIntegrations" where "name" = 'ACS' and "typeCode" = 5002) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5723561699ddf70c00be27ed', 13, 'ACS', 'Azure Container Service', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('5723561699ddf70c00be27ed', 13, 'ACS', 'Azure Container Service', 'deploy', false, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for ACS
@@ -660,7 +660,7 @@ do $$
     -- ghe
     if not exists (select 1 from "masterIntegrations" where "name" = 'ghe' and "typeCode" = 5000) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('563347d6046d220c002a3474', 15, 'ghe', 'Github Enterprise', 'scm', true, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('563347d6046d220c002a3474', 15, 'ghe', 'Github Enterprise', 'scm', false, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for ghe
@@ -677,7 +677,7 @@ do $$
     -- bitbucket
     if not exists (select 1 from "masterIntegrations" where "name" = 'bitbucket' and "typeCode" = 5000) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('562dc347b84b390c0083e72e', 16, 'bitbucket', 'BitBucket', 'scm', true, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('562dc347b84b390c0083e72e', 16, 'bitbucket', 'BitBucket', 'scm', false, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for bitbucket
@@ -694,7 +694,7 @@ do $$
     -- Email
     if not exists (select 1 from "masterIntegrations" where "name" = 'Email' and "typeCode" = 5003) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('55816ffb4d96360c000ec6f3', 18, 'Email', 'Email', 'notification', true, 'account', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('55816ffb4d96360c000ec6f3', 18, 'Email', 'Email', 'notification', false, 'account', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Email
@@ -706,7 +706,7 @@ do $$
     -- Quay.io
     if not exists (select 1 from "masterIntegrations" where "name" = 'Quay.io' and "typeCode" = 5001) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('559eab320a31140d00a15d3a', 19, 'Quay.io', 'Quay.io', 'hub', true, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('559eab320a31140d00a15d3a', 19, 'Quay.io', 'Quay.io', 'hub', false, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Quay.io
@@ -738,7 +738,7 @@ do $$
     -- github
     if not exists (select 1 from "masterIntegrations" where "name" = 'github' and "typeCode" = 5000) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('562dc2f048095b0d00ceebcd', 20, 'github', 'GitHub', 'scm', true, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('562dc2f048095b0d00ceebcd', 20, 'github', 'GitHub', 'scm', false, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for github
@@ -755,7 +755,7 @@ do $$
     -- gitlab
     if not exists (select 1 from "masterIntegrations" where "name" = 'gitlab' and "typeCode" = 5000) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('5728e13b3d93990c000fd8e4', 21, 'gitlab', 'GitLab', 'scm', true, 'account', 5000,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('5728e13b3d93990c000fd8e4', 21, 'gitlab', 'GitLab', 'scm', false, 'account', 5000,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for gitlab
@@ -772,7 +772,7 @@ do $$
     -- bitbucketServer
     if not exists (select 1 from "masterIntegrations" where "name" = 'bitbucketServer' and "typeCode" = 5000) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('572af430ead9631100f7f64d', 22, 'bitbucketServer', 'BitBucket Server', 'scm', true, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('572af430ead9631100f7f64d', 22, 'bitbucketServer', 'BitBucket Server', 'scm', false, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for bitbucketServer
@@ -794,7 +794,7 @@ do $$
     -- ssh-key
     if not exists (select 1 from "masterIntegrations" where "name" = 'ssh-key' and "typeCode" = 5004) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('568aa7c3368a090c006da702', 23, 'ssh-key', 'SSH Key', 'key', true, 'account', 5004, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('568aa7c3368a090c006da702', 23, 'ssh-key', 'SSH Key', 'key', false, 'account', 5004, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for ssh-key
@@ -811,7 +811,7 @@ do $$
     -- pem-key
     if not exists (select 1 from "masterIntegrations" where "name" = 'pem-key' and "typeCode" = 5004) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('568aa74cd43b0d0c004fec91', 24, 'pem-key', 'PEM Key', 'key', true, 'account', 5004, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('568aa74cd43b0d0c004fec91', 24, 'pem-key', 'PEM Key', 'key', false, 'account', 5004, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for pem-key
@@ -823,7 +823,7 @@ do $$
     -- hipchat
     if not exists (select 1 from "masterIntegrations" where "name" = 'hipchat' and "typeCode" = 5003) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('56fb978f1cc7210f00bd5e72', 25, 'hipchat', 'HipChat', 'notification', true, 'account', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('56fb978f1cc7210f00bd5e72', 25, 'hipchat', 'HipChat', 'notification', false, 'account', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for hipchat
@@ -835,7 +835,7 @@ do $$
     -- Docker Trusted Registry
     if not exists (select 1 from "masterIntegrations" where "name" = 'Docker Trusted Registry' and "typeCode" = 5001) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57110b987ed9d269c9d71ac1', 26, 'Docker Trusted Registry', 'Docker Trusted Registry', 'hub', true, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57110b987ed9d269c9d71ac1', 26, 'Docker Trusted Registry', 'Docker Trusted Registry', 'hub', false, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Docker Trusted Registry
@@ -862,7 +862,7 @@ do $$
     -- DDC
     if not exists (select 1 from "masterIntegrations" where "name" = 'DDC' and "typeCode" = 5002) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('571f081b37803a0d00455d25', 27, 'DDC', 'Docker DataCenter', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('571f081b37803a0d00455d25', 27, 'DDC', 'Docker DataCenter', 'deploy', false, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for DDC
@@ -884,7 +884,7 @@ do $$
     -- TRIPUB
     if not exists (select 1 from "masterIntegrations" where "name" = 'TRIPUB' and "typeCode" = 5002) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('576ce63321333398d11a35ab', 28, 'TRIPUB', 'Joyent Triton Public Cloud ', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('576ce63321333398d11a35ab', 28, 'TRIPUB', 'Joyent Triton Public Cloud ', 'deploy', false, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for TRIPUB
@@ -933,7 +933,7 @@ do $$
     -- github auth
     if not exists (select 1 from "masterIntegrations" where "name" = 'github' and "typeCode" = 5007) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('577de63321333398d11a35ac', 30, 'github', 'github auth', 'auth', true, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('577de63321333398d11a35ac', 30, 'github', 'github auth', 'auth', false, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for github auth
@@ -960,7 +960,7 @@ do $$
     -- bitbucket auth
     if not exists (select 1 from "masterIntegrations" where "name" = 'bitbucket' and "typeCode" = 5007) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('577de63321333398d11a35ad', 31, 'bitbucket', 'bitbucket auth', 'auth', true, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('577de63321333398d11a35ad', 31, 'bitbucket', 'bitbucket auth', 'auth', false, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for bitbucket auth
@@ -988,7 +988,7 @@ do $$
     -- SMTP
     if not exists (select 1 from "masterIntegrations" where "name" = 'SMTP' and "typeCode" = 5003) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57cea8056ce9c71800d31ab3', 33, 'SMTP', 'SMTP', 'notification', true, 'system', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57cea8056ce9c71800d31ab3', 33, 'SMTP', 'SMTP', 'notification', false, 'system', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for SMTP
@@ -1035,7 +1035,7 @@ do $$
     -- Amazon S3
     if not exists (select 1 from "masterIntegrations" where "name" = 'amazons3' and "typeCode" = 5005) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57cecf81c3d9bb70153d8249', 34, 'amazons3', 'Amazon S3', 'cloudproviders', true, 'system', 5005, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57cecf81c3d9bb70153d8249', 34, 'amazons3', 'Amazon S3', 'cloudproviders', false, 'system', 5005, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Amazon S3
@@ -1057,7 +1057,7 @@ do $$
     -- bitbucket server auth
     if not exists (select 1 from "masterIntegrations" where "name" = 'bitbucketServer' and "typeCode" = 5007) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('577de63321333398d11a35ae', 35, 'bitbucketServer', 'bitbucket server auth', 'auth', true, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('577de63321333398d11a35ae', 35, 'bitbucketServer', 'bitbucket server auth', 'auth', false, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for bitbucket server auth
@@ -1084,7 +1084,7 @@ do $$
     -- github enterprise auth
     if not exists (select 1 from "masterIntegrations" where "name" = 'githubEnterprise' and "typeCode" = 5007) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('507f1f77bcf86cd799439011', 36, 'githubEnterprise', 'github enterprise auth', 'auth', true, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('507f1f77bcf86cd799439011', 36, 'githubEnterprise', 'github enterprise auth', 'auth', false, 'system', 5007, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for github enterprise
@@ -1111,7 +1111,7 @@ do $$
     -- JENKINS
     if not exists (select 1 from "masterIntegrations" where "name" = 'Jenkins' and "typeCode" = 5009) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57dbab5d15c59206bf4fbb50', 37, 'Jenkins', 'Jenkins', 'externalci', true, 'account', 5009, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57dbab5d15c59206bf4fbb50', 37, 'Jenkins', 'Jenkins', 'externalci', false, 'account', 5009, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for JENKINS
@@ -1133,7 +1133,7 @@ do $$
     -- artifactory
     if not exists (select 1 from "masterIntegrations" where "name" = 'artifactory' and "typeCode" = 5001) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57dbab5d15c59206bf4fbb51', 38, 'artifactory', 'JFrog Artifactory', 'hub', true, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57dbab5d15c59206bf4fbb51', 38, 'artifactory', 'JFrog Artifactory', 'hub', false, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for artifactory
@@ -1155,7 +1155,7 @@ do $$
     -- CLUSTER
     if not exists (select 1 from "masterIntegrations" where "name" = 'CLUSTER' and "typeCode" = 5002) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('576ce63321333398d11a35ac', 39, 'CLUSTER', 'Node Cluster', 'deploy', true, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('576ce63321333398d11a35ac', 39, 'CLUSTER', 'Node Cluster', 'deploy', false, 'account', 5002, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for CLUSTER
@@ -1177,7 +1177,7 @@ do $$
     -- Mailgun
     if not exists (select 1 from "masterIntegrations" where "name" = 'mailgun' and "typeCode" = 5003) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57e8ea91424bff9c871d7321', 40, 'mailgun', 'Mailgun', 'notification', true, 'system', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57e8ea91424bff9c871d7321', 40, 'mailgun', 'Mailgun', 'notification', false, 'system', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Mailgun
@@ -1204,7 +1204,7 @@ do $$
     --Gmail
     if not exists (select 1 from "masterIntegrations" where "name" = 'gmail' and "typeCode" = 5003) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57e8ea9c14d3ef88e56fecb4', 41, 'gmail', 'Gmail', 'notification', true, 'system', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('57e8ea9c14d3ef88e56fecb4', 41, 'gmail', 'Gmail', 'notification', false, 'system', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Gmail
@@ -2227,7 +2227,7 @@ do $$
     if exists (select 1 from "systemConfigs" where "serverEnabled" = false) then
       if not exists (select 1 from "masterIntegrations" where "name" = 'braintree' and "typeCode" = 5008) then
         insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-        values ('57aafd0673ea26cb053fe1ca', 32, 'braintree', 'braintree', 'payment', true, 'system', 5008, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+        values ('57aafd0673ea26cb053fe1ca', 32, 'braintree', 'braintree', 'payment', false, 'system', 5008, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
       end if;
 
       -- masterIntegrationFields for Braintree
