@@ -1,8 +1,6 @@
 #!/bin/bash -e
 
 export AVAILABLE_MASTER_INTEGRATIONS=""
-export ENABLED_MASTER_INTEGRATIONS=""
-export DISABLED_MASTER_INTEGRATIONS=""
 
 get_available_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
@@ -85,6 +83,7 @@ validate_masterIntegrations(){
     if [ $is_valid_master_integration == false ]; then
       __process_msg "Invalid master integration in state.json: '$enabled_master_integration_name'" \
         "of type '$enabled_master_integration_type'"
+      exit 1
     fi
 
   done
