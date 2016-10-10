@@ -88,12 +88,59 @@ validate_masterIntegrations(){
     fi
 
   done
+
+  __process_msg "Master integration list in state.json valid, proceeding"
 }
 
 enable_masterIntegrations() {
   __process_msg "enabling master integrations in db"
-  # for all integrations in enabled list, PUT on db with enabled=true
-  true
+  local enabled_master_integrations=$(cat $STATE_FILE | jq '.masterIntegrations')
+  local enabled_master_integrations_length=$(echo $enabled_master_integrations \
+    | jq -r '. | length')
+  local available_master_integrations_length=$(echo $AVAILABLE_MASTER_INTEGRATIONS \
+    | jq -r '. | length')
+
+  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
+  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+
+  for i in $(seq 1 $enabled_master_integrations_length); do
+    local enabled_master_integration=$(echo $enabled_master_integrations \
+      | jq '.['"$i-1"']')
+    local enabled_master_integration_name=$(echo $enabled_master_integration \
+      | jq -r '.name')
+    local enabled_master_integration_type=$(echo $enabled_master_integration \
+      | jq -r '.type')
+
+    for j in $(seq 1 $available_master_integrations_length); do
+      local available_master_integration=$(echo $AVAILABLE_MASTER_INTEGRATIONS \
+        | jq '.['"$j-1"']')
+      local available_master_integration_id=$(echo $available_master_integration \
+        | jq -r '.id')
+      local available_master_integration_name=$(echo $available_master_integration \
+        | jq -r '.name')
+      local available_master_integration_type=$(echo $available_master_integration \
+        | jq -r '.type')
+
+
+      if [ "$enabled_master_integration_name" == "$available_master_integration_name"  ] && \
+        [ "$enabled_master_integration_type" == "$available_master_integration_type" ]; then
+        is_valid_master_integration=true
+        updated_master_integration=$(echo $available_master_integration | jq '.isEnabled=true')
+
+        local master_integration_put_endpoint="$api_url/masterIntegrations/$available_master_integration_id"
+        local put_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
+          -X POST -d "$updated_master_integration" $master_integration_put_endpoint \
+            --write-out "%{http_code}\n" --silent --output /dev/null)
+        if [ "$put_call_resp_code" -gt "299" ]; then
+          echo "Error enabling master integration $available_master_integration_name(status code $put_call_resp_code)"
+        else
+          echo "Sucessfully enabled master integration $available_master_integration_name"
+        fi
+
+        break
+      fi
+    done
+  done
 }
 
 disable_masterIntegrations() {
@@ -108,7 +155,7 @@ main() {
   __process_marker "Configuring master integrations"
   get_available_masterIntegrations
   validate_masterIntegrations
-  enable_masterIntegrations
+  #enable_masterIntegrations
   disable_masterIntegrations
 }
 
