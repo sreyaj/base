@@ -87,26 +87,6 @@ install() {
   #source "$SCRIPTS_DIR/provisionServices.sh"
 }
 
-upgrade() {
-  __process_marker "Starting update"
-  local service_name="$1"
-  local service_image="$2"
-  source "$SCRIPTS_DIR/upgrade.sh" "$service_name" "$service_image"
-
-  # TODO:
-  # get swarm ip
-  # get the service name from statefile
-  # generate swarm update command using the new image(from cmd line) and options(from statefile)
-  # execute updaate command on swarm machine
-}
-
-__print_help_upgrade() {
-  echo "
-  usage: ./base.sh --upgrade <service_name> <image_name>
-  This command updates the <service_name> Shippable component with image tag <image_name>
-  "
-}
-
 __print_help_install() {
   echo "
   usage: ./base.sh --install [local | production]
@@ -122,7 +102,6 @@ __print_help() {
   OPTIONS:
     -s | --status     Print status of current installation
     -i | --install    Start a new Shippable installation
-    -u | --upgrade    Upgrade existing Shippable installation
     -v | --version    Print version of this script
     -h | --help       Print this message
   "
@@ -154,15 +133,6 @@ if [[ $# -gt 0 ]]; then
         install
       else
         __print_help_install
-      fi
-      ;;
-    -u|--upgrade)
-      shift
-      if [[ $# -ne 2 ]]; then
-        __print_help_upgrade
-      else
-        upgrade $@
-        shift 2
       fi
       ;;
     -h|--help) __print_help
