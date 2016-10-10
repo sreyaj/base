@@ -571,6 +571,18 @@ run_migrations_local() {
   fi
 }
 
+manage_masterIntegrations() {
+  SKIP_STEP=false
+  _check_component_status "masterIntegrationsConfigured"
+  if [ "$SKIP_STEP" = false ]; then
+    source "$SCRIPTS_DIR/_manageMasterIntegrations.sh"
+
+    #_update_install_status "masterIntegrationsConfigured"
+  else
+    __process_msg "Master integrations already configured, skipping"
+  fi
+}
+
 insert_route_permissions() {
   SKIP_STEP=false
   _check_component_status "routePermissionsUpdated"
@@ -785,6 +797,9 @@ main() {
     provision_api_local
     test_api_endpoint
     run_migrations_local
+    manage_masterIntegrations
+
+    ## master intgrations
     #generate_providers
     #insert_system_integrations
     #restart_api_local
