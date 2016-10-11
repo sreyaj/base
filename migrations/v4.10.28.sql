@@ -1588,18 +1588,6 @@ do $$
       alter table "versions" add column "projectId" varchar(24);
     end if;
 
-    -- Add github in providers
-    if not exists (select 1 from "providers" where "url" = 'https://api.github.com') then
-      insert into "providers" ("id", "masterIntegrationId", "url", "name", "createdAt", "updatedAt")
-      values ('562dbd9710c5980d003b0451', '562dc2f048095b0d00ceebcd', 'https://api.github.com', 'github', '2016-02-29T00:00:00.000Z', '2016-02-29T00:00:00.000Z');
-    end if;
-
-    -- Add bitbucket in providers
-    if not exists (select 1 from "providers" where "url" = 'https://bitbucket.org') then
-      insert into "providers" ("id", "masterIntegrationId", "url", "name", "createdAt", "updatedAt")
-      values ('562dbda348095b0d00ce6a43', '562dc347b84b390c0083e72e', 'https://bitbucket.org', 'bitbucket', '2016-02-29T00:00:00.000Z', '2016-02-29T00:00:00.000Z');
-    end if;
-
     -- Make "sourceId" nullable in projects table
     if exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'sourceId') then
       alter table "projects" alter column "sourceId" drop not null;

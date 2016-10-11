@@ -1,8 +1,6 @@
 #!/bin/bash -e
 
 export AVAILABLE_MASTER_INTEGRATIONS=""
-export ENABLED_MASTER_INTEGRATIONS=""
-export DISABLED_MASTER_INTEGRATIONS=""
 
 get_available_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
@@ -85,6 +83,7 @@ validate_masterIntegrations(){
     if [ $is_valid_master_integration == false ]; then
       __process_msg "Invalid master integration in state.json: '$enabled_master_integration_name'" \
         "of type '$enabled_master_integration_type'"
+      exit 1
     fi
 
   done
@@ -124,13 +123,18 @@ enable_masterIntegrations() {
 
       if [ "$enabled_master_integration_name" == "$available_master_integration_name"  ] && \
         [ "$enabled_master_integration_type" == "$available_master_integration_type" ]; then
-        is_valid_master_integration=true
         updated_master_integration=$(echo $available_master_integration | jq '.isEnabled=true')
 
         local master_integration_put_endpoint="$api_url/masterIntegrations/$available_master_integration_id"
-        local put_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
-          -X POST -d "$updated_master_integration" $master_integration_put_endpoint \
-            --write-out "%{http_code}\n" --silent --output /dev/null)
+        local put_call_resp_code=$(curl \
+          -H "Content-Type: application/json" \
+          -H "Authorization: apiToken $api_token" \
+          -X POST \
+          -d "$updated_master_integration" \
+          $master_integration_put_endpoint \
+          --write-out "%{http_code}\n" \
+          --silent \
+          --output /dev/null)
         if [ "$put_call_resp_code" -gt "299" ]; then
           echo "Error enabling master integration $available_master_integration_name(status code $put_call_resp_code)"
         else

@@ -15,9 +15,18 @@
       "type": "auth"
     },
     {
+      "name": "bitbucket",
+      "type": "auth"
+    },
+    {
       "name": "github",
       "type": "scm"
-    },{
+    },
+    {
+      "name": "bitbucket",
+      "type": "scm"
+    },
+    {
       "name": "ECR",
       "type": "hub"
     }
@@ -27,6 +36,12 @@
       "name": "github",
       "url": "https://api.github.com",
       "masterIntegration": "github",
+      "type": "scm"
+    },
+    {
+      "name": "bitbucket",
+      "url": "https://bitbucket.org",
+      "masterIntegration": "bitbucket",
       "type": "scm"
     }
   ],

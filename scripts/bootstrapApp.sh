@@ -583,6 +583,19 @@ manage_masterIntegrations() {
   fi
 }
 
+manage_providers() {
+  SKIP_STEP=false
+  _check_component_status "providersConfigured"
+  if [ "$SKIP_STEP" = false ]; then
+    source "$SCRIPTS_DIR/_manageProviders.sh"
+
+    #_update_install_status "providersConfigured"
+  else
+    __process_msg "Providers already configured, skipping"
+  fi
+
+}
+
 insert_route_permissions() {
   SKIP_STEP=false
   _check_component_status "routePermissionsUpdated"
@@ -798,7 +811,7 @@ main() {
     test_api_endpoint
     run_migrations_local
     manage_masterIntegrations
-
+    manage_providers
     ## master intgrations
     #generate_providers
     #insert_system_integrations
