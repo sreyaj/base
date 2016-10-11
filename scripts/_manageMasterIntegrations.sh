@@ -123,13 +123,18 @@ enable_masterIntegrations() {
 
       if [ "$enabled_master_integration_name" == "$available_master_integration_name"  ] && \
         [ "$enabled_master_integration_type" == "$available_master_integration_type" ]; then
-        is_valid_master_integration=true
         updated_master_integration=$(echo $available_master_integration | jq '.isEnabled=true')
 
         local master_integration_put_endpoint="$api_url/masterIntegrations/$available_master_integration_id"
-        local put_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
-          -X POST -d "$updated_master_integration" $master_integration_put_endpoint \
-            --write-out "%{http_code}\n" --silent --output /dev/null)
+        local put_call_resp_code=$(curl \
+          -H "Content-Type: application/json" \
+          -H "Authorization: apiToken $api_token" \
+          -X POST \
+          -d "$updated_master_integration" \
+          $master_integration_put_endpoint \
+          --write-out "%{http_code}\n" \
+          --silent \
+          --output /dev/null)
         if [ "$put_call_resp_code" -gt "299" ]; then
           echo "Error enabling master integration $available_master_integration_name(status code $put_call_resp_code)"
         else
