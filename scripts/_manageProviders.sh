@@ -99,7 +99,6 @@ validate_providers() {
       __process_msg "Please add integration for the provider or remove the provider and run installer again"
       exit 1
     fi
-
   done
 
   __process_msg "Providers  list in state.json valid, proceeding"
@@ -200,23 +199,12 @@ upsert_providers() {
   done
 }
 
-delete_providers() {
-  __process_msg "deleting redudant providers"
-  # for each provider in list
-  # if there is no MI, ask user to remove the provider from list
-  #   and try again
-
-  # GET all providers from db
-  # if providers not in state, DELETE providers from db
-}
-
 main() {
   __process_marker "Configuring providers"
   get_enabled_masterIntegrations
   get_providers
   validate_providers
   upsert_providers
-  #delete_providers
 }
 
 main
