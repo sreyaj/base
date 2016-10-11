@@ -1,30 +1,240 @@
 {
+  "coreServices": [
+    "api",
+    "www",
+    "charon",
+    "cron",
+    "jobRequest",
+    "jobTrigger",
+    "deploy",
+    "manifest",
+    "release",
+    "rSync",
+    "sync",
+    "timeTrigger",
+    "versionTrigger",
+    "ini",
+    "nexec",
+    "irc",
+    "nf"
+  ],
   "integrationServices": [
     {
-      "name": "braintree",
+      "name": "bitbucket",
+      "type": "auth",
+      "services": []
+    },
+    {
+      "name": "bitbucketServer",
+      "type": "auth",
+      "services": []
+    },
+    {
+      "name": "github",
+      "type": "auth",
+      "services": []
+    },
+    {
+      "name": "githubEnterprise",
+      "type": "auth",
+      "services": []
+    },
+    {
+      "name": "AWS",
+      "type": "cloudproviders",
       "services": [
-        "api",
+        "marshaller",
+        "ec2"
+      ]
+    },
+    {
+      "name": "amazons3",
+      "type": "cloudproviders",
+      "services": []
+    },
+    {
+      "name": "AWS",
+      "type": "deploy",
+      "services": []
+    },
+    {
+      "name": "AWS_IAM",
+      "type": "deploy",
+      "services": []
+    },
+    {
+      "name": "DCL",
+      "type": "deploy",
+      "services": []
+    },
+    {
+      "name": "DDC",
+      "type": "deploy",
+      "services": []
+    },
+    {
+      "name": "GKE",
+      "type": "deploy",
+      "services": []
+    },
+    {
+      "name": "TRIPUB",
+      "type": "deploy",
+      "services": [
+        "certgen"
+      ]
+    },
+    {
+      "name": "CLUSTER",
+      "type": "deploy",
+      "services": [
+        "certgen"
+      ]
+    },
+    {
+      "name": "Jenkins",
+      "type": "externalci",
+      "services": [
+        "jSync"
+      ]
+    },
+    {
+      "name": "Docker",
+      "type": "hub",
+      "services": []
+    },
+    {
+      "name": "Docker Trusted Registry",
+      "type": "hub",
+      "services": []
+    },
+    {
+      "name": "Private Docker Registry",
+      "type": "hub",
+      "services": []
+    },
+    {
+      "name": "Quay.io",
+      "type": "hub",
+      "services": []
+    },
+    {
+      "name": "ECR",
+      "type": "hub",
+      "services": []
+    },
+    {
+      "name": "GCR",
+      "type": "hub",
+      "services": []
+    },
+    {
+      "name": "artifactory",
+      "type": "hub",
+      "services": []
+    },
+    {
+      "name": "pem-key",
+      "type": "key",
+      "services": []
+    },
+    {
+      "name": "ssh-key",
+      "type": "key",
+      "services": []
+    },
+    {
+      "name": "gmail",
+      "type": "notification",
+      "services": [
+        "nf",
+        "email"
+      ]
+    },
+    {
+      "name": "mailgun",
+      "type": "notification",
+      "services": [
+        "nf",
+        "email"
+      ]
+    },
+    {
+      "name": "SMTP",
+      "type": "notification",
+      "services": [
+        "nf",
+        "email"
+      ]
+    },
+    {
+      "name": "Email",
+      "type": "notification",
+      "services": [
+        "nf",
+        "email"
+      ]
+    },
+    {
+      "name": "hipchat",
+      "type": "notification",
+      "services": [
+        "nf",
+        "hipchat"
+      ]
+    },
+    {
+      "name": "Slack",
+      "type": "notification",
+      "services": [
+        "nf",
+        "slack"
+      ]
+    },
+    {
+      "name": "webhook",
+      "type": "notification",
+      "services": [
+        "nf",
+        "webhook"
+      ]
+    },
+    {
+      "name": "braintree",
+      "type": "payment",
+      "services": [
         "braintree"
       ]
     },
     {
       "name": "github",
-      "services": [
-        "api",
-        "www",
-        "sync"
-      ]
+      "type": "scm",
+      "services": []
     },
     {
-      "name": "github",
+      "name": "ghe",
       "type": "scm",
-      "services": [
-        "api",
-        "www",
-        "jobTrigger",
-        "jobRequest",
-        "cron"
-      ]
+      "services": []
+    },
+    {
+      "name": "bitbucket",
+      "type": "scm",
+      "services": []
+    },
+    {
+      "name": "gitlab",
+      "type": "scm",
+      "services": []
+    },
+    {
+      "name": "Git store",
+      "type": "scm",
+      "services": []
+    },
+    {
+      "name": "VAULT",
+      "type": "secretsBackend",
+      "services": []
     }
   ],
   "serviceConfigs": [
@@ -62,14 +272,53 @@
       ]
     },
     {
-      "name": "sync",
-      "repository": "micro50",
-      "replias": 2,
+      "name": "nexec",
+      "repository": "nexec",
+      "replicas": 1,
       "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_VORTEX_URL",
+        "SHIPPABLE_API_URL",
         "SHIPPABLE_ROOT_AMQP_URL",
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
-        "SHIPPABLE_API_URL",
+        "RUN_MODE"
+      ]
+    },
+    {
+      "name": "braintree",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
         "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "certgen",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "charon",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
         "RUN_MODE",
         "COMPONENT"
       ]
@@ -89,17 +338,275 @@
       ]
     },
     {
-      "name": "versionTrigger",
-      "replicas": 1,
+      "name": "ec2",
       "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "email",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_WWW_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "hipchat",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_WWW_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "hubspotSync",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT",
+        "SHIP_TIME_LIMIT",
+        "HUBSPOT_API_ENDPOINT",
+        "HUBSPOT_API_TOKEN",
+        "HUBSPOT_LIST_ID",
+        "SHOULD_SIMULATE"
+      ]
+    },
+    {
+      "name": "ini",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT",
+        "DOCKER_VERSION",
+        "SETUP_RUN_SH",
+        "EXEC_IMAGE"
+      ]
+    },
+    {
+      "name": "jobRequest",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_WWW_URL",
+        "RUN_MODE",
+        "COMPONENT",
+        "REGISTRY_REGION",
+        "REGISTRY_ACCOUNT_ID"
+      ]
+    },
+    {
+      "name": "jobTrigger",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_WWW_URL",
+        "RUN_MODE",
+        "COMPONENT",
+        "API_RETRY_INTERVAL"
+      ]
+    },
+    {
+      "name": "jSync",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "marshaller",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_WWW_URL",
+        "RUN_MODE",
+        "COMPONENT",
+        "PROVIDERS",
+        "SHIPPABLE_EXEC_IMAGE"
+      ]
+    },
+    {
+      "name": "nf",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_WWW_URL",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "slack",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_WWW_URL",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "deploy",
+      "repository": "micro50",
+      "replicas": 3,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT",
+        "JOB_TYPE"
+      ]
+    },
+    {
+      "name": "manifest",
+      "repository": "micro50",
+      "replicas": 2,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT",
+        "JOB_TYPE"
+      ]
+    },
+    {
+      "name": "release",
+      "repository": "micro50",
+      "replicas": 2,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT",
+        "JOB_TYPE"
+      ]
+    },
+    {
+      "name": "rSync",
+      "repository": "micro50",
+      "replicas": 2,
+      "envs": [
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "RUN_MODE",
+        "COMPONENT",
+        "JOB_TYPE"
+      ]
+    },
+    {
+      "name": "sync",
+      "repository": "micro50",
+      "replicas": 2,
       "envs": [
         "SHIPPABLE_ROOT_AMQP_URL",
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
         "SHIPPABLE_API_URL",
         "SHIPPABLE_API_TOKEN",
         "RUN_MODE",
-        "COMPONENT",
-        "SHIPPABLE_VORTEX_URL"
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "timeTrigger",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_API_TOKEN",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "versionTrigger",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_API_TOKEN",
+        "RUN_MODE",
+        "COMPONENT"
+      ]
+    },
+    {
+      "name": "webhook",
+      "repository": "micro50",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_WWW_URL",
+        "RUN_MODE",
+        "COMPONENT"
       ]
     }
   ],
