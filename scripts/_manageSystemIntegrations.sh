@@ -2,6 +2,7 @@
 
 export ENABLED_MASTER_INTEGRATIONS=""
 export AVAILABLE_SYSTEM_INTEGRATIONS=""
+export ENABLED_SYSTEM_INTEGRATIONS=""
 
 get_enabled_masterIntegrations() {
   __process_msg "GET-ing available master integrations from db"
@@ -53,10 +54,65 @@ get_enabled_systemIntegrations() {
 }
 
 validate_systemIntegrations() {
-  # for each MI in list
-  # if there is no systemintegration, error
-  # else, valid list
-  true
+  __process_msg "Validating system integrations list in state.json"
+  local enabled_master_integrations=$(echo $ENABLED_MASTER_INTEGRATIONS \
+    | jq '.')
+  local enabled_master_integrations_length=$(echo $enabled_master_integrations \
+    | jq -r '. | length')
+
+  if [ $enabled_master_integrations_length -eq 0 ]; then
+    __process_msg "Misconfigured state.json. State cannot have zero master integrations, please reconfigure state " \
+      " to insert master integrations"
+    exit 1
+  fi
+
+  local enabled_system_integrations=$(cat $STATE_FILE \
+    | jq '.systemIntegrations')
+  local enabled_system_integrations_length=$(echo $enabled_system_integrations \
+    | jq -r '. | length')
+
+  if [ $enabled_system_integrations_length -eq 0 ]; then
+    __process_msg "Please add system integrations and run installer again"
+  fi
+
+  for i in $(seq 1 $enabled_system_integrations_length); do
+    local enabled_system_integration=$(echo $enabled_system_integrations \
+      | jq '.['"$i-1"']')
+    local enabled_system_integration_name=$(echo $enabled_system_integration \
+      | jq -r '.name')
+    local enabled_system_integration_master_name=$(echo $enabled_system_integration \
+      | jq -r '.masterName')
+    local enabled_system_integration_master_type=$(echo $enabled_system_integration \
+      | jq -r '.masterType')
+    local is_valid_system_integration=false
+
+    for j in $(seq 1 $enabled_master_integrations_length); do
+      local enabled_master_integration=$(echo $enabled_master_integrations \
+        | jq '.['"$j-1"']')
+      local enabled_master_integration_name=$(echo $enabled_master_integration \
+        | jq -r '.name')
+      local enabled_master_integration_type=$(echo $enabled_master_integration \
+        | jq -r '.type')
+
+
+      if [ $enabled_system_integration_master_name == $enabled_master_integration_name ] && \
+        [ $enabled_system_integration_master_type == $enabled_master_integration_type ]; then
+        # found associated master integration
+        is_valid_system_integration=true
+        break
+      fi
+    done
+
+    if [ $is_valid_system_integration == false ]; then
+      __process_msg "Invalid system integration in state.json: '$enabled_system_integration_name'." \
+        " Cannot find releated master integration"
+      __process_msg "Please add master integration for the provider or remove the system integration " \
+        " and run installer again"
+      exit 1
+    fi
+
+  done
+  __process_msg "Successfully validated system integrations"
 }
 
 upsert_systemIntegrations() {
