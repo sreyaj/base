@@ -156,9 +156,6 @@ upsert_providers() {
           local master_integration_provider=$(echo $enabled_provider \
             | jq '.masterIntegrationId="'$enabled_master_integration_id'"')
 
-          echo "----------"
-          echo $master_integration_provider
-
           local providers_post_endpoint="$api_url/providers"
           local post_call_resp_code=$(curl \
             -H "Content-Type: application/json" \
