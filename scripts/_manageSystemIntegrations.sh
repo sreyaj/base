@@ -33,6 +33,25 @@ get_enabled_masterIntegrations() {
   fi
 }
 
+get_enabled_systemIntegrations() {
+  __process_msg "GET-ing enabled system integrations from db"
+  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
+  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+  local system_integrations_get_endpoint="$api_url/systemIntegrations?isEnabled=true"
+
+  local response=$(curl \
+    -H "Content-Type: application/json" \
+    -H "Authorization: apiToken $api_token" \
+    -X GET $system_integrations_get_endpoint \
+    --silent)
+  response=$(echo $response | jq '.')
+
+  AVAILABLE_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
+  local available_integrations_length=$(echo $AVAILABLE_SYSTEM_INTEGRATIONS | jq -r '. | length')
+  __process_msg "Successfully fetched providers from db: $available_integrations_length"
+
+}
+
 validate_systemIntegrations() {
   # for each MI in list
   # if there is no systemintegration, error
@@ -63,6 +82,7 @@ delete_systemIntegrations() {
 main() {
   __process_marker "Configuring system integrations"
   get_enabled_masterIntegrations
+  get_enabled_systemIntegrations
   validate_systemIntegrations
   upsert_systemIntegrations
   delete_systemIntegrations

@@ -823,7 +823,7 @@ main() {
     run_migrations_local
     manage_masterIntegrations
     manage_providers
-    #manage_systemIntegrations
+    manage_systemIntegrations
     #restart_api_local
   fi
 }

@@ -35,14 +35,12 @@
     {
       "name": "github",
       "url": "https://api.github.com",
-      "masterIntegration": "github",
-      "type": "scm"
+      "masterIntegration": "github"
     },
     {
       "name": "bitbucket",
       "url": "https://bitbucket.org",
-      "masterIntegration": "bitbucket",
-      "type": "scm"
+      "masterIntegration": "bitbucket"
     }
   ],
   "systemIntegrations": [
