@@ -47,6 +47,21 @@
   ],
   "systemIntegrations": [
     {
+      "name": "github.com",
+      "masterName": "github",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "value": null,
+          "label": "clientSecret"
+        },
+        {
+          "value": null,
+          "label": "clientId"
+        }
+      ]
+    },
+    {
       "name": "Internal Shippable ECR",
       "masterName": "ECR",
       "masterType": "hub",

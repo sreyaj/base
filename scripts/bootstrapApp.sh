@@ -593,7 +593,18 @@ manage_providers() {
   else
     __process_msg "Providers already configured, skipping"
   fi
+}
 
+manage_systemIntegrations() {
+  SKIP_STEP=false
+  _check_component_status "systemIntegrationsConfigured"
+  if [ "$SKIP_STEP" = false ]; then
+    source "$SCRIPTS_DIR/_manageSystemIntegrations.sh"
+
+    #_update_install_status "systemIntegrationsConfigured"
+  else
+    __process_msg "System integrations already configured, skipping"
+  fi
 }
 
 insert_route_permissions() {
@@ -812,9 +823,7 @@ main() {
     run_migrations_local
     manage_masterIntegrations
     manage_providers
-    ## master intgrations
-    #generate_providers
-    #insert_system_integrations
+    #manage_systemIntegrations
     #restart_api_local
   fi
 }

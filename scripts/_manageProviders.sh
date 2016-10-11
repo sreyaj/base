@@ -66,16 +66,12 @@ validate_providers() {
   local enabled_providers=$(cat $STATE_FILE | jq '.masterIntegrationProviders')
   local enabled_providers_length=$(echo $enabled_providers | jq '. | length')
 
-  # make sure each provider has an integration, else ask to remove it
-  # NOTE: an interation might or might not have a provider but a provider
-  # HAS to be associated with an integration
+  # make sure each provider has a master integration with same "name"
   for i in $(seq 1 $enabled_providers_length); do
     local enabled_provider=$(echo $enabled_providers \
       | jq '.['"$i-1"']')
     local enabled_provider_name=$(echo $enabled_provider \
       | jq -r '.name')
-    local enabled_provider_type=$(echo $enabled_provider \
-      | jq -r '.type')
     local is_valid_master_integration_provider=false
 
     for j in $(seq 1 $enabled_master_integrations_length); do
@@ -83,11 +79,8 @@ validate_providers() {
         | jq '.['"$j-1"']')
       local enabled_master_integration_name=$(echo $enabled_master_integration \
         | jq -r '.name')
-      local enabled_master_integration_type=$(echo $enabled_master_integration \
-        | jq -r '.type')
 
-      if [ $enabled_master_integration_name == $enabled_provider_name ] && \
-        [ $enabled_master_integration_type == $enabled_provider_type ]; then
+      if [ $enabled_master_integration_name == $enabled_provider_name ]; then
         is_valid_master_integration_provider=true
         break
       fi
@@ -124,24 +117,17 @@ upsert_providers() {
       | jq '.['"$i-1"']')
     local enabled_provider_name=$(echo $enabled_provider \
       | jq -r '.name')
-    local enabled_provider_type=$(echo $enabled_provider \
-      | jq -r '.type')
 
     for j in $(seq 1 $enabled_master_integrations_length); do
       local enabled_master_integration=$(echo $enabled_master_integrations \
         | jq '.['"$j-1"']')
       local enabled_master_integration_name=$(echo $enabled_master_integration \
         | jq -r '.name')
-      local enabled_master_integration_type=$(echo $enabled_master_integration \
-        | jq -r '.type')
       local enabled_master_integration_id=$(echo $enabled_master_integration \
         | jq -r '.id')
 
-      if [ $enabled_master_integration_name == $enabled_provider_name ] && \
-        [ $enabled_master_integration_type == $enabled_provider_type ]; then
-        
+      if [ $enabled_master_integration_name == $enabled_provider_name ]; then
         # found the integration for the provider
-
         # find provider from db
         local db_master_integration_provider=$(echo $AVAILABLE_PROVIDERS \
           | jq -r '.[] |
@@ -191,7 +177,7 @@ upsert_providers() {
           fi
 
         fi
-    
+        break
       fi
 
     done
