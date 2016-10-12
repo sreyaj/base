@@ -577,21 +577,9 @@ manage_masterIntegrations() {
   if [ "$SKIP_STEP" = false ]; then
     source "$SCRIPTS_DIR/_manageMasterIntegrations.sh"
 
-    #_update_install_status "masterIntegrationsConfigured"
+    _update_install_status "masterIntegrationsConfigured"
   else
     __process_msg "Master integrations already configured, skipping"
-  fi
-}
-
-manage_providers() {
-  SKIP_STEP=false
-  _check_component_status "providersConfigured"
-  if [ "$SKIP_STEP" = false ]; then
-    source "$SCRIPTS_DIR/_manageProviders.sh"
-
-    #_update_install_status "providersConfigured"
-  else
-    __process_msg "Providers already configured, skipping"
   fi
 }
 
@@ -601,7 +589,7 @@ manage_systemIntegrations() {
   if [ "$SKIP_STEP" = false ]; then
     source "$SCRIPTS_DIR/_manageSystemIntegrations.sh"
 
-    #_update_install_status "systemIntegrationsConfigured"
+    _update_install_status "systemIntegrationsConfigured"
   else
     __process_msg "System integrations already configured, skipping"
   fi
@@ -795,6 +783,11 @@ restart_api_local() {
   sleep 10
 }
 
+update_service_list() {
+  __process_msg "configuring services according to master integrations"
+  source "$SCRIPTS_DIR/_manageServices.sh"
+}
+
 main() {
   __process_marker "Updating system config"
   generate_serviceuser_token
@@ -812,6 +805,7 @@ main() {
     generate_providers
     insert_system_integrations
     insert_system_machine_image
+    update_service_list
     restart_api
   else
     update_docker_creds_local
@@ -822,8 +816,9 @@ main() {
     test_api_endpoint
     run_migrations_local
     manage_masterIntegrations
-    manage_providers
     manage_systemIntegrations
+    insert_system_machine_image
+    update_service_list
     #restart_api_local
   fi
 }
