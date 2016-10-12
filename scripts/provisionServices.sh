@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-readonly SERVICE_CONFIG="$DATA_DIR/config.json"
+readonly SERVICE_CONFIG="$USR_DIR/config.json"
 
 export SKIP_STEP=false
 
