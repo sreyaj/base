@@ -35,18 +35,6 @@
       "type": "auth"
     }
   ], 
-  "masterIntegrationProviders": [
-    {
-      "name": "github",
-      "url": "https://api.github.com",
-      "masterIntegration": "github"
-    },
-    {
-      "name": "bitbucket",
-      "url": "https://bitbucket.org",
-      "masterIntegration": "bitbucket"
-    }
-  ],
   "systemIntegrations": [
     {
       "name": "github.com",
@@ -54,16 +42,16 @@
       "masterType": "auth",
       "formJSONValues": [
         {
-          "value": null,
+          "value": "superSecret",
           "label": "clientSecret"
         },
         {
-          "value": null,
+          "value": "someClientId",
           "label": "clientId"
         },
         {
-          "value": "someid",
-          "label": "providerId"
+          "label": "http://localhost:50001",
+          "value": "wwwUrl",
         },
         {
           "value": "https://api.github.com",
@@ -77,19 +65,19 @@
       "masterType": "auth",
       "formJSONValues": [
         {
-          "value": null,
+          "value": "superSecret",
           "label": "clientSecret"
         },
         {
-          "value": null,
+          "value": "someClientId",
           "label": "clientId"
         },
         {
-          "value": "someid",
-          "label": "providerId"
+          "value": "https://api.bbs.com",
+          "label": "url"
         },
         {
-          "value": "https://api.bbs.com",
+          "value": "https://mybbs.com",
           "label": "wwwUrl"
         }
       ]
@@ -125,6 +113,7 @@
     "serviceUserToken": "",
     "swarmWorkerToken": "",
     "vaultToken": "",
+    "runShImage": "shipimg/runsh:master.12392",
     "dockerpass": "",
     "wwwUrl": "http://localhost:50001",
     "dynamicNodesSystemIntegrationId": "5745a34a25cf521200e83fe9",
@@ -225,8 +214,8 @@
     "apiConfigured": false,
     "systemConfigUpdated": false,
     "migrationsUpdated": false,
+    "servicesConfigured": false,
     "masterIntegrationsConfigured": false,
-    "providersConfigured": false,
     "systemIntegrationsConfigured": false,
     "wwwInstalled": false,
     "wwwInitialized": false,
