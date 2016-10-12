@@ -156,7 +156,7 @@ install_compose(){
 
 install_database() {
   SKIP_STEP=false
-  _check_component_status "databaseInitialized"
+  _check_component_status "databaseInstalled"
   if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Database"
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
@@ -171,7 +171,6 @@ install_database() {
     __process_msg "Waiting 30s for postgres to boot"
     sleep 30s
     _update_install_status "databaseInstalled"
-    _update_install_status "databaseInitialized"
   else
     __process_msg "Database already installed, skipping"
     __process_msg "Database already initialized, skipping"
@@ -196,37 +195,46 @@ install_database_local() {
 }
 
 save_db_credentials_in_statefile() {
-  __process_msg "Saving database credentials in state file"
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local db_ip=$(echo $db_host | jq -r '.ip')
-  local db_port=5432
-  local db_address=$db_ip":"$db_port
+  SKIP_STEP=false
+  _check_component_status "databaseInitialized"
 
-  db_name="shipdb"
-  db_username="apiuser"
-  db_password="testing1234"
-  db_dialect="postgres"
+  if [ "$SKIP_STEP" = false ]; then
+    __process_msg "Saving database credentials in state file"
+    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+    local db_ip=$(echo $db_host | jq -r '.ip')
+    local db_port=5432
+    local db_address=$db_ip":"$db_port
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.dbHost = "'$db_ip'"')
-  update=$(echo $result | jq '.' | tee $STATE_FILE)
+    db_name="shipdb"
+    db_username="apiuser"
+    db_password="testing1234"
+    db_dialect="postgres"
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.dbDialect = "'$db_dialect'"')
-  update=$(echo $result | jq '.' | tee $STATE_FILE)
+    result=$(cat $STATE_FILE | jq '.systemSettings.dbHost = "'$db_ip'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.dbPort = "'$db_port'"')
-  update=$(echo $result | jq '.' | tee $STATE_FILE)
+    result=$(cat $STATE_FILE | jq '.systemSettings.dbDialect = "'$db_dialect'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.dbname = "'$db_name'"')
-  update=$(echo $result | jq '.' | tee $STATE_FILE)
+    result=$(cat $STATE_FILE | jq '.systemSettings.dbPort = "'$db_port'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.dbUsername = "'$db_username'"')
-  update=$(echo $result | jq '.' | tee $STATE_FILE)
+    result=$(cat $STATE_FILE | jq '.systemSettings.dbname = "'$db_name'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.dbPassword = "'$db_password'"')
-  update=$(echo $result | jq '.' | tee $STATE_FILE)
+    result=$(cat $STATE_FILE | jq '.systemSettings.dbUsername = "'$db_username'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
 
-  result=$(cat $STATE_FILE | jq '.systemSettings.dbUrl = "'$db_address'"')
-  update=$(echo $result | jq '.' | tee $STATE_FILE)
+    result=$(cat $STATE_FILE | jq '.systemSettings.dbPassword = "'$db_password'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+    result=$(cat $STATE_FILE | jq '.systemSettings.dbUrl = "'$db_address'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+    _update_install_status "databaseInitialized"
+  else
+    __process_msg "Database already initialized, skipping"
+  fi
 }
 
 save_db_credentials_in_statefile_local() {
@@ -435,18 +443,23 @@ install_rabbitmq() {
     __process_msg "Installing RabbitMQ"
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installRabbit.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
+
+    local update=$(cat $STATE_FILE \
+      | jq '.systemSettings.amqpHost="'$amqp_host'"')
+    _update_state "$update"
+
     _update_install_status "rabbitmqInstalled"
   else
     amqp_host=$(cat $STATE_FILE \
-      | jq '.systemSettings.amqpHost')
+      | jq -r '.systemSettings.amqpHost')
     amqp_port=$(cat $STATE_FILE \
-      | jq '.systemSettings.amqpPort')
+      | jq -r '.systemSettings.amqpPort')
     amqp_admin_port=$(cat $STATE_FILE \
-      | jq '.systemSettings.amqpAdminPort')
+      | jq -r '.systemSettings.amqpAdminPort')
     amqp_protocol=$(cat $STATE_FILE \
-      | jq '.systemSettings.amqpProtocol')
+      | jq -r '.systemSettings.amqpProtocol')
     amqp_admin_protocol=$(cat $STATE_FILE \
-      | jq '.systemSettings.amqpAdminProtocol')
+      | jq -r '.systemSettings.amqpAdminProtocol')
 
     __process_msg "RabbitMQ already installed, skipping"
   fi
@@ -460,32 +473,33 @@ install_rabbitmq() {
   if [ "$SKIP_STEP" = false ]; then
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
+
+    local amqp_user="SHIPPABLETESTUSER"
+    local amqp_pass="SHIPPABLETESTPASS"
+    local amqp_exchange="shippableEx"
+
+    local amqp_url="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippable"
+    __process_msg "Amqp url: $amqp_url"
+    local update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrl = "'$amqp_url'"')
+    update=$(echo $update | jq '.' | tee $STATE_FILE)
+
+    local amqp_url_root="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippableRoot"
+    __process_msg "Amqp root url: $amqp_url_root"
+    update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlRoot = "'$amqp_url_root'"')
+    update=$(echo $update | jq '.' | tee $STATE_FILE)
+
+    local amqp_url_admin="$amqp_admin_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_admin_port"
+    __process_msg "Amqp admin url: $amqp_url_admin"
+    update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
+    update=$(echo $update | jq '.' | tee $STATE_FILE)
+
+    update=$(cat $STATE_FILE | jq '.systemSettings.amqpDefaultExchange = "'$amqp_exchange'"')
+    update=$(echo $update | jq '.' | tee $STATE_FILE)
+
     _update_install_status "rabbitmqInitialized"
   else
     __process_msg "RabbitMQ already initialized, skipping"
   fi
-
-  local amqp_user="SHIPPABLETESTUSER"
-  local amqp_pass="SHIPPABLETESTPASS"
-  local amqp_exchange="shippableEx"
-
-  local amqp_url="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippable"
-  __process_msg "Amqp url: $amqp_url"
-  local update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrl = "'$amqp_url'"')
-  update=$(echo $update | jq '.' | tee $STATE_FILE)
-
-  local amqp_url_root="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippableRoot"
-  __process_msg "Amqp root url: $amqp_url_root"
-  update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlRoot = "'$amqp_url_root'"')
-  update=$(echo $update | jq '.' | tee $STATE_FILE)
-
-  local amqp_url_admin="$amqp_admin_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_admin_port"
-  __process_msg "Amqp admin url: $amqp_url_admin"
-  update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
-  update=$(echo $update | jq '.' | tee $STATE_FILE)
-
-  update=$(cat $STATE_FILE | jq '.systemSettings.amqpDefaultExchange = "'$amqp_exchange'"')
-  update=$(echo $update | jq '.' | tee $STATE_FILE)
 }
 
 install_rabbitmq_local() {
