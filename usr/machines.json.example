@@ -4,7 +4,7 @@
     "ip" : "45.55.49.134",
     "name": "db",
     "login": "root",
-    "dataMount": "/data",
+    "dataMount": "/usr",
     "cores": 2,
     "memory": 4096,
     "arch": "x86"
@@ -14,7 +14,7 @@
     "ip" : "45.55.49.134",
     "name": "swarm",
     "login": "root",
-    "dataMount": "/data",
+    "dataMount": "/usr",
     "cores": 2,
     "memory": 4096,
     "arch": "x86"
@@ -24,7 +24,7 @@
     "ip" : "45.55.49.134",
     "name": "services1",
     "login": "root",
-    "dataMount": "/data",
+    "dataMount": "/usr",
     "cores": 2,
     "memory": 4096,
     "arch": "x86"
@@ -34,7 +34,7 @@
     "ip" : "45.55.49.134",
     "name": "services2",
     "login": "root",
-    "dataMount": "/data",
+    "dataMount": "/usr",
     "cores": 2,
     "memory": 4096,
     "arch": "x86"

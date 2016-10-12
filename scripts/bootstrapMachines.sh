@@ -1,5 +1,5 @@
 #!/bin/bash -e
-readonly MACHINES_CONFIG="$DATA_DIR/machines.json"
+readonly MACHINES_CONFIG="$USR_DIR/machines.json"
 ###########################################################
 export MACHINES_LIST=""
 

@@ -108,8 +108,8 @@ generate_system_config() {
     __process_msg "Inserting data into systemConfigs Table"
 
     #TODO: put sed update into a function and call it for each variable
-    local system_configs_template="$DATA_DIR/system_configs.sql.template"
-    local system_configs_sql="$DATA_DIR/system_configs.sql"
+    local system_configs_template="$USR_DIR/system_configs.sql.template"
+    local system_configs_sql="$USR_DIR/system_configs.sql"
 
     # NOTE:
     # "sed" is using '#' as a separator in following statements
@@ -265,7 +265,7 @@ create_system_config_local() {
   if [ "$SKIP_STEP" = false ]; then
     __process_msg "Creating systemConfigs table on local db"
 
-    local system_configs_file="$DATA_DIR/system_configs.sql"
+    local system_configs_file="$USR_DIR/system_configs.sql"
     local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
 
     sudo cp -vr $system_configs_file $db_mount_dir

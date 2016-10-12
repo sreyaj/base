@@ -11,7 +11,7 @@ _validate_state() {
 
 _update_state() {
   local updated_state="$1"
-  local state_backup="$DATA_DIR/state.json.backup"
+  local state_backup="$USR_DIR/state.json.backup"
 
   cp $STATE_FILE $state_backup
 

@@ -3,7 +3,7 @@
 ###########################################################
 validate_version() {
   __process_msg "validating version"
-  if [ ! -f "$DATA_DIR/machines.json" ]; then
+  if [ ! -f "$USR_DIR/machines.json" ]; then
     echo "Cannot find machines.json, exiting..."
     exit 1
   else
@@ -15,22 +15,22 @@ validate_version() {
 }
 
 generate_state() {
-  if [ ! -f "$DATA_DIR/state.json" ]; then
-    if [ -f "$DATA_DIR/state.json.backup" ]; then
+  if [ ! -f "$USR_DIR/state.json" ]; then
+    if [ -f "$USR_DIR/state.json.backup" ]; then
       __process_msg "A state.json.backup file exists, do you want to use the backup? (yes/no)"
       read response
       if [[ "$response" == "yes" ]]; then
-        cp -vr $DATA_DIR/state.json.backup $DATA_DIR/state.json
-        rm $DATA_DIR/state.json.backup || true
+        cp -vr $USR_DIR/state.json.backup $USR_DIR/state.json
+        rm $USR_DIR/state.json.backup || true
       else
         __process_msg "Dicarding backup, creating a new state.json from state.json.example"
-        cp -vr $DATA_DIR/state.json.example $DATA_DIR/state.json
-        rm $DATA_DIR/state.json.backup || true
+        cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
+        rm $USR_DIR/state.json.backup || true
       fi
     else
       __process_msg "No state.json exists, creating a new state.json from state.json.example."
-      cp -vr $DATA_DIR/state.json.example $DATA_DIR/state.json
-      rm $DATA_DIR/state.json.backup || true
+      cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
+      rm $USR_DIR/state.json.backup || true
     fi
   else
     __process_msg "using existing state.json"
