@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+export RELEASE_VERSION="v4.10.29"
+
 ###########################################################
 validate_version() {
   __process_msg "validating version"
@@ -46,7 +48,7 @@ bootstrap_state() {
 
     ##TODO parse this from versions file
     __process_msg "updating release version"
-    release_version="v4.10.29"
+    release_version="$RELEASE_VERSION"
     local release=$(cat $STATE_FILE | jq '.release="'"$release_version"'"')
     update=$(echo $release | jq '.' | tee $STATE_FILE)
 

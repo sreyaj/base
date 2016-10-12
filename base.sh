@@ -11,7 +11,7 @@
 # Global variables ########################################
 ###########################################################
 readonly INSTALLER_VERSION=4.0.0
-export INSTALL_MODE=production
+export INSTALL_MODE="local"
 readonly IFS=$'\n\t'
 readonly ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly VERSIONS_DIR="$ROOT_DIR/versions"
@@ -125,6 +125,7 @@ if [[ $# -gt 0 ]]; then
       shift ;;
     -i|--install)
       shift
+      __process_marker "Booting shippable installer"
       if [[ $# -eq 1 ]]; then
         install_mode=$1
       fi
@@ -132,7 +133,8 @@ if [[ $# -gt 0 ]]; then
         export INSTALL_MODE="$install_mode"
         install
       else
-        __print_help_install
+        __process_msg "Running installer in default 'local' mode"
+        install
       fi
       ;;
     -h|--help) __print_help
