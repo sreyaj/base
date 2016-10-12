@@ -230,6 +230,7 @@ upsert_systemIntegrations() {
         --output /dev/null)
       if [ "$post_call_resp_code" -gt "299" ]; then
         echo "Error adding integration for $enabled_master_integration_display_name(status code $post_call_resp_code)"
+        exit 1
       else
         echo "Sucessfully added integration for $enabled_master_integration_display_name"
       fi
