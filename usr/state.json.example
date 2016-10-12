@@ -29,23 +29,71 @@
     {
       "name": "ECR",
       "type": "hub"
+    },
+    {
+      "name": "bitbucketServer",
+      "type": "auth"
     }
   ], 
   "masterIntegrationProviders": [
     {
       "name": "github",
       "url": "https://api.github.com",
-      "masterIntegration": "github",
-      "type": "scm"
+      "masterIntegration": "github"
     },
     {
       "name": "bitbucket",
       "url": "https://bitbucket.org",
-      "masterIntegration": "bitbucket",
-      "type": "scm"
+      "masterIntegration": "bitbucket"
     }
   ],
   "systemIntegrations": [
+    {
+      "name": "github.com",
+      "masterName": "github",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "value": null,
+          "label": "clientSecret"
+        },
+        {
+          "value": null,
+          "label": "clientId"
+        },
+        {
+          "value": "someid",
+          "label": "providerId"
+        },
+        {
+          "value": "https://api.github.com",
+          "label": "url"
+        }
+      ]
+    },
+    {
+      "name": "bitbucket server auth",
+      "masterName": "bitbucketServer",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "value": null,
+          "label": "clientSecret"
+        },
+        {
+          "value": null,
+          "label": "clientId"
+        },
+        {
+          "value": "someid",
+          "label": "providerId"
+        },
+        {
+          "value": "https://api.bbs.com",
+          "label": "wwwUrl"
+        }
+      ]
+    },
     {
       "name": "Internal Shippable ECR",
       "masterName": "ECR",
