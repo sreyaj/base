@@ -6,6 +6,7 @@ _validate_state() {
   local release=$(echo $state | jq '.release')
   if [ -z "$release" ]; then
     echo "Invalid state.json, missing field: release"
+    exit 1
   fi
 }
 

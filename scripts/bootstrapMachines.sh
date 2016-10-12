@@ -14,9 +14,9 @@ validate_machines_config() {
   fi
 
   __process_msg "Cleaning up machines array in state.json"
-  local update=$(echo $STATE_FILE | \
-    jq '.machines=[]')
-  _update_state $update
+  local update=$(echo $STATE_FILE \
+    | jq '.machines=[]')
+  _update_state "$update"
 
   ##TODO: check if there is at least one machine "core" group and "services" group
   ##TODO: if all machines are in consistent state, then skip this
@@ -40,7 +40,7 @@ validate_machines_config() {
 
     local update=$(echo $machines_state \
       | jq '.')
-    _update_state $update
+    _update_state "$update"
   done
 }
 
@@ -120,7 +120,7 @@ bootstrap() {
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installBase.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh $INSTALL_MODE"
   done
 }
 

@@ -42,10 +42,18 @@ update_docker_creds() {
 
     __process_msg "Updating : installerAccessKey"
     local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
+    if [ -z "$aws_access_key" ]; then
+      __process_msg "Please update 'systemSettings.installerAccessKey' in state.json and run installer again"
+      exit 1
+    fi
     sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
 
     __process_msg "Updating : installerSecretKey"
     local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
+    if [ -z "$aws_secret_key" ]; then
+      __process_msg "Please update 'systemSettings.installerSecretKey' in state.json and run installer again"
+      exit 1
+    fi
     sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
 
     _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
