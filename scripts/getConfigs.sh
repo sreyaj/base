@@ -3,11 +3,13 @@
 ###########################################################
 validate_version() {
   __process_msg "validating version"
-  if [ ! -f "$USR_DIR/machines.json" ]; then
-    echo "Cannot find machines.json, exiting..."
-    exit 1
-  else
-    __process_msg "Found machines.json"
+  if [ "$install_mode" == "production" ]; then
+    if [ ! -f "$USR_DIR/machines.json" ]; then
+      echo "Cannot find machines.json, exiting..."
+      exit 1
+    else
+      __process_msg "Found machines.json"
+    fi
   fi
 
   #TODO check versions directory, error if empty
