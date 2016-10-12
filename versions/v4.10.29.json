@@ -268,7 +268,8 @@
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
         "SHIPPABLE_AWS_ACCOUNT_ID",
         "GITHUB_LINK_SYSINT_ID",
-        "BITBUCKET_LINK_SYSINT_ID"
+        "BITBUCKET_LINK_SYSINT_ID",
+        "RUN_MODE"
       ]
     },
     {
