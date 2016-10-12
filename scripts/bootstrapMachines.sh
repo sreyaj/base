@@ -13,6 +13,11 @@ validate_machines_config() {
     __process_msg "Machine count: $machine_count"
   fi
 
+  __process_msg "Cleaning up machines array in state.json"
+  local update=$(echo $STATE_FILE | \
+    jq '.machines=[]')
+  _update_state $update
+
   ##TODO: check if there is at least one machine "core" group and "services" group
   ##TODO: if all machines are in consistent state, then skip this
   __process_msg "Validated machines config"
@@ -32,8 +37,10 @@ validate_machines_config() {
         "sshSuccessful": "false",
         "isConsistent": "false"
       }]')
-    ## TO pretty print the statefile
-    echo $machines_state | jq '.' > $STATE_FILE
+
+    local update=$(echo $machines_state \
+      | jq '.')
+    _update_state $update
   done
 }
 
@@ -91,7 +98,7 @@ check_requirements() {
   for i in $(seq 1 $machine_count); do
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
-    _copy_script_remote $host "checkRequirements.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/checkRequirements.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/checkRequirements.sh"
   done
 }
@@ -112,12 +119,9 @@ bootstrap() {
   for i in $(seq 1 $machine_count); do
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
-    _copy_script_remote $host "installBase.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installBase.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh"
   done
-
-  local update=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped='true'')
-  _update_state "$update"
 }
 
 bootstrap_local() {
@@ -125,13 +129,13 @@ bootstrap_local() {
 
   source "$REMOTE_SCRIPTS_DIR/installBase.sh" "$INSTALL_MODE"
 
-  local update=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped='true'')
-  _update_state "$update"
 }
 
 main() {
   __process_marker "Bootstrapping machines"
-  local machines_bootstrap_status=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped')
+  local machines_bootstrap_status=$(cat $STATE_FILE \
+    | jq '.installStatus.machinesBootstrapped')
+
   if [ $machines_bootstrap_status == true ]; then
     __process_msg "Machines already bootstrapped"
   else
@@ -147,7 +151,8 @@ main() {
       bootstrap_local
     fi
 
-    local update=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped=true')
+    local update=$(cat $STATE_FILE \
+      | jq '.installStatus.machinesBootstrapped=true')
     _update_state "$update"
   fi
 }

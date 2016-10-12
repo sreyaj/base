@@ -67,6 +67,11 @@ do $$
       -- add default value
     end if;
 
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'customHostDockerVersion') then
+      alter table "systemConfigs" add column "customHostDockerVersion" INT;
+      -- add default value
+    end if;
+
     alter table "systemConfigs" owner to "apiuser";
   end
 $$;
@@ -105,7 +110,8 @@ do $$
             "allowDynamicNodes"={{ALLOW_DYNAMIC_NODES}},
             "allowCustomNodes"={{ALLOW_CUSTOM_NODES}},
             "consoleMaxLifespan"={{CONSOLE_MAX_LIFESPAN}},
-            "consoleCleanupHour"={{CONSOLE_CLEANUP_HOUR}}
+            "consoleCleanupHour"={{CONSOLE_CLEANUP_HOUR}},
+            "customHostDockerVersion"={{CONSOLE_CLEANUP_HOUR}}
         where id=1;
     end if;
 

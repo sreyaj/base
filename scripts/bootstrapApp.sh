@@ -38,7 +38,7 @@ update_docker_creds() {
     local host=$(echo "$gitlab_host" | jq '.ip')
 
     local credentials_template="$REMOTE_SCRIPTS_DIR/credentials.template"
-    local credentials_file="$REMOTE_SCRIPTS_DIR/credentials"
+    local credentials_file="$USR_DIR/credentials"
 
     __process_msg "Updating : installerAccessKey"
     local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
@@ -48,7 +48,7 @@ update_docker_creds() {
     local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
     sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
 
-    _copy_script_remote $host "credentials" "/root/.aws/"
+    _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
     local save_docker_login_cmd='aws ecr --region us-east-1 get-login > /tmp/docker_login.sh'
     _exec_remote_cmd $host "$save_docker_login_cmd"
     local update_perm='chmod +x /tmp/docker_login.sh'
@@ -237,6 +237,10 @@ generate_system_config() {
     local console_cleanup_hour=$(cat $STATE_FILE | jq -r '.systemSettings.consoleCleanupHour')
     sed -i "s#{{CONSOLE_CLEANUP_HOUR}}#$console_cleanup_hour#g" $system_configs_sql
 
+    __process_msg "Updating : customHostDockerVersion"
+    local custom_host_docker_version=$(cat $STATE_FILE | jq -r '.systemSettings.customHostDockerVersion')
+    sed -i "s#{{CUSTOM_HOST_DOCKER_VERSION}}#$custom_host_docker_version#g" $system_configs_sql
+
     _update_install_status "systemConfigSqlCreated"
     __process_msg "Successfully generated 'systemConfig' table data"
   else
@@ -247,17 +251,22 @@ generate_system_config() {
 create_system_config() {
   __process_msg "Creating systemConfigs table"
 
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local db_ip=$(echo $db_host | jq -r '.ip')
-  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  SKIP_STEP=false
+  _check_component_status "systemConfigUpdated"
+  if [ "$SKIP_STEP" = false ]; then
+    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+    local db_ip=$(echo $db_host | jq -r '.ip')
+    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
 
-  #TODO: fetch db_name from state.json
-  local db_name="shipdb"
+    #TODO: fetch db_name from state.json
+    local db_name="shipdb"
 
-  _copy_script_remote $db_ip "system_configs.sql" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs.sql"
-
-  __process_msg "Successfully created systemConfigs table"
+    _copy_script_remote $db_ip "$USR_DIR/system_configs.sql" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs.sql"
+    __process_msg "Successfully created systemConfigs table"
+  else
+    __process_msg "system configs already updated, skipping"
+  fi
 }
 
 create_system_config_local() {
@@ -276,27 +285,6 @@ create_system_config_local() {
     __process_msg "Successfully created systemConfigs table on local db"
   else
     __process_msg "system configs already updated, skipping"
-  fi
-}
-
-insert_system_config() {
-  SKIP_STEP=false
-  _check_component_status "systemConfigUpdated"
-  if [ "$SKIP_STEP" = false ]; then
-    # TODO: This should ideally check if the API is _actually_ up and running.
-    __process_msg "Inserting data into systemConfigs Table"
-    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-    local db_ip=$(echo $db_host | jq -r '.ip')
-    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-
-    #TODO: fetch db_name from state.json
-    local db_name="shipdb"
-
-    _copy_script_remote $db_ip "system_configs_data.sql" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs_data.sql"
-    _update_install_status "systemConfigUpdated"
-  else
-    __process_msg "System config already updated, skipping"
   fi
 }
 
@@ -539,8 +527,11 @@ run_migrations() {
     local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
     local db_name="shipdb"
 
-    _copy_script_remote $db_ip "migrations.sql" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/migrations.sql"
+    local migrations_file_path="$MIGRATIONS_DIR/$RELEASE_VERSION.sql"
+    local migrations_file_name=$(basename $migrations_file_path)
+
+    _copy_script_remote $db_ip $migrations_file_path "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/$migrations_file_name"
     _update_install_status "migrationsUpdated"
   else
     __process_msg "Migrations already run, skipping"
@@ -594,37 +585,6 @@ manage_systemIntegrations() {
   fi
 }
 
-insert_route_permissions() {
-  SKIP_STEP=false
-  _check_component_status "routePermissionsUpdated"
-  if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Running routePermissions.sql"
-
-    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-    local db_ip=$(echo $db_host | jq -r '.ip')
-    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-    local db_name="shipdb"
-
-    _copy_script_remote $db_ip "routePermissions.sql" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/routePermissions.sql"
-    _update_install_status "routePermissionsUpdated"
-  else
-    __process_msg "Route permissions already updated, skipping"
-  fi
-}
-
-insert_providers() {
-  __process_msg "Inserting data into Providers"
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local db_ip=$(echo $db_host | jq -r '.ip')
-  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-
-  local db_name="shipdb"
-
-  _copy_script_remote $db_ip "providers_data.sql" "$SCRIPT_DIR_REMOTE"
-  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/providers_data.sql"
-}
-
 insert_providers_local() {
   __process_msg "Inserting data into Providers"
   local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
@@ -635,72 +595,6 @@ insert_providers_local() {
 
   sudo cp -vr $providers_file $db_mount_dir
   sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/providers_data.sql
-}
-
-generate_providers() {
-  __process_msg "Inserting data into providers Table"
-
-  local providers_length=$(cat $STATE_FILE | jq '.providers | length')
-
-  for i in $(seq 1 $providers_length); do
-    local providers_template="$REMOTE_SCRIPTS_DIR/providersData.sql.template"
-    local providers_sql="$REMOTE_SCRIPTS_DIR/providers_data.sql"
-
-    __process_msg "Updating : id"
-    local id=$(cat $STATE_FILE | jq -r '.providers['"$i -1"'].id')
-    sed "s#{{ID}}#$id#g" $providers_template > $providers_sql
-
-    __process_msg "Updating : masterIntegrationId"
-    local masterIntegrationId=$(cat $STATE_FILE | jq -r '.providers['"$i -1"'].masterIntegrationId')
-    sed -i "s#{{MASTER_INTEGRATION_ID}}#$masterIntegrationId#g" $providers_sql
-
-    __process_msg "Updating : url"
-    local url=$(cat $STATE_FILE | jq -r '.providers['"$i -1"'].url')
-    sed -i "s#{{URL}}#$url#g" $providers_sql
-
-    __process_msg "Updating : name"
-    local name=$(cat $STATE_FILE | jq -r '.providers['"$i -1"'].name')
-    sed -i "s#{{NAME}}#$name#g" $providers_sql
-
-    __process_msg "Updating : createdAt"
-    local created_at=$(date)
-    sed -i "s#{{CREATED_AT}}#$created_at#g" $providers_sql
-
-    __process_msg "Updating : updatedAt"
-    sed -i "s#{{UPDATED_AT}}#$created_at#g" $providers_sql
-
-    if [ "$INSTALL_MODE" == "production" ]; then
-      insert_providers
-    else
-      insert_providers_local
-    fi
-    rm $providers_sql
-  done
-
-  __process_msg "Successfully generated 'systemConfig' table data"
-}
-
-insert_system_integrations() {
-  __process_msg "Inserting system integrations"
-  local api_url=""
-  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local system_integrations=$(cat $STATE_FILE | jq -r '.systemIntegrations')
-  local system_integrations_count=$(echo $system_integrations | jq '. | length')
-  local system_integration_post_endpoint="$api_url/systemIntegrations"
-
-  for i in $(seq 1 $system_integrations_count); do
-    local system_integration=$(echo $system_integrations | jq -r '.['"$i-1"']')
-    local system_integration_name=$(echo $system_integration | jq -r '.name')
-    local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
-      -X POST -d "$system_integration" $system_integration_post_endpoint \
-        --write-out "%{http_code}\n" --silent --output /dev/null)
-    if [ "$post_call_resp_code" -gt "299" ]; then
-      echo "Error inserting system integration $system_integration_name(status code $post_call_resp_code)"
-    else
-      echo "Sucessfully inserted system integration $system_integration_name"
-    fi
-  done
 }
 
 insert_system_machine_image() {
@@ -797,14 +691,12 @@ main() {
     update_docker_creds
     generate_system_config
     create_system_config
-    insert_system_config
     generate_api_config
     provision_api
     test_api_endpoint
     run_migrations
-    insert_route_permissions
-    generate_providers
-    insert_system_integrations
+    manage_masterIntegrations
+    manage_systemIntegrations
     insert_system_machine_image
     update_service_list
     restart_api
