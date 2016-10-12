@@ -84,7 +84,7 @@ install() {
   source "$SCRIPTS_DIR/bootstrapMachines.sh"
   source "$SCRIPTS_DIR/installCore.sh"
   source "$SCRIPTS_DIR/bootstrapApp.sh"
-  #source "$SCRIPTS_DIR/provisionServices.sh"
+  source "$SCRIPTS_DIR/provisionServices.sh"
 }
 
 __print_help_install() {

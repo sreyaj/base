@@ -1,12 +1,11 @@
 #!/bin/bash -e
 
-readonly SERVICE_CONFIG="$USR_DIR/config.json"
+readonly release_file="$VERSIONS_DIR/$RELEASE_VERSION".json
 
 export SKIP_STEP=false
 
 load_services() {
-  # TODO: load service configuration from `config.json`
-  local service_count=$(cat $SERVICE_CONFIG | jq '.services | length')
+  local service_count=$(cat $STATE_FILE | jq '.services | length')
   if [[ $service_count -lt 3 ]]; then
     __process_msg "Shippable requires at least api, www and sync to boot"
     exit 1
@@ -105,14 +104,37 @@ __save_service_config() {
     local component=$4
     local job_type=$5
 
+    __process_msg "Saving image for $service"
+    local system_images_registry=$(cat $STATE_FILE | jq -r '.systemSettings.systemImagesRegistry')
+    local service_repository=$(cat $release_file | jq -r --arg service "$service" '
+      .serviceConfigs[] |
+      select (.name==$service) | .repository')
+    local service_tag=$service"."$RELEASE_VERSION
+    if [ $service == "www" ]; then
+      service_tag=$RELEASE_VERSION
+    fi
+    local service_image="$system_images_registry/$service_repository:$service_tag"
+    echo $service_image
+    local image_update=$(cat $STATE_FILE | jq --arg service "$service" '
+      .services  |=
+      map(if .name == "'$service'" then
+          .image = "'$service_image'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $image_update | jq '.' | tee $STATE_FILE)
+    __process_msg "Successfully updated $service port mapping"
+
     __process_msg "Saving config for $service"
-    local env_vars=$(cat $CONFIG_FILE | jq --arg service "$service" '
-      .services[] |
+    local env_vars=$(cat $release_file | jq --arg service "$service" '
+      .serviceConfigs[] |
       select (.name==$service) | .envs')
     __process_msg "Found envs for $service: $env_vars"
 
     local env_vars_count=$(echo $env_vars | jq '. | length')
-    __process_msg "Successfully read from config.json: $service.envs ($env_vars_count)"
+    __process_msg "Successfully read from version file: $service.envs ($env_vars_count)"
 
     env_values=""
     for i in $(seq 1 $env_vars_count); do
@@ -153,11 +175,9 @@ __save_service_config() {
     )
     update=$(echo $state_env | jq '.' | tee $STATE_FILE)
 
-
-
     __process_msg "Generating $service replicas"
-    local replicas=$(cat $CONFIG_FILE | jq --arg service "$service" '
-      .services[] |
+    local replicas=$(cat $release_file | jq --arg service "$service" '
+      .serviceConfigs[] |
       select (.name==$service) | .replicas')
 
     if [ $replicas != "null" ]; then
@@ -291,154 +311,21 @@ provision_www() {
   __run_service "www"
 }
 
-provision_sync() {
-  __save_service_config sync "" " --name sync --network ingress --with-registry-auth --endpoint-mode vip" "sync"
-  __run_service "sync"
-}
-
-provision_ini() {
-  __save_service_config ini " " " --name ini --network ingress --with-registry-auth --endpoint-mode vip" "ini"
-  __run_service "ini"
-}
-
-provision_deploy() {
-  __save_service_config deploy " " " --name deploy --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "deploy"
-  __run_service "deploy"
-}
-
-provision_release() {
-  __save_service_config release " " " --name release --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "release"
-  __run_service "release"
-}
-
-provision_rSync() {
-  __save_service_config rSync " " " --name rSync --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "rSync"
-  __run_service "rSync"
-}
-
-provision_manifest() {
-  __save_service_config manifest " " " --name manifest --network ingress --with-registry-auth --endpoint-mode vip" "stepExec" "manifest"
-  __run_service "manifest"
-}
-
-provision_versionTrigger() {
-  __save_service_config versionTrigger " " " --name versionTrigger --network ingress --with-registry-auth --endpoint-mode vip" "versionTrigger"
-  __run_service "versionTrigger"
-}
-
-provision_certgen() {
-  __save_service_config certgen " " " --name certgen --network ingress --with-registry-auth --endpoint-mode vip" "certgen"
-  __run_service "certgen"
-}
-
-provision_charon() {
-  __save_service_config charon " " " --name charon --network ingress --with-registry-auth --endpoint-mode vip" "charon"
-  __run_service "charon"
-}
-
-provision_nexec() {
-  __save_service_config nexec " " " --name nexec --network ingress --with-registry-auth --endpoint-mode vip" "nexec"
-  __run_service "nexec"
-}
-
-provision_jobtrigger() {
-  __save_service_config jobtrigger " " " --name jobtrigger --network ingress --with-registry-auth --endpoint-mode vip" "jobTrigger"
-  __run_service "jobtrigger"
-}
-
-provision_jobrequest() {
-  __save_service_config jobrequest " " " --name jobrequest --network ingress --with-registry-auth --endpoint-mode vip" "jobRequest"
-  __run_service "jobrequest"
-}
-
-provision_cron() {
-  __save_service_config cron " " " --name cron --network ingress --with-registry-auth --endpoint-mode vip" "cron"
-  __run_service "cron"
-}
-
-provision_marshaller() {
-  __save_service_config marshaller " " " --name marshaller --network ingress --with-registry-auth --endpoint-mode vip" "marshaller"
-  __run_service "marshaller"
-}
-
-provision_sync() {
-  __save_service_config sync "" " --name sync --network ingress --with-registry-auth --endpoint-mode vip" "sync"
-  # The second argument will be used for $component
-  __run_service "sync"
-}
-
-provision_nf() {
-  __save_service_config nf "" " --name nf --network ingress --with-registry-auth --endpoint-mode vip" "nf"
-  __run_service "nf"
-}
-
-provision_email() {
-  __save_service_config email "" " --name email --network ingress --with-registry-auth --endpoint-mode vip" "email"
-  __run_service "email"
-}
-
-provision_slack() {
-  __save_service_config slack "" " --name slack --network ingress --with-registry-auth --endpoint-mode vip" "slack"
-  __run_service "slack"
-}
-
-provision_hipchat() {
-  __save_service_config hipchat "" " --name hipchat --network ingress --with-registry-auth --endpoint-mode vip" "hipchat"
-  __run_service "hipchat"
-}
-
-provision_irc() {
-  __save_service_config irc "" " --name irc --network ingress --with-registry-auth --endpoint-mode vip" "irc"
-  __run_service "irc"
-}
-
-provision_webhook() {
-  __save_service_config webhook "" " --name webhook --network ingress --with-registry-auth --endpoint-mode vip" "webhook"
-  __run_service "webhook"
-}
-
-provision_jSync() {
-  __save_service_config jSync "" " --name jSync --network ingress --with-registry-auth --endpoint-mode vip" "jSync"
-  __run_service "jSync"
-}
-
-provision_timeTrigger() {
-  __save_service_config timeTrigger "" " --name timeTrigger --network ingress --with-registry-auth --endpoint-mode vip" "timeTrigger"
-  __run_service "timeTrigger"
-}
-
-provision_ec2() {
-  __save_service_config ec2 "" " --name ec2 --network ingress --with-registry-auth --endpoint-mode vip" "ec2"
-  __run_service "ec2"
+provision_services() {
+  local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
+  local services_count=$(echo $services | jq '. | length')
+  for i in $(seq 1 $services_count); do
+    local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
+    __save_service_config $service "" " --name $service --network ingress --with-registry-auth --endpoint-mode vip" $service
+    __run_service "$service"
+  done
 }
 
 main() {
   __process_marker "Provisioning services"
   load_services
   provision_www
-  provision_sync
-  provision_ini
-  provision_nexec
-  provision_jobrequest
-  provision_jobtrigger
-  provision_marshaller
-  provision_cron
-  provision_deploy
-  provision_release
-  provision_rSync
-  provision_manifest
-  provision_versionTrigger
-  provision_certgen
-  provision_charon
-  provision_nf
-  provision_email
-  provision_slack
-  provision_hipchat
-  provision_irc
-  provision_webhook
-  provision_jSync
-  provision_timeTrigger
-  provision_ec2
+  provision_services
 }
 
 main
