@@ -11,8 +11,8 @@ _copy_script_remote() {
   local port=22
   local host="$1"
   shift
-  local script_name="$1"
-  local script_path_local="$REMOTE_SCRIPTS_DIR/$script_name"
+  local script_path_local="$1"
+  local script_name=$(basename $script_path_local)
   shift
   local script_dir_remote="$1"
   local script_path_remote="$script_dir_remote/$script_name"

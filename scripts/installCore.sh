@@ -28,7 +28,7 @@ install_docker() {
     __process_msg "Installing Docker on management machine"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq '.ip')
-    _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
 
     __process_msg "Installing Docker on service machines"
@@ -37,7 +37,7 @@ install_docker() {
     for i in $(seq 1 $service_machines_count); do
       local machine=$(echo $service_machines_list | jq '.['"$i-1"']')
       local host=$(echo $machine | jq '.ip')
-      _copy_script_remote $host "installDocker.sh" "$SCRIPT_DIR_REMOTE"
+      _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$SCRIPT_DIR_REMOTE"
       _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installDocker.sh"
     done
     __process_msg "Please configure http_proxy in /etc/default/docker, if proxy needs to be configured. Press any button to continue, once this is done..."
@@ -72,7 +72,7 @@ install_swarm() {
     __process_msg "Installing Swarm"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq '.ip')
-    _copy_script_remote $host "installSwarm.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installSwarm.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installSwarm.sh"
 
     __process_msg "Initializing docker swarm master"
@@ -166,7 +166,7 @@ install_database() {
     # - copy the installation script to remote machine
     # - run sed command to replace username/password with user input
     # - once complete, save the values in satefile
-    _copy_script_remote $host "installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installPostgresql.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installPostgresql.sh"
     __process_msg "Waiting 30s for postgres to boot"
     sleep 30s
@@ -297,9 +297,10 @@ save_db_credentials() {
   local db_address=$db_ip:$db_port
 
   #TODO: fetch db_name from state.json
+  # make substitutions locally and then push
   local db_name="shipdb"
 
-  _copy_script_remote $host ".pgpass" "/root/"
+  _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/.pgpass" "/root/"
   _exec_remote_cmd $host "sed -i \"s/{{address}}/$db_address/g\" /root/.pgpass"
   _exec_remote_cmd $host "sed -i \"s/{{database}}/$db_name/g\" /root/.pgpass"
   _exec_remote_cmd $host "sed -i \"s/{{username}}/$db_username/g\" /root/.pgpass"
@@ -315,7 +316,7 @@ install_vault() {
   _check_component_status "vaultInstalled"
   if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Vault"
-    _copy_script_remote $host "installVault.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installVault.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installVault.sh"
     _update_install_status "vaultInstalled"
   else
@@ -336,11 +337,11 @@ install_vault() {
     local db_name="shipdb"
     local VAULT_JSON_FILE="/etc/vault.d/vaultConfig.json"
 
-    _copy_script_remote $host "vault.hcl" "/etc/vault.d/"
-    _copy_script_remote $host "policy.hcl" "/etc/vault.d/"
-    _copy_script_remote $host "vault_kv_store.sql" "/etc/vault.d/"
-    _copy_script_remote $host "vault.conf" "/etc/init/"
-    _copy_script_remote $host "vaultConfig.json" "/etc/vault.d/"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/vault.hcl" "/etc/vault.d/"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/policy.hcl" "/etc/vault.d/"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/vault_kv_store.sql" "/etc/vault.d/"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/vault.conf" "/etc/init/"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/vaultConfig.json" "/etc/vault.d/"
 
     _exec_remote_cmd $host "sed -i \"s/{{DB_USERNAME}}/$db_username/g\" /etc/vault.d/vault.hcl"
     _exec_remote_cmd $host "sed -i \"s/{{DB_PASSWORD}}/$db_password/g\" /etc/vault.d/vault.hcl"
@@ -350,7 +351,7 @@ install_vault() {
 
     _exec_remote_cmd $host "service vault start || true"
 
-    _copy_script_remote $host "bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd_proxyless "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
     _update_install_status "vaultInitialized"
   else
@@ -432,21 +433,21 @@ install_rabbitmq() {
   _check_component_status "rabbitmqInstalled"
   if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing RabbitMQ"
-    _copy_script_remote $host "installRabbit.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installRabbit.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
     _update_install_status "rabbitmqInstalled"
   else
     __process_msg "RabbitMQ already installed, skipping"
   fi
 
-  _copy_script_remote $host "rabbitmqadmin" "$SCRIPT_DIR_REMOTE"
+  _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/rabbitmqadmin" "$SCRIPT_DIR_REMOTE"
 
   # TODO: The user should be prompted to enter a username and password, which should be
   # used by the bootstrapRabbit.sh
   SKIP_STEP=false
   _check_component_status "rabbitmqInitialized"
   if [ "$SKIP_STEP" = false ]; then
-    _copy_script_remote $host "bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
     _update_install_status "rabbitmqInitialized"
   else
@@ -562,8 +563,8 @@ install_gitlab() {
     local gitlab_root_password=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="password")|.value')
     local gitlab_external_url=$(echo $gitlab_system_int | jq -r '.formJSONValues[]| select (.label=="url")|.value')
 
-    _copy_script_remote $host "installGitlab.sh" "$SCRIPT_DIR_REMOTE"
-    _copy_script_remote $host "gitlab.rb" "/etc/gitlab/"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installGitlab.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/gitlab.rb" "/etc/gitlab/"
 
     _exec_remote_cmd $host "sed -i \"s/{{gitlab_machine_url}}/$host/g\" /etc/gitlab/gitlab.rb"
     _exec_remote_cmd $host "sed -i \"s/{{gitlab_password}}/$gitlab_root_password/g\" /etc/gitlab/gitlab.rb"
@@ -597,7 +598,7 @@ install_ecr() {
     __process_msg "Installing Docker on management machine"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
     local host=$(echo $gitlab_host | jq '.ip')
-    _copy_script_remote $host "installEcr.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installEcr.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installEcr.sh"
     _update_install_status "ecrInstalled"
     _update_install_status "ecrInitialized"
@@ -655,8 +656,8 @@ install_redis() {
 
   if [ "$SKIP_STEP" = false ]; then
     __process_msg "Installing Redis"
-    _copy_script_remote $host "redis.conf" "/etc/redis"
-    _copy_script_remote $host "installRedis.sh" "$SCRIPT_DIR_REMOTE"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/redis.conf" "/etc/redis"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installRedis.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRedis.sh"
     _update_install_status "redisInstalled"
     _update_install_status "redisInitialized"
