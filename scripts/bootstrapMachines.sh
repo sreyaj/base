@@ -13,6 +13,11 @@ validate_machines_config() {
     __process_msg "Machine count: $machine_count"
   fi
 
+  __process_msg "Cleaning up machines array in state.json"
+  local update=$(echo $STATE_FILE | \
+    jq '.machines=[]')
+  _update_state $update
+
   ##TODO: check if there is at least one machine "core" group and "services" group
   ##TODO: if all machines are in consistent state, then skip this
   __process_msg "Validated machines config"
