@@ -49,7 +49,7 @@ get_enabled_systemIntegrations() {
 
   AVAILABLE_SYSTEM_INTEGRATIONS=$(echo $response | jq '.')
   local available_integrations_length=$(echo $AVAILABLE_SYSTEM_INTEGRATIONS | jq -r '. | length')
-  __process_msg "Successfully fetched providers from db: $available_integrations_length"
+  __process_msg "Successfully fetched enabled system integrations from db: $available_integrations_length"
 
 }
 
@@ -116,12 +116,126 @@ validate_systemIntegrations() {
 }
 
 upsert_systemIntegrations() {
-  # for each MI in list
-  # find systemintegration from statefile
-  # get systemINtegration from db
-  # if 404, POST systemIntegration
-  # if 200, PUT systemIntegration
-  true
+  local enabled_system_integrations=$(cat $STATE_FILE \
+    | jq '.systemIntegrations')
+  local enabled_system_integrations_length=$(echo $enabled_system_integrations \
+    | jq -r '. | length')
+
+  local available_system_integrations=$(echo $AVAILABLE_SYSTEM_INTEGRATIONS \
+    | jq '.')
+  local available_system_integrations_length=$(echo $available_system_integrations \
+    | jq -r '. | length')
+
+  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
+
+  for i in $(seq 1 $enabled_system_integrations_length); do
+    local enabled_system_integration=$(echo $enabled_system_integrations \
+      | jq '.['"$i-1"']')
+    local enabled_system_integration_master_name=$(echo $enabled_system_integration \
+      | jq -r '.masterName')
+    local enabled_system_integration_master_type=$(echo $enabled_system_integration \
+      | jq -r '.masterType')
+
+    local is_system_integration_available=false
+    local system_integration_to_update=""
+    local system_integration_in_db=""
+
+    for j in $(seq 1 $available_system_integrations_length); do
+      local available_system_integration=$(echo $available_system_integrations \
+        | jq '.['"$j-1"']')
+      local available_system_integration_master_name=$(echo $available_system_integration \
+        | jq -r '.masterName')
+      local available_system_integration_master_type=$(echo $available_system_integration \
+        | jq -r '.masterType')
+
+      if [ $enabled_system_integration_master_name == $available_system_integration_master_name ] && \
+        [ $enabled_system_integration_master_type == $available_system_integration_master_type ]; then
+        is_system_integration_available=true
+        system_integration_to_update=$enabled_system_integration
+        system_integration_in_db=$available_system_integration
+      fi
+    done
+
+    if [ $is_system_integration_available == true ]; then
+      # put the system integration with values in state.json
+      __process_msg "System integration already present, updating it: $enabled_system_integration_master_name"
+      local db_system_integration_id=$(echo $system_integration_in_db \
+        | jq -r '.id')
+      local db_system_integration_master_name=$(echo $system_integration_in_db \
+        | jq -r '.masterName')
+      local db_system_integration_master_display_name=$(echo $system_integration_in_db \
+        | jq -r '.masterDisplayName')
+
+      enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.id="'$db_system_integration_id'"')
+      enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.masterName="'$db_system_integration_master_name'"')
+      enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.masterDisplayName="'$db_system_integration_master_display_name'"')
+
+      local integrations_put_endpoint="$api_url/systemIntegrations/$db_system_integration_id"
+      local post_call_resp_code=$(curl \
+        -H "Content-Type: application/json" \
+        -H "Authorization: apiToken $api_token" \
+        -X PUT \
+        -d "$enabled_system_integration" \
+        $integrations_put_endpoint \
+        --write-out "%{http_code}\n" \
+        --silent \
+        --output /dev/null)
+      if [ "$post_call_resp_code" -gt "299" ]; then
+        echo "Error adding integration for $enabled_system_integration_master_name(status code $post_call_resp_code)"
+      else
+        echo "Sucessfully added integration for $enabled_system_integration_master_name"
+      fi
+
+    else
+      # find the master integration for this system integration
+      # post a new system integration
+      __process_msg "Adding new system integration: $enabled_system_integration_master_name"
+      local enabled_master_integration=$(echo $ENABLED_MASTER_INTEGRATIONS \
+        | jq '.[] | 
+          select
+            (.name == "'$enabled_system_integration_master_name'"
+            and .type == "'$enabled_system_integration_master_type'")')
+      local enabled_master_integration_id=$(echo $enabled_master_integration \
+        | jq -r '.id')
+      local enabled_master_integration_display_name=$(echo $enabled_master_integration \
+        | jq -r '.displayName')
+      local enabled_master_integration_name=$(echo $enabled_master_integration \
+        | jq -r '.name')
+
+      enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.masterIntegrationId="'$enabled_master_integration_id'"')
+      enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.masterDisplayName="'$enabled_master_integration_display_name'"')
+      enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.masterName="'$enabled_master_integration_name'"')
+      enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.isEnabled=true')
+
+      local=$(echo $enabled_provider \
+        | jq '.masterIntegrationId="'$enabled_master_integration_id'"')
+
+      local integrations_post_endpoint="$api_url/systemIntegrations"
+      local post_call_resp_code=$(curl \
+        -H "Content-Type: application/json" \
+        -H "Authorization: apiToken $api_token" \
+        -X POST \
+        -d "$enabled_system_integration" \
+        $integrations_post_endpoint \
+        --write-out "%{http_code}\n" \
+        --silent \
+        --output /dev/null)
+      if [ "$post_call_resp_code" -gt "299" ]; then
+        echo "Error adding integration for $enabled_master_integration_display_name(status code $post_call_resp_code)"
+      else
+        echo "Sucessfully added integration for $enabled_master_integration_display_name"
+      fi
+
+    fi
+  done
 }
 
 delete_systemIntegrations() {
