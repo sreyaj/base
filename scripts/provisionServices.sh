@@ -114,7 +114,6 @@ __save_service_config() {
       service_tag=$RELEASE_VERSION
     fi
     local service_image="$system_images_registry/$service_repository:$service_tag"
-    echo $service_image
     local image_update=$(cat $STATE_FILE | jq --arg service "$service" '
       .services  |=
       map(if .name == "'$service'" then
