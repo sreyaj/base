@@ -384,18 +384,14 @@ generate_api_config() {
     __process_msg "Successfully generated api environment variables : $api_env_values"
 
 
-    local api_service=$(cat $STATE_FILE | jq '.services[] | select (.name=="api")')
-    if [ -z "$api_service" ]; then
-      __process_msg "no api service in state.json, creating new one"
-      api_service=$(cat $STATE_FILE |  \
-        jq '.services=[
-              {
-                "name": "api",
-                "image": "'$api_service_image'"
-              }
-            ]')
-      update=$(echo $api_service | jq '.' | tee $STATE_FILE)
-    fi
+    local api_service=$(cat $STATE_FILE |  \
+      jq '.services=[
+            {
+              "name": "api",
+              "image": "'$api_service_image'"
+            }
+          ]')
+    update=$(echo $api_service | jq '.' | tee $STATE_FILE)
 
     local api_state_env=$(cat $STATE_FILE | jq '
       .services  |=

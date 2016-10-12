@@ -157,7 +157,12 @@
     "buildTimeoutMS": 3600000,
     "dbHost": "172.17.42.1",
     "installerAccessKey": "",
-    "installerSecretKey" : ""
+    "installerSecretKey" : "",
+    "consoleCleanupHour": 0,
+    "consoleMaxLifespan": 0,
+    "allowSystemNodes": true,
+    "allowDynamicNodes": true,
+    "allowCustomNodes": true
   },
   "machines": [
     {

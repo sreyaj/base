@@ -15,7 +15,19 @@ load_services() {
 }
 
 __map_env_vars() {
-  if [ "$1" == "SHIPPABLE_API_TOKEN" ]; then
+  if [ "$1" == "DBNAME" ]; then
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.dbname')
+  elif [ "$1" == "DBUSERNAME" ]; then
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  elif [ "$1" == "DBPASSWORD" ]; then
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.dbPassword')
+  elif [ "$1" == "DBHOST" ]; then
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.dbHost')
+  elif [ "$1" == "DBPORT" ]; then
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.dbPort')
+  elif [ "$1" == "DBDIALECT" ]; then
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.dbDialect')
+  elif [ "$1" == "SHIPPABLE_API_TOKEN" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
   elif [ "$1" == "SHIPPABLE_VORTEX_URL" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')/vortex
@@ -110,8 +122,12 @@ __save_service_config() {
       .serviceConfigs[] |
       select (.name==$service) | .repository')
     local service_tag=$service"."$RELEASE_VERSION
-    if [ $service == "www" ]; then
+    if [ $service == "www" ] || [ $service == "api" ] \
+      || [ $service == "nexec" ]; then
       service_tag=$RELEASE_VERSION
+    elif [ $service == "deploy" ] || [ $service == "manifest" ] \
+      || [ $service == "release" ] || [ $service == "rSync" ]; then
+      service_tag="stepExec".$RELEASE_VERSION
     fi
     local service_image="$system_images_registry/$service_repository:$service_tag"
     __process_msg "Image version generated for $service : $service_image"
