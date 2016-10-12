@@ -3,6 +3,7 @@
 _copy_script_remote() {
   if [ "$#" -ne 3 ]; then
     __process_msg "The number of arguments expected by _copy_script_remote is 3"
+    __process_msg "current argumehts $@"
     exit 1
   fi
 

@@ -32,8 +32,10 @@ validate_machines_config() {
         "sshSuccessful": "false",
         "isConsistent": "false"
       }]')
-    ## TO pretty print the statefile
-    echo $machines_state | jq '.' > $STATE_FILE
+
+    local update=$(echo $machines_state \
+      | jq '.')
+    _update_state $update
   done
 }
 
@@ -115,9 +117,6 @@ bootstrap() {
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installBase.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installBase.sh"
   done
-
-  local update=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped='true'')
-  _update_state "$update"
 }
 
 bootstrap_local() {
@@ -125,13 +124,13 @@ bootstrap_local() {
 
   source "$REMOTE_SCRIPTS_DIR/installBase.sh" "$INSTALL_MODE"
 
-  local update=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped='true'')
-  _update_state "$update"
 }
 
 main() {
   __process_marker "Bootstrapping machines"
-  local machines_bootstrap_status=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped')
+  local machines_bootstrap_status=$(cat $STATE_FILE \
+    | jq '.installStatus.machinesBootstrapped')
+
   if [ $machines_bootstrap_status == true ]; then
     __process_msg "Machines already bootstrapped"
   else
@@ -147,7 +146,8 @@ main() {
       bootstrap_local
     fi
 
-    local update=$(cat $STATE_FILE | jq '.installStatus.machinesBootstrapped=true')
+    local update=$(cat $STATE_FILE \
+      | jq '.installStatus.machinesBootstrapped=true')
     _update_state "$update"
   fi
 }
