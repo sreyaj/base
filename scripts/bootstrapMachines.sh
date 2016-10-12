@@ -139,6 +139,8 @@ main() {
   if [ $machines_bootstrap_status == true ]; then
     __process_msg "Machines already bootstrapped"
   else
+    __process_msg "Machines not bootstrapped"
+    __process_msg "Bootstrapping machines for $INSTALL_MODE"
     if [ "$INSTALL_MODE" == "production" ]; then
       validate_machines_config
       create_ssh_keys

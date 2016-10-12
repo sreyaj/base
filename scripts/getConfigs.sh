@@ -60,11 +60,6 @@ bootstrap_state() {
       jq '.masterIntegrations=[]')
     update=$(echo $master_integrations | jq '.' | tee $STATE_FILE)
 
-    __process_msg "injecting empty providers"
-    local providers=$(cat $STATE_FILE | \
-      jq '.masterIntegrationProviders=[]')
-    update=$(echo $providers | jq '.' | tee $STATE_FILE)
-
     __process_msg "injecting empty system integrations"
     local system_integrations=$(cat $STATE_FILE | \
       jq '.systemIntegrations=[]')
