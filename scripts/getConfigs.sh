@@ -44,7 +44,7 @@ bootstrap_state() {
 
     ##TODO parse this from versions file
     __process_msg "updating release version"
-    release_version="v4.10.28"
+    release_version="v4.10.29"
     local release=$(cat $STATE_FILE | jq '.release="'"$release_version"'"')
     update=$(echo $release | jq '.' | tee $STATE_FILE)
 
@@ -93,57 +93,6 @@ validate_state() {
   # check if systemMachineImages exist
   # check if services exist
   __process_msg "state.json valid, proceeding with installation"
-}
-
-bootstrap_state_old() {
-  __process_msg "Bootstrapping state.json"
-   local bootstrap_state=$(jq -n --arg v "$initial_obj" \
-      '{
-        "release": "'$release_version'",
-        "masterIntegrations": [],
-        "masterIntegrationProviders": [],
-        "systemIntegrations": [],
-        "services": [],
-        "machines": [],
-        "inProgress": "true",
-      }' \
-    | tee $STATE_FILE)
-
- local release=$(cat $CONFIG_FILE | jq -r '.release')
- local bootstrap_state=$(jq -n --arg v "$initial_obj" \
-    '{
-      "release": "'$release'",
-      "systemSettings": {},
-      "services": [
-        {
-          "name": "api"
-        }
-      ],
-      "machines": [],
-      "systemIntegrations": [],
-      "core": [],
-      "inProgress": "true",
-      "installStatus": {}
-    }' \
-  | tee $STATE_FILE)
-  __process_msg "Created state.json template"
-
-  local service_count=$(cat $CONFIG_FILE | jq '.services | length')
-  local service_list=$(cat $CONFIG_FILE | jq '.services')
-
-  for i in $(seq 1 $service_count); do
-    local service_name=$(echo $service_list | jq '.['"$i-1"'] | .name')
-    local service_image=$(echo $service_list | jq '.['"$i-1"'] | .image')
-    local services_state=$(cat $STATE_FILE | jq '
-      .services |= . + [{
-        "name": '"$service_name"',
-        "image": '"$service_image"',
-        "isRunning": "false"
-      }]
-    ')
-    _update_state "$services_state"
-  done
-  __process_msg "Updated services in state.json"
 }
 
 main() {
