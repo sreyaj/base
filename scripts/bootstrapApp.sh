@@ -237,6 +237,10 @@ generate_system_config() {
     local console_cleanup_hour=$(cat $STATE_FILE | jq -r '.systemSettings.consoleCleanupHour')
     sed -i "s#{{CONSOLE_CLEANUP_HOUR}}#$console_cleanup_hour#g" $system_configs_sql
 
+    __process_msg "Updating : customHostDockerVersion"
+    local custom_host_docker_version=$(cat $STATE_FILE | jq -r '.systemSettings.customHostDockerVersion')
+    sed -i "s#{{CUSTOM_HOST_DOCKER_VERSION}}#$custom_host_docker_version#g" $system_configs_sql
+
     _update_install_status "systemConfigSqlCreated"
     __process_msg "Successfully generated 'systemConfig' table data"
   else

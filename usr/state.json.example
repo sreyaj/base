@@ -162,7 +162,8 @@
     "consoleMaxLifespan": 0,
     "allowSystemNodes": true,
     "allowDynamicNodes": true,
-    "allowCustomNodes": true
+    "allowCustomNodes": true,
+    "customHostDockerVersion": "1.12.1"
   },
   "machines": [
     {
