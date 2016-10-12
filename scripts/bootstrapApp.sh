@@ -88,7 +88,8 @@ update_docker_creds_local() {
     fi
     sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
 
-    cp -vr $credentials_file $HOME/.aws/
+    mkdir -p ~/.aws
+    cp -v $credentials_file $HOME/.aws/
     echo "aws ecr --region us-east-1 get-login" | sudo tee /tmp/docker_login.sh
     sudo chmod +x /tmp/docker_login.sh
     local docker_login_cmd=$(eval "/tmp/docker_login.sh")
@@ -307,7 +308,7 @@ generate_api_config() {
     __process_msg "Generating api config"
     local release_file="$VERSIONS_DIR/$RELEASE_VERSION".json
     local api_service=$(cat $release_file | jq '.serviceConfigs[] | select (.name=="api")')
-    
+
     if [ -z "$api_service" ]; then
       __process_msg "Incorrect release version, missing api configuration"
       exit 1
