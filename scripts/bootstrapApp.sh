@@ -569,32 +569,22 @@ insert_system_machine_image() {
   local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
   local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   local system_machine_image_post_endpoint="$api_url/systemMachineImages"
-  local exec_image=$(cat $STATE_FILE | jq '.systemSettings.execImage')
-  local run_sh_image=$(cat $STATE_FILE | jq '.systemSettings.runShImage')
 
-  local system_machine_image='{
-    "externalId": "shippable",
-    "provider": "shippable",
-    "name": "shippable",
-    "description": "shippable",
-    "isAvailable": true,
-    "isDefault": true,
-    "region": "shippable",
-    "keyName": "shippable",
-    "systemIntegrationId": "shippable",
-    "execImage": '$exec_image',
-    "runShImage": '$run_sh_image',
-    "securityGroup": "shippable"
-  }'
+  local release_file="$VERSIONS_DIR/$RELEASE_VERSION".json
+  local system_machine_images=$(cat $release_file | jq -r '.systemMachineImages')
+  local system_machine_images_length=$(echo $system_machine_images | jq -r '. | length')
 
-  local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
-    -X POST -d "$system_machine_image" $system_machine_image_post_endpoint \
-      --write-out "%{http_code}\n" --silent --output /dev/null)
-  if [ "$post_call_resp_code" -gt "299" ]; then
-    echo "Error inserting system machine image(status code $post_call_resp_code)"
-  else
-    echo "Sucessfully inserted system machine image"
-  fi
+  for i in $(seq 1 $system_machine_images_length); do
+    local system_machine_image=$(echo $system_machine_images | jq '.['"$i-1"']')
+    local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
+      -X POST -d "$system_machine_image" $system_machine_image_post_endpoint \
+        --write-out "%{http_code}\n" --silent --output /dev/null)
+    if [ "$post_call_resp_code" -gt "299" ]; then
+      echo "Error inserting system machine image(status code $post_call_resp_code)"
+    else
+      echo "Sucessfully inserted system machine image"
+    fi
+  done
 }
 
 restart_api() {
