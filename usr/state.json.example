@@ -33,6 +33,10 @@
     {
       "name": "bitbucketServer",
       "type": "auth"
+    },
+    {
+      "type": "scm",
+      "name": "bitbucketServer"
     }
   ],
   "systemIntegrations": [
