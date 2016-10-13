@@ -248,7 +248,12 @@
         "DBPORT",
         "DBPASSWORD",
         "DBDIALECT",
-        "SHIPPABLE_API_URL"
+        "SHIPPABLE_API_URL",
+        "REGISTRY_SECRET_KEY",
+        "REGISTRY_ACCESS_KEY",
+        "REGISTRY_ACCESS_POLICY",
+        "REGISTRY_REGION",
+        "REGISTRY_ACCOUNT_ID"
       ],
       "replicas": 2
     },
