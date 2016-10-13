@@ -405,7 +405,7 @@ do $$
     -- Git Store
     if not exists (select 1 from "masterIntegrations" where "name" = 'Git store' and "typeCode" = 5000) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('574ee696d49b091400b75f19', 1, 'Git store', 'Internal Gitlab Server', 'scm', true, 'account', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      values ('574ee696d49b091400b75f19', 1, 'Git store', 'Internal Gitlab Server', 'scm', true, 'system', 5000, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- masterIntegrationFields for Git Store
