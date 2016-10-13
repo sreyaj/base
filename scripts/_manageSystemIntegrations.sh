@@ -219,7 +219,7 @@ upsert_systemIntegrations() {
         | jq '.isEnabled=true')
 
       echo "----------"
-      echo $enabled_system_integration
+      echo $enabled_system_integration | jq '.'
 
       local integrations_post_endpoint="$api_url/systemIntegrations"
       local post_call_resp_code=$(curl \
