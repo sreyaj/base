@@ -14,7 +14,7 @@ validate_machines_config() {
   fi
 
   __process_msg "Cleaning up machines array in state.json"
-  local update=$(echo $STATE_FILE \
+  local update=$(cat $STATE_FILE \
     | jq '.machines=[]')
   _update_state "$update"
 
