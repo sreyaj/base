@@ -6,9 +6,7 @@ __add_service() {
   local service_name="$1"
 
   local service=$(cat $release_file | jq -c '.serviceConfigs[] | select (.name=='$service_name')')
-  if [ -z "$service" ]; then
-    __process_msg "Missing $service_name configuration, skipping"
-  else
+  if [ ! -z "$service" ]; then
     service=$(cat $STATE_FILE | jq '.services[] | select (.name=='$service_name')')
     if [ -z "$service" ]; then
       __process_msg "no $service_name service in state.json, creating new one"
@@ -77,6 +75,7 @@ main() {
   remove_services
   add_core_services
   add_master_integration_services
+  __process_msg "Configured services list"
 }
 
 main
