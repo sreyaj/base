@@ -579,6 +579,50 @@ save_gitlab_state() {
   fi
 }
 
+save_gitlab_state_local() {
+  local gitlab_sys_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select(.name=="gitlab")')
+  if [ -z "$gitlab_sys_int" ]; then
+    local gitlab_host="localhost"
+    local host="172.17.42.1"
+    local gitlab_root_username="root"
+    local gitlab_root_password="shippable1234"
+    gitlab_local_url="http://$host/api/v3"
+
+    local gitlab_integration=$(cat $STATE_FILE | jq '
+      .systemIntegrations |= . + [{
+        "name": "gitlab",
+        "masterIntegrationId": "574ee696d49b091400b75f19",
+        "masterDisplayName": "Internal Gitlab Server",
+        "masterName": "Git store",
+        "masterType": "scm",
+        "isEnabled": true,
+        "formJSONValues": [
+          {
+            "label": "username",
+            "value": "'$gitlab_root_username'"
+          },
+          {
+            "label": "subscriptionProjectLimit",
+            "value": "100"
+          },
+          {
+            "label": "password",
+            "value": "'$gitlab_root_password'"
+          },
+          {
+            "label": "url",
+            "value": "'$gitlab_local_url'"
+          },
+          {
+            "label": "sshPort",
+            "value": "22"
+          }
+        ]
+      }]')
+    _update_state "$gitlab_integration"
+  fi
+}
+
 install_gitlab() {
   SKIP_STEP=false
   _check_component_status "gitlabInitialized"
@@ -616,6 +660,34 @@ install_gitlab_local() {
     _update_install_status "gitlabInstalled"
   else
     __process_msg "Gitlab already installed, skipping"
+  fi
+}
+
+save_aws_system_integration() {
+  local aws_sys_int=$(cat $STATE_FILE | jq '.systemIntegrations[] | select(.name=="aws")')
+  if [ -z "$aws_sys_int" ]; then
+    local installer_access_key=$(cat $STATE_FILE | jq '.systemSettings.installerAccessKey')
+    local installer_secret_key=$(cat $STATE_FILE | jq '.systemSettings.installerSecretKey')
+    aws_sys_int=$(cat $STATE_FILE | jq '
+      .systemIntegrations |= . + [{
+      "name": "aws",
+      "masterDisplayName": "Shippable AWS",
+      "masterIntegrationId": "5673c6561895ca4474669507",
+      "masterName": "AWS",
+      "masterType": "cloudproviders",
+      "formJSONValues": [
+       {
+         "label": "accessKey",
+         "value": '$installer_access_key'
+       },
+       {
+         "label": "secretKey",
+         "value": '$installer_secret_key'
+       }
+      ],
+      "isEnabled": true
+    }]')
+    _update_state "$aws_sys_int"
   fi
 }
 
@@ -716,6 +788,7 @@ install_redis_local() {
 
     __process_msg "Redis successfully intalled"
     _update_install_status "redisInstalled"
+    _update_install_status "redisInitialized"
   else
     __process_msg "Redis already installed, skipping"
   fi
@@ -734,6 +807,7 @@ main() {
     install_rabbitmq
     save_gitlab_state
     install_gitlab
+    save_aws_system_integration
     install_ecr
     initialize_workers
     install_redis
@@ -748,7 +822,9 @@ main() {
     initialize_vault_local
     install_rabbitmq_local
     initialize_rabbitmq_local
+    save_gitlab_state_local
     install_gitlab_local
+    save_aws_system_integration
     install_ecr_local
     install_redis_local
   fi
