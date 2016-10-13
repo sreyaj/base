@@ -109,29 +109,6 @@ install_swarm() {
   fi
 }
 
-install_swarm_local() {
-  SKIP_STEP=false
-  _check_component_status "swarmInstalled"
-  if [ "$SKIP_STEP" == false ]; then
-    __process_msg "Installing Swarm on localhost"
-    source "$REMOTE_SCRIPTS_DIR/installSwarm.sh" "$INSTALL_MODE"
-    _update_install_status "swarmInstalled"
-  else
-    __process_msg "Swarm already installed, skipping"
-  fi
-
-  SKIP_STEP=false
-  _check_component_status "swarmInitialized"
-  if [ "$SKIP_STEP" == false ]; then
-    __process_msg "Initializing docker swarm"
-    sudo docker swarm leave --force || true
-    docker swarm init --advertise-addr 127.0.0.1
-    _update_install_status "swarmInitialized"
-  else
-    __process_msg "Swarm already initialized, skipping"
-  fi
-}
-
 install_compose(){
   SKIP_STEP=false
   _check_component_status "composeInstalled"
@@ -832,7 +809,6 @@ main() {
     install_redis
   else
     install_docker_local
-    install_swarm_local
     install_compose
     install_database_local
     save_db_credentials_in_statefile_local
