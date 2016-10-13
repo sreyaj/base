@@ -2245,7 +2245,7 @@ do $$
         values (137, '57aafd0673ea26cb053fe1ca', 'braintreePublicKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
       end if;
     end if;
-    
+
     -- Add "customHostDockerVersion" to systemConfigs table
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'customHostDockerVersion') then
       alter table "systemConfigs" add column "customHostDockerVersion" varchar(24);
@@ -3730,6 +3730,30 @@ do $$
       isSuperUser := true
     );
 
+    perform set_route_permission(
+      routePattern := '/passthrough/discounts/:id',
+      httpVerb := 'GET',
+      roleCode := 6000,
+      isPublic := false,
+      isSuperUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/passthrough/discounts/:id',
+      httpVerb := 'GET',
+      roleCode := 6010,
+      isPublic := false,
+      isSuperUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/passthrough/discounts/:id',
+      httpVerb := 'GET',
+      roleCode := 6020,
+      isPublic := false,
+      isSuperUser := false
+    );
+
     -- set payments routePermissions
 
     perform set_route_permission(
@@ -5185,6 +5209,15 @@ do $$
       isPublic := false,
       isSuperUser := false
     );
+
+    perform set_route_permission(
+      routePattern := '/subscriptions/:id/transactions',
+      httpVerb := 'GET',
+      roleCode := 6020,
+      isPublic := false,
+      isSuperUser := false
+    );
+
 
     perform set_route_permission(
       routePattern := '/transactions',
