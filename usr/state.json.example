@@ -137,7 +137,7 @@
     "noProxy": "",
     "httpsProxy": "",
     "domain": "localhost",
-    "amqpUrlAdmin": "http://SHIPPABLETESTUSER:SHIPPABLETESTPASS@172.17.42.1:15671",
+    "amqpUrlAdmin": "http://SHIPPABLETESTUSER:SHIPPABLETESTPASS@172.17.42.1:15672",
     "amqpProtocol": "amqp",
     "amqpAdminProtocol": "http",
     "amqpHost": "172.17.42.1",
