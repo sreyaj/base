@@ -685,7 +685,8 @@ save_aws_system_integration() {
          "value": '$installer_secret_key'
        }
       ],
-      "isEnabled": true
+      "isEnabled": true,
+      "id": "5745a34a25cf521200e83fe9"
     }]')
     _update_state "$aws_sys_int"
   fi

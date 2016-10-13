@@ -65,7 +65,12 @@ add_master_integration_services() {
   local master_integrations_count=$(echo $master_integrations | jq '. | length')
   for i in $(seq 1 $master_integrations_count); do
     local master_integration_service=$(echo $master_integrations | jq '.['"$i-1"'] | .name')
-    __add_service "$master_integration_service"
+    local integration_services=$(cat $release_file | jq -c '[ .integrationServices[] | select (.name == '$master_integration_service') | .services[] ]')
+    local integration_services_count=$(echo $integration_services | jq '. | length')
+    for i in $(seq 1 $integration_services_count); do
+      local service=$(echo $integration_services | jq '.['"$i-1"']')
+      __add_service "$service"
+    done
   done
 }
 
