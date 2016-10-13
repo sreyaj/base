@@ -957,6 +957,10 @@ do $$
       values (79, '577de63321333398d11a35ac', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    if exists (select 1 from "masterIntegrationFields" where "id" = 79 and "isRequired" = true) then
+        update "masterIntegrationFields" set "isRequired" = false where "id" = 79;
+    end if;
+
     -- bitbucket auth
     if not exists (select 1 from "masterIntegrations" where "name" = 'bitbucket' and "typeCode" = 5007) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -984,6 +988,9 @@ do $$
       values (85, '577de63321333398d11a35ad', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    if exists (select 1 from "masterIntegrationFields" where "id" = 85 and "isRequired" = true) then
+        update "masterIntegrationFields" set "isRequired" = false where "id" = 85;
+    end if;
 
     -- SMTP
     if not exists (select 1 from "masterIntegrations" where "name" = 'SMTP' and "typeCode" = 5003) then
@@ -1079,6 +1086,10 @@ do $$
     if not exists (select 1 from "masterIntegrationFields" where "id" = 97) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (97, '577de63321333398d11a35ae', 'providerId', 'string', false, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
+
+    if exists (select 1 from "masterIntegrationFields" where "id" = 97 and "isRequired" = true) then
+        update "masterIntegrationFields" set "isRequired" = false where "id" = 97;
     end if;
 
     -- github enterprise auth
