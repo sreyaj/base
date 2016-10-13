@@ -324,11 +324,29 @@ provision_services() {
   done
 }
 
+remove_services() {
+  local running_services=$(echo "$(docker inspect --format='{{json .Name}}' $(docker ps -a -q))" | tr '\n' ',')
+  local required_services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
+  running_services="["${running_services::-1}"]"
+  local running_services_count=$(echo $running_services | jq '. | length')
+  for i in $(seq 1 $running_services_count); do
+    local service=$(echo $running_services | jq -r '.['"$i-1"']')
+    if [[ ! $service =~ .*"local".* ]]; then
+      service=${service:1}
+      required_service=$(echo $required_services | jq -r '.[] | select (.name=="'$service'") | .name')
+      if [ -z "$required_service" ]; then
+        sudo docker rm -f $service || true
+      fi
+    fi
+  done
+}
+
 main() {
   __process_marker "Provisioning services"
   load_services
   provision_www
   provision_services
+  remove_services
 }
 
 main

@@ -25,10 +25,18 @@ remove_services() {
   local services="$(cat $STATE_FILE | jq -c '[ .services[] ]')"
   local services_count=$(echo $services | jq '. | length')
   local master_integrations="$(cat $STATE_FILE | jq -c '[ .masterIntegrations[] ]')"
+  local master_integration_services="[]"
+  local master_integrations_count=$(echo $master_integrations | jq '. | length')
+  for i in $(seq 1 $master_integrations_count); do
+    local master_integration=$(echo $master_integrations | jq '.['"$i-1"'] | .name')
+    local integration_services=$(cat $release_file | jq -c '[ .integrationServices[] | select( .name=='$master_integration' ) | .services[] ]')
+    master_integration_services=$(echo $master_integration_services | \
+          jq '. |= . + '$integration_services'')
+  done
   local indices_del="[]"
   for i in $(seq 1 $services_count); do
     local service=$(echo $services | jq '.['"$i-1"'] | .name')
-    local service_present=$(echo $master_integrations | jq '.[] | select (.name=='$service')')
+    local service_present=$(echo $master_integration_services | jq '.[] | select (.=='$service')')
     if [ -z "$service_present" ]; then
       local core_services=$(cat $release_file | jq '.coreServices')
       service_present=$(echo $core_services | jq '.[] | select (.=='$service')')
@@ -38,7 +46,6 @@ remove_services() {
       fi
     fi
   done
-
   local indices_del_length=$(echo $indices_del | jq '. | length')
   local counter=$((indices_del_length - 1))
   while [ $counter -ge 0 ]; do
