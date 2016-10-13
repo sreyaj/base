@@ -621,6 +621,7 @@
     {
       "externalId": "ami-abcdefgh",
       "provider": "AWS",
+      "description": "Stable AMI",
       "name": "Stable",
       "isAvailable": true,
       "isDefault": true,
