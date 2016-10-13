@@ -1826,9 +1826,6 @@ do $$
     -- "port" is not a required field for bitbucket auth master integration
     update "masterIntegrationFields" set "isRequired" = false where "id" = 83;
 
-    -- Remove braintree systemIntegration
-    delete from "systemIntegrations" where "name" = 'braintree' and "masterType" = 'payment';
-
   -- Adds foreign key relationships for resources
     if not exists (select 1 from pg_constraint where conname = 'resources_subscriptionId_fkey') then
       alter table "resources" add constraint "resources_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
@@ -2221,6 +2218,38 @@ do $$
     delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6020;
 
+    if exists (select 1 from "systemConfigs" where "serverEnabled" = false) then
+      if not exists (select 1 from "masterIntegrations" where "name" = 'braintree' and "typeCode" = 5008) then
+        insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+        values ('57aafd0673ea26cb053fe1ca', 32, 'braintree', 'braintree', 'payment', true, 'system', 5008, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      end if;
+
+      -- masterIntegrationFields for Braintree
+      if not exists (select 1 from "masterIntegrationFields" where "id" = 134 and "name" = 'braintreeEnvironment') then
+        insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+        values (134, '57aafd0673ea26cb053fe1ca', 'braintreeEnvironment', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      end if;
+
+      if not exists (select 1 from "masterIntegrationFields" where "id" = 135 and "name" = 'braintreeMerchantId') then
+        insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+        values (135, '57aafd0673ea26cb053fe1ca', 'braintreeMerchantId', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      end if;
+
+      if not exists (select 1 from "masterIntegrationFields" where "id" = 136 and "name" = 'braintreePrivateKey') then
+        insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+        values (136, '57aafd0673ea26cb053fe1ca', 'braintreePrivateKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      end if;
+
+      if not exists (select 1 from "masterIntegrationFields" where "id" = 137 and "name" = 'braintreePublicKey') then
+        insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+        values (137, '57aafd0673ea26cb053fe1ca', 'braintreePublicKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+      end if;
+    end if;
+    
+    -- Add "customHostDockerVersion" to systemConfigs table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'customHostDockerVersion') then
+      alter table "systemConfigs" add column "customHostDockerVersion" varchar(24);
+    end if;
   end
 $$;
 
