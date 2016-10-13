@@ -429,13 +429,10 @@ save_vault_credentials() {
 }
 
 install_rabbitmq() {
-  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local amqp_host=$(echo $db_host | jq -r '.ip')
-  local host=$amqp_host
-  local amqp_port=$(cat $STATE_FILE | jq -r '.systemSettings.amqpPort')
-  local amqp_admin_port=$(cat $STATE_FILE | jq -r '.systemSettings.amqpAdminPort')
-  local amqp_protocol=$(cat $STATE_FILE | jq -r '.systemSettings.amqpProtocol')
-  local amqp_admin_protocol=$(cat $STATE_FILE | jq -r '.systemSettings.amqpAdminProtocol')
+  local db_host=$(cat $STATE_FILE \
+    | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host \
+    | jq -r '.ip')
 
   SKIP_STEP=false
   _check_component_status "rabbitmqInstalled"
@@ -444,57 +441,78 @@ install_rabbitmq() {
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/installRabbit.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/installRabbit.sh"
 
-    local update=$(cat $STATE_FILE \
-      | jq '.systemSettings.amqpHost="'$amqp_host'"')
-    _update_state "$update"
-
     _update_install_status "rabbitmqInstalled"
   else
-    amqp_host=$(cat $STATE_FILE \
-      | jq -r '.systemSettings.amqpHost')
-    amqp_port=$(cat $STATE_FILE \
-      | jq -r '.systemSettings.amqpPort')
-    amqp_admin_port=$(cat $STATE_FILE \
-      | jq -r '.systemSettings.amqpAdminPort')
-    amqp_protocol=$(cat $STATE_FILE \
-      | jq -r '.systemSettings.amqpProtocol')
-    amqp_admin_protocol=$(cat $STATE_FILE \
-      | jq -r '.systemSettings.amqpAdminProtocol')
-
     __process_msg "RabbitMQ already installed, skipping"
   fi
 
   _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/rabbitmqadmin" "$SCRIPT_DIR_REMOTE"
 
-  # TODO: The user should be prompted to enter a username and password, which should be
-  # used by the bootstrapRabbit.sh
   SKIP_STEP=false
   _check_component_status "rabbitmqInitialized"
   if [ "$SKIP_STEP" = false ]; then
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/bootstrapRabbit.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/bootstrapRabbit.sh"
 
-    local amqp_user="SHIPPABLETESTUSER"
-    local amqp_pass="SHIPPABLETESTPASS"
-    local amqp_exchange="shippableEx"
+    local amqp_host=$host
+    local amqp_url=$(cat $STATE_FILE \
+      | jq -r '.systemSettings.amqpUrl')
+    local amqp_url_admin=$(cat $STATE_FILE \
+      | jq -r '.systemSettings.amqpUrlAdmin')
+    local amqp_host_state=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').hostname")
+    local amqp_port=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').port")
+    local amqp_user=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').username")
+    local amqp_pass=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').password")
+    local amqp_protocol=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').scheme")
+    local amqp_admin_protocol=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url_admin').scheme")
+    local amqp_admin_port=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url_admin').port")
 
-    local amqp_url="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippable"
-    __process_msg "Amqp url: $amqp_url"
-    local update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrl = "'$amqp_url'"')
-    update=$(echo $update | jq '.' | tee $STATE_FILE)
+    if [ -z "$amqp_port" ]; then
+      # hostname provided as a fqdn
+      # this can only happen when user has manually updated it,
+      # use the host from statefile
 
-    local amqp_url_root="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippableRoot"
-    __process_msg "Amqp root url: $amqp_url_root"
-    update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlRoot = "'$amqp_url_root'"')
-    update=$(echo $update | jq '.' | tee $STATE_FILE)
+      amqp_host=$amqp_host_state
+      local amqp_url_updated="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host/shippable"
+      __process_msg "Amqp url: $amqp_url"
+      local update=$(cat $STATE_FILE \
+        | jq '.systemSettings.amqpUrl = "'$amqp_url_updated'"')
+      update=$(echo $update | jq '.' | tee $STATE_FILE)
 
-    local amqp_url_admin="$amqp_admin_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_admin_port"
-    __process_msg "Amqp admin url: $amqp_url_admin"
-    update=$(cat $STATE_FILE | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
-    update=$(echo $update | jq '.' | tee $STATE_FILE)
+      local amqp_url_root="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host/shippableRoot"
+      __process_msg "Amqp root url: $amqp_url_root"
+      update=$(cat $STATE_FILE \
+        | jq '.systemSettings.amqpUrlRoot = "'$amqp_url_root'"')
+      update=$(echo $update | jq '.' | tee $STATE_FILE)
 
-    update=$(cat $STATE_FILE | jq '.systemSettings.amqpDefaultExchange = "'$amqp_exchange'"')
-    update=$(echo $update | jq '.' | tee $STATE_FILE)
+      local amqp_url_admin="$amqp_admin_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_admin_port"
+      __process_msg "Amqp admin url: $amqp_url_admin"
+      update=$(cat $STATE_FILE \
+        | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
+      update=$(echo $update | jq '.' | tee $STATE_FILE)
+
+    else
+      # hostname provided as ip:port pair
+      # use the ip of install box
+
+      local amqp_url_updated="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippable"
+      __process_msg "Amqp url: $amqp_url"
+      local update=$(cat $STATE_FILE \
+        | jq '.systemSettings.amqpUrl = "'$amqp_url_updated'"')
+      update=$(echo $update | jq '.' | tee $STATE_FILE)
+
+      local amqp_url_root="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_port/shippableRoot"
+      __process_msg "Amqp root url: $amqp_url_root"
+      update=$(cat $STATE_FILE \
+        | jq '.systemSettings.amqpUrlRoot = "'$amqp_url_root'"')
+      update=$(echo $update | jq '.' | tee $STATE_FILE)
+
+      local amqp_url_admin="$amqp_admin_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_admin_port"
+      __process_msg "Amqp admin url: $amqp_url_admin"
+      update=$(cat $STATE_FILE \
+        | jq '.systemSettings.amqpUrlAdmin = "'$amqp_url_admin'"')
+      update=$(echo $update | jq '.' | tee $STATE_FILE)
+    fi
 
     _update_install_status "rabbitmqInitialized"
   else

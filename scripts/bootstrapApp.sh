@@ -246,26 +246,6 @@ generate_system_config() {
   local custom_host_docker_version=$(cat $STATE_FILE | jq -r '.systemSettings.customHostDockerVersion')
   sed -i "s#{{CUSTOM_HOST_DOCKER_VERSION}}#$custom_host_docker_version#g" $system_configs_sql
 
-  __process_msg "Updating : registryAccessKey"
-  local custom_host_docker_version=$(cat $STATE_FILE | jq -r '.systemSettings.registryAccessKey')
-  sed -i "s#{{REGISTRY_ACCESS_KEY}}#$custom_host_docker_version#g" $system_configs_sql
-
-  __process_msg "Updating : registrySecretKey"
-  local custom_host_docker_version=$(cat $STATE_FILE | jq -r '.systemSettings.registrySecretKey')
-  sed -i "s#{{REGISTRY_SECRET_KEY}}#$custom_host_docker_version#g" $system_configs_sql
-
-  __process_msg "Updating : registryRegion"
-  local custom_host_docker_version=$(cat $STATE_FILE | jq -r '.systemSettings.registryRegion')
-  sed -i "s#{{REGISTRY_REGION}}#$custom_host_docker_version#g" $system_configs_sql
-
-  __process_msg "Updating : registryAccountId"
-  local custom_host_docker_version=$(cat $STATE_FILE | jq -r '.systemSettings.registryAccountId')
-  sed -i "s#{{REGISTRY_ACCOUNT_ID}}#$custom_host_docker_version#g" $system_configs_sql
-
-  __process_msg "Updating : registryAccessPolicy"
-  local custom_host_docker_version=$(cat $STATE_FILE | jq -r '.systemSettings.registryAccessPolicy')
-  sed -i "s#{{REGISTRY_ACCESS_POLICY}}#$custom_host_docker_version#g" $system_configs_sql
-
   __process_msg "Successfully generated 'systemConfig' table data"
 }
 

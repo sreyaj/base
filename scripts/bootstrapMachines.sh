@@ -4,8 +4,9 @@ readonly MACHINES_CONFIG="$USR_DIR/machines.json"
 export MACHINES_LIST=""
 
 validate_machines_config() {
+  __process_msg "validating machines config"
   MACHINES_LIST=$(cat $MACHINES_CONFIG | jq '.')
-  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
+  local machine_count=$(echo $MACHINES_LIST | jq -r '. | length')
   if [[ $machine_count -lt 2 ]]; then
     __process_msg "At least 2 machines required to set up shippable, $machine_count provided"
     exit 1
@@ -134,7 +135,7 @@ bootstrap_local() {
 main() {
   __process_marker "Bootstrapping machines"
   local machines_bootstrap_status=$(cat $STATE_FILE \
-    | jq '.installStatus.machinesBootstrapped')
+    | jq -r '.installStatus.machinesBootstrapped')
 
   if [ $machines_bootstrap_status == true ]; then
     __process_msg "Machines already bootstrapped"
