@@ -19,6 +19,8 @@ validate_version() {
 }
 
 generate_state() {
+  __process_msg "Generating state file"
+  __process_msg "Install mode: $INSTALL_MODE"
   if [ ! -f "$USR_DIR/state.json" ]; then
     if [ -f "$USR_DIR/state.json.backup" ]; then
       __process_msg "A state.json.backup file exists, do you want to use the backup? (yes/no)"
@@ -28,16 +30,19 @@ generate_state() {
         rm $USR_DIR/state.json.backup || true
       else
         __process_msg "Dicarding backup, creating a new state.json from state.json.example"
+        rm $USR_DIR/state.json.backup || true
         cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
         local update=$(cat $STATE_FILE \
           | jq '.installMode="'$INSTALL_MODE'"')
-        _update_state "$update"
-        rm $USR_DIR/state.json.backup || true
+        update=$(echo $machines | jq '.' | tee $STATE_FILE)
       fi
     else
       __process_msg "No state.json exists, creating a new state.json from state.json.example."
       cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
       rm $USR_DIR/state.json.backup || true
+      local update=$(cat $STATE_FILE \
+        | jq '.installMode="'$INSTALL_MODE'"')
+      update=$(echo $machines | jq '.' | tee $STATE_FILE)
     fi
   else
     __process_msg "using existing state.json"

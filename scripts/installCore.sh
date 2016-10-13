@@ -459,20 +459,13 @@ install_rabbitmq() {
       | jq -r '.systemSettings.amqpUrl')
     local amqp_url_admin=$(cat $STATE_FILE \
       | jq -r '.systemSettings.amqpUrlAdmin')
-    local amqp_host_state=$(cat $STATE_FILE \
-      | python -c "from urlparse import urlparse; print urlparse('$amqp_url').hostname")
-    local amqp_port=$(cat $STATE_FILE \
-      | python -c "from urlparse import urlparse; print urlparse('$amqp_url').port")
-    local amqp_user=$(cat $STATE_FILE \
-      | python -c "from urlparse import urlparse; print urlparse('$amqp_url').username")
-    local amqp_pass=$(cat $STATE_FILE \
-      | python -c "from urlparse import urlparse; print urlparse('$amqp_url').password")
-    local amqp_protocol=$(cat $STATE_FILE \
-      | python -c "from urlparse import urlparse; print urlparse('$amqp_url').scheme")
-    local amqp_admin_protocol=$(cat $STATE_FILE \
-      | python -c "from urlparse import urlparse; print urlparse('$amqp_url_admin').scheme")
-    local amqp_admin_port=$(cat $STATE_FILE \
-      | python -c "from urlparse import urlparse; print urlparse('$amqp_url_admin').port")
+    local amqp_host_state=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').hostname")
+    local amqp_port=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').port")
+    local amqp_user=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').username")
+    local amqp_pass=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').password")
+    local amqp_protocol=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url').scheme")
+    local amqp_admin_protocol=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url_admin').scheme")
+    local amqp_admin_port=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url_admin').port")
 
     if [ -z "$amqp_port" ]; then
       # hostname provided as a fqdn
