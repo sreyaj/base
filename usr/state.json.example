@@ -1,6 +1,7 @@
 {
   "release": "",
   "migrations": "",
+  "installMode": "local",
   "masterIntegrations": [
     {
       "name": "braintree",

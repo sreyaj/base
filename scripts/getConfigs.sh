@@ -5,7 +5,7 @@ export RELEASE_VERSION="v4.10.29"
 ###########################################################
 validate_version() {
   __process_msg "validating version"
-  if [ "$install_mode" == "production" ]; then
+  if [ "$INSTALL_MODE" == "production" ]; then
     if [ ! -f "$USR_DIR/machines.json" ]; then
       echo "Cannot find machines.json, exiting..."
       exit 1
@@ -29,6 +29,9 @@ generate_state() {
       else
         __process_msg "Dicarding backup, creating a new state.json from state.json.example"
         cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
+        local update=$(cat $STATE_FILE \
+          | jq '.installMode="'$INSTALL_MODE'"')
+        _update_state "$update"
         rm $USR_DIR/state.json.backup || true
       fi
     else
@@ -38,6 +41,21 @@ generate_state() {
     fi
   else
     __process_msg "using existing state.json"
+  fi
+}
+
+validate_install_mode() {
+  __process_msg "validating install mode"
+  local state_install_mode=$(cat $STATE_FILE \
+    | jq -r '.installMode')
+
+  if [ "$INSTALL_MODE" == "$state_install_mode" ]; then
+    __process_msg "Install mode verified, proceeding"
+  else
+    __process_msg "Installer and state.json installMode values different"
+    __process_msg "Either run installer in same mode as state.json or "\
+      "remove state.json and try again"
+    exit 1
   fi
 }
 
@@ -78,6 +96,22 @@ bootstrap_state() {
   fi
 }
 
+modify_state() {
+  if [ "$INSTALL_MODE" == "production" ]; then
+    __process_msg "default state.json created, do you want to edit it to to update any values ?"
+    __process_msg "enter 'yes' to edit the file, any other key to proceed"
+    read response
+    if [[ "$response" == "yes" ]]; then
+      __process_msg "Edit 'usr/state.json' to update desired values and run installer again"
+      exit 0
+    else
+      __process_msg "state.json manual configuration skipped"
+    fi
+  else
+    __process_msg "Installer running locally, skipping optional configuration edit"
+  fi
+}
+
 validate_state() {
   __process_msg "validating state.json"
   # parse from jq
@@ -103,7 +137,9 @@ main() {
   __process_marker "Configuring installer"
   validate_version
   generate_state
+  validate_install_mode
   bootstrap_state
+  modify_state
   validate_state
 }
 
