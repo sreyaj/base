@@ -542,27 +542,13 @@ run_migrations_local() {
 }
 
 manage_masterIntegrations() {
-  SKIP_STEP=false
-  _check_component_status "masterIntegrationsConfigured"
-  if [ "$SKIP_STEP" = false ]; then
-    source "$SCRIPTS_DIR/_manageMasterIntegrations.sh"
-
-    _update_install_status "masterIntegrationsConfigured"
-  else
-    __process_msg "Master integrations already configured, skipping"
-  fi
+  __process_msg "Configuring master integrations"
+  source "$SCRIPTS_DIR/_manageMasterIntegrations.sh"
 }
 
 manage_systemIntegrations() {
-  SKIP_STEP=false
-  _check_component_status "systemIntegrationsConfigured"
-  if [ "$SKIP_STEP" = false ]; then
-    source "$SCRIPTS_DIR/_manageSystemIntegrations.sh"
-
-    _update_install_status "systemIntegrationsConfigured"
-  else
-    __process_msg "System integrations already configured, skipping"
-  fi
+  __process_msg "Configuring master integrations"
+  source "$SCRIPTS_DIR/_manageSystemIntegrations.sh"
 }
 
 insert_providers_local() {

@@ -217,8 +217,6 @@
     "dockerCredsUpdated": false,
     "systemConfigUpdated": false,
     "migrationsUpdated": false,
-    "servicesConfigured": false,
-    "masterIntegrationsConfigured": false,
-    "systemIntegrationsConfigured": false
+    "servicesConfigured": false
   }
 }

@@ -95,8 +95,9 @@ validate_systemIntegrations() {
         | jq -r '.type')
 
 
-      if [ $enabled_system_integration_master_name == $enabled_master_integration_name ] && \
-        [ $enabled_system_integration_master_type == $enabled_master_integration_type ]; then
+      echo $enabled_master_integration_name
+      if [ "$enabled_system_integration_master_name" == "$enabled_master_integration_name" ] && \
+        [ "$enabled_system_integration_master_type" == "$enabled_master_integration_type" ]; then
         # found associated master integration
         is_valid_system_integration=true
         break
@@ -104,7 +105,7 @@ validate_systemIntegrations() {
     done
 
     if [ $is_valid_system_integration == false ]; then
-      __process_msg "Invalid system integration in state.json: '$enabled_system_integration_name'." \
+      __process_msg "Invalid system integration in state.json: '$enabled_system_integration_master_name'." \
         " Cannot find releated master integration"
       __process_msg "Please add master integration for the provider or remove the system integration " \
         " and run installer again"
@@ -207,6 +208,8 @@ upsert_systemIntegrations() {
         | jq -r '.name')
 
       enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.name="'$enabled_master_integration_display_name'"')
+      enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.masterIntegrationId="'$enabled_master_integration_id'"')
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.masterDisplayName="'$enabled_master_integration_display_name'"')
@@ -215,8 +218,8 @@ upsert_systemIntegrations() {
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.isEnabled=true')
 
-      local=$(echo $enabled_provider \
-        | jq '.masterIntegrationId="'$enabled_master_integration_id'"')
+      echo "----------"
+      echo $enabled_system_integration
 
       local integrations_post_endpoint="$api_url/systemIntegrations"
       local post_call_resp_code=$(curl \
@@ -229,10 +232,10 @@ upsert_systemIntegrations() {
         --silent \
         --output /dev/null)
       if [ "$post_call_resp_code" -gt "299" ]; then
-        echo "Error adding integration for $enabled_master_integration_display_name(status code $post_call_resp_code)"
+        __process_msg "Error adding integration for $enabled_master_integration_display_name(status code $post_call_resp_code)"
         exit 1
       else
-        echo "Sucessfully added integration for $enabled_master_integration_display_name"
+        __process_msg "Sucessfully added integration for $enabled_master_integration_display_name"
       fi
 
     fi
