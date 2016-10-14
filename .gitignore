@@ -3,6 +3,7 @@ usr/machinekey*
 usr/machines.json
 usr/state.json
 usr/state.json.backup
+usr/credentials
 scripts/local/data
 scripts/local/gitlab
 scripts/local/vault/scripts/keys.txt
