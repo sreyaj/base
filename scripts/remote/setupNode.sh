@@ -29,9 +29,6 @@ update_watchers() {
 
 update_network_limits() {
   echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
-  echo "net.netfilter.nf_conntrack_max=$MAX_CONNECTIONS" | sudo tee -a /etc/sysctl.conf
-  echo "net.netfilter.nf_conntrack_generic_timeout=$CONNECTION_TIMEOUT" | sudo tee -a /etc/sysctl.conf
-  echo "net.netfilter.nf_conntrack_tcp_timeout_established=$ESTABLISHED_CONNECTION_TIMEOUT" | sudo tee -a /etc/sysctl.conf
 }
 
 refresh_settings() {
