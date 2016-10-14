@@ -255,7 +255,6 @@
     "redisInstalled": false,
     "redisInitialized": false,
     "serviceuserTokenGenerated": false,
-    "dockerCredsUpdated": false,
     "systemConfigUpdated": false
   }
 }
