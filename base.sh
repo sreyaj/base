@@ -87,6 +87,26 @@ install() {
   source "$SCRIPTS_DIR/provisionServices.sh"
 }
 
+install_release() {
+  local release=$1
+  local release_file="$VERSIONS_DIR/$release".json
+  if [ -f $release_file ]; then
+    __process_marker "Booting shippable installer"
+    local install_mode=$(cat $STATE_FILE | jq -r '.installMode')
+    local release=$1
+    local update=$(cat $STATE_FILE | jq '.release="'$release'"')
+    _update_state "$update"
+    if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
+      export INSTALL_MODE="$install_mode"
+    else
+      __process_msg "Running installer in default 'local' mode"
+    fi
+    install
+  else
+    __process_msg "Invalid release version $release"
+  fi
+}
+
 __print_help_install() {
   echo "
   usage: ./base.sh --install [local | production]
@@ -102,6 +122,7 @@ __print_help() {
   OPTIONS:
     -s | --status     Print status of current installation
     -i | --install    Start a new Shippable installation
+    -r | --release    Install a particular version
     -v | --version    Print version of this script
     -h | --help       Print this message
   "
@@ -123,6 +144,14 @@ if [[ $# -gt 0 ]]; then
       shift ;;
     -v|--version) __show_version
       shift ;;
+    -r|--release)
+      shift
+      if [[ ! $# -eq 1 ]]; then
+        __process_msg "Mention the release version to be installed."
+      else
+        install_release $1
+      fi
+      ;;
     -i|--install)
       shift
       __process_marker "Booting shippable installer"
