@@ -4,6 +4,10 @@
   "installMode": "local",
   "masterIntegrations": [
     {
+      "type": "scm",
+      "name": "Git store"
+    },
+    {
       "name": "braintree",
       "type": "payment"
     },
@@ -100,6 +104,48 @@
           "value": null,
           "label": "aws_secret_access_key"
         }
+      ]
+    },
+    {
+      "name": "gitlab",
+      "masterName": "Git store",
+      "masterType": "scm",
+      "formJSONValues": [
+        {
+          "label": "username",
+          "value": "root"
+        },
+        {
+          "label": "subscriptionProjectLimit",
+          "value": "100"
+        },
+        {
+          "label": "password",
+          "value": "shippable1234"
+        },
+        {
+          "label": "url",
+          "value": "http://172.17.42.1/api/v3"
+        },
+        {
+          "label": "sshPort",
+          "value": "22"
+        }
+      ]
+    },
+    {
+      "name": "aws",
+      "masterName": "AWS",
+      "masterType": "cloudproviders",
+      "formJSONValues": [
+       {
+         "label": "accessKey",
+         "value": "xxxx"
+       },
+       {
+         "label": "secretKey",
+         "value": "xxxx"
+       }
       ]
     }
   ],
