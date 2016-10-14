@@ -256,9 +256,6 @@
     "redisInitialized": false,
     "serviceuserTokenGenerated": false,
     "dockerCredsUpdated": false,
-    "systemConfigUpdated": false,
-    "servicesConfigured": false,
-    "ecrInstalled": false,
-    "ecrInitialized": false
+    "systemConfigUpdated": false
   }
 }
