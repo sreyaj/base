@@ -327,15 +327,20 @@ provision_services() {
 remove_services() {
   local running_services=$(echo "$(docker inspect --format='{{json .Name}}' $(docker ps -a -q))" | tr '\n' ',')
   local required_services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
+  local ship_services=$(cat $release_file | jq -c '[ .serviceConfigs[] | .name]')
   running_services="["${running_services::-1}"]"
   local running_services_count=$(echo $running_services | jq '. | length')
   for i in $(seq 1 $running_services_count); do
     local service=$(echo $running_services | jq -r '.['"$i-1"']')
     if [[ ! $service =~ .*"local".* ]]; then
       service=${service:1}
-      required_service=$(echo $required_services | jq -r '.[] | select (.name=="'$service'") | .name')
-      if [ -z "$required_service" ]; then
-        sudo docker rm -f $service || true
+      local required_service=$(echo $ship_services | jq '.[] | select (.=="'$service'")')
+      if [ ! -z "$required_service" ]; then
+        required_service=$(echo $required_services | jq -r '.[] | select (.name=="'$service'") | .name')
+        if [ -z "$required_service" ]; then
+          local removed_service=$(sudo docker rm -f $service || true)
+          __process_msg "$removed_service service removed"
+        fi
       fi
     fi
   done
