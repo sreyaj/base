@@ -958,7 +958,7 @@ do $$
     end if;
 
     if exists (select 1 from "masterIntegrationFields" where "id" = 79 and "isRequired" = true) then
-        update "masterIntegrationFields" set "isRequired" = false where "id" = 79;
+      update "masterIntegrationFields" set "isRequired" = false where "id" = 79;
     end if;
 
     -- bitbucket auth
@@ -989,7 +989,7 @@ do $$
     end if;
 
     if exists (select 1 from "masterIntegrationFields" where "id" = 85 and "isRequired" = true) then
-        update "masterIntegrationFields" set "isRequired" = false where "id" = 85;
+      update "masterIntegrationFields" set "isRequired" = false where "id" = 85;
     end if;
 
     -- SMTP
@@ -1089,7 +1089,7 @@ do $$
     end if;
 
     if exists (select 1 from "masterIntegrationFields" where "id" = 97 and "isRequired" = true) then
-        update "masterIntegrationFields" set "isRequired" = false where "id" = 97;
+      update "masterIntegrationFields" set "isRequired" = false where "id" = 97;
     end if;
 
     -- github enterprise auth
