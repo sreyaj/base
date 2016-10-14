@@ -108,6 +108,24 @@ install_release() {
   fi
 }
 
+install_file() {
+  local state_file=$1
+  if [ -f $state_file ]; then
+    type jq
+    local copy=$(cp $state_file $STATE_FILE 2> /dev/null)
+    __process_marker "Booting shippable installer"
+    local install_mode=$(cat $STATE_FILE | jq -r '.installMode')
+    if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
+      export INSTALL_MODE="$install_mode"
+    else
+      __process_msg "Running installer in default 'local' mode"
+    fi
+    install
+  else
+    __process_msg "$state_file not present."
+  fi
+}
+
 __print_help_install() {
   echo "
   usage: ./base.sh --install [local | production]
@@ -124,6 +142,7 @@ __print_help() {
     -s | --status     Print status of current installation
     -i | --install    Start a new Shippable installation
     -r | --release    Install a particular version
+    -f | --file       Use existing state file
     -v | --version    Print version of this script
     -h | --help       Print this message
   "
@@ -145,6 +164,14 @@ if [[ $# -gt 0 ]]; then
       shift ;;
     -v|--version) __show_version
       shift ;;
+    -f|--file)
+    shift
+      if [[ ! $# -eq 1 ]]; then
+        __process_msg "Specify the state file to be used for install."
+      else
+        install_file $1
+      fi
+      ;;
     -r|--release)
       shift
       if [[ ! $# -eq 1 ]]; then
