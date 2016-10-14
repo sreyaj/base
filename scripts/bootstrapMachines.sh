@@ -121,7 +121,7 @@ setup_node() {
     local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
     local host=$(echo $machine | jq '.ip')
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/setupNode.sh" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/setupNode.sh $INSTALL_MODE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/setupNode.sh"
   done
 }
 
