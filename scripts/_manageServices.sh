@@ -21,36 +21,6 @@ __add_service() {
   fi
 }
 
-remove_services() {
-  local services="$(cat $STATE_FILE | jq -c '[ .services[] ]')"
-  local services_count=$(echo $services | jq '. | length')
-  local master_integrations="$(cat $STATE_FILE | jq -c '[ .masterIntegrations[] ]')"
-  local indices_del="[]"
-  for i in $(seq 1 $services_count); do
-    local service=$(echo $services | jq '.['"$i-1"'] | .name')
-    local service_present=$(echo $master_integrations | jq '.[] | select (.name=='$service')')
-    if [ -z "$service_present" ]; then
-      local core_services=$(cat $release_file | jq '.coreServices')
-      service_present=$(echo $core_services | jq '.[] | select (.=='$service')')
-      if [ -z "$service_present" ]; then
-        indices_del=$(echo $indices_del | \
-          jq '. |= . + ['"$i-1"']')
-      fi
-    fi
-  done
-
-  local indices_del_length=$(echo $indices_del | jq '. | length')
-  local counter=$((indices_del_length - 1))
-  while [ $counter -ge 0 ]; do
-    local index=$(echo $indices_del | jq '.['$counter']')
-    services=$(echo $services | jq -c 'del(.['$index'])')
-    counter=$((counter-1))
-  done
-
-  local update=$(cat $STATE_FILE | jq '.services='$services'')
-  _update_state "$update"
-}
-
 add_core_services() {
   local core_services=$(cat $release_file | jq '.coreServices')
   local core_services_count=$(echo $core_services | jq '. | length')
@@ -77,7 +47,6 @@ add_master_integration_services() {
 main() {
   __process_marker "Configuring services list"
 
-  remove_services
   add_core_services
   add_master_integration_services
   __process_msg "Configured services list"
