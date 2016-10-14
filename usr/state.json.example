@@ -101,6 +101,36 @@
           "label": "aws_secret_access_key"
         }
       ]
+    },
+    {
+      "name": "gitlab",
+      "masterIntegrationId": "574ee696d49b091400b75f19",
+      "masterDisplayName": "Internal Gitlab Server",
+      "masterName": "Git store",
+      "masterType": "scm",
+      "isEnabled": true,
+      "formJSONValues": [
+        {
+          "label": "username",
+          "value": "root"
+        },
+        {
+          "label": "subscriptionProjectLimit",
+          "value": "100"
+        },
+        {
+          "label": "password",
+          "value": "shippable1234"
+        },
+        {
+          "label": "url",
+          "value": "http://172.17.42.1/api/v3"
+        },
+        {
+          "label": "sshPort",
+          "value": "22"
+        }
+      ]
     }
   ],
   "services": [
