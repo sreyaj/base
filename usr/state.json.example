@@ -258,7 +258,6 @@
     "serviceuserTokenGenerated": false,
     "dockerCredsUpdated": false,
     "systemConfigUpdated": false,
-    "migrationsUpdated": false,
     "servicesConfigured": false
   }
 }

@@ -497,47 +497,38 @@ test_api_endpoint() {
 }
 
 run_migrations() {
-  SKIP_STEP=false
-  _check_component_status "migrationsUpdated"
-  if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Running migrations.sql"
+  __process_msg "Running migrations.sql"
 
-    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-    local db_ip=$(echo $db_host | jq -r '.ip')
-    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-    local db_name="shipdb"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local db_ip=$(echo $db_host | jq -r '.ip')
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  local db_name="shipdb"
 
-    local migrations_file_path="$MIGRATIONS_DIR/$RELEASE_VERSION.sql"
+  local migrations_file_path="$MIGRATIONS_DIR/$RELEASE_VERSION.sql"
+  if [ ! -f $migrations_file_path ]; then
+    __process_msg "No migrations found for this release, skipping"
+  else
     local migrations_file_name=$(basename $migrations_file_path)
-
     _copy_script_remote $db_ip $migrations_file_path "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/$migrations_file_name"
-    _update_install_status "migrationsUpdated"
-  else
-    __process_msg "Migrations already run, skipping"
   fi
 }
 
 run_migrations_local() {
-  SKIP_STEP=false
-  _check_component_status "migrationsUpdated"
-  if [ "$SKIP_STEP" = false ]; then
-    __process_msg "Running migrations.sql"
+  __process_msg "Running migrations.sql"
 
-    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-    local db_name="shipdb"
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  local db_name="shipdb"
 
-    ##TODO: this should be the latest release file
-    ##TODO update the version in state after migration is run
-    local migrations_file="$MIGRATIONS_DIR/$RELEASE_VERSION".sql
+  ##TODO: this should be the latest release file
+  ##TODO update the version in state after migration is run
+  local migrations_file="$MIGRATIONS_DIR/$RELEASE_VERSION".sql
+  if [ ! -f $migrations_file ]; then
+    __process_msg "No migrations found for this release, skipping"
+  else
     local db_mount_dir="$LOCAL_SCRIPTS_DIR/data/migrations.sql"
-
     sudo cp -vr $migrations_file $db_mount_dir
     sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/migrations.sql
-
-    _update_install_status "migrationsUpdated"
-  else
-    __process_msg "Migrations already run, skipping"
   fi
 }
 
