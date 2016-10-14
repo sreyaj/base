@@ -317,10 +317,14 @@ provision_www() {
 provision_services() {
   local services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
   local services_count=$(echo $services | jq '. | length')
+  local provisioned_services="[\"www\",\"api\"]"
   for i in $(seq 1 $services_count); do
     local service=$(echo $services | jq -r '.['"$i-1"'] | .name')
-    __save_service_config $service "" " --name $service --network ingress --with-registry-auth --endpoint-mode vip" $service
-    __run_service "$service"
+    local provisioned_service=$(echo $provisioned_services | jq -r '.[] | select (.=="'$service'")')
+    if [ -z "$provisioned_service" ]; then
+      __save_service_config $service "" " --name $service --network ingress --with-registry-auth --endpoint-mode vip" $service
+      __run_service "$service"
+    fi
   done
 }
 

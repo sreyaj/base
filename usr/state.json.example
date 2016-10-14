@@ -1,6 +1,5 @@
 {
   "release": "",
-  "migrations": "",
   "installMode": "local",
   "masterIntegrations": [
     {
@@ -258,6 +257,8 @@
     "serviceuserTokenGenerated": false,
     "dockerCredsUpdated": false,
     "systemConfigUpdated": false,
-    "servicesConfigured": false
+    "servicesConfigured": false,
+    "ecrInstalled": false,
+    "ecrInitialized": false
   }
 }

@@ -445,8 +445,6 @@ provision_api() {
 
   _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
-  _update_install_status "apiProvisioned"
-  _update_install_status "apiInstalled"
   __process_msg "Successfully provisioned api"
 }
 
@@ -469,8 +467,6 @@ provision_api_local() {
 
   local result=$(eval $boot_api_cmd)
 
-  _update_install_status "apiProvisioned"
-  _update_install_status "apiInstalled"
   __process_msg "Successfully provisioned api"
 }
 
@@ -601,7 +597,6 @@ restart_api() {
   sleep 30
 
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
-  _update_install_status "apiInitialized"
 }
 
 restart_api_local() {
@@ -622,7 +617,6 @@ restart_api_local() {
   local result=$(eval $boot_api_cmd)
   __process_msg "Waiting 10s before API restart..."
   sleep 10
-  _update_install_status "apiInitialized"
 }
 
 update_service_list() {
