@@ -165,7 +165,7 @@ if [[ $# -gt 0 ]]; then
     -v|--version) __show_version
       shift ;;
     -f|--file)
-    shift
+      shift
       if [[ ! $# -eq 1 ]]; then
         __process_msg "Specify the state file to be used for install."
       else
