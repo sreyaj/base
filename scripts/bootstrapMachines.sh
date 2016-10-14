@@ -114,6 +114,17 @@ export_language() {
   done
 }
 
+setup_node() {
+  __process_msg "Configuring ulimits on machines"
+  local machine_count=$(echo $MACHINES_LIST | jq '. | length')
+  for i in $(seq 1 $machine_count); do
+    local machine=$(echo $MACHINES_LIST | jq '.['"$i-1"']')
+    local host=$(echo $machine | jq '.ip')
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/setupNode.sh" "$SCRIPT_DIR_REMOTE"
+    _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/setupNode.sh"
+  done
+}
+
 bootstrap() {
   __process_msg "Installing core components on machines"
   local machine_count=$(echo $MACHINES_LIST | jq '. | length')
@@ -127,9 +138,7 @@ bootstrap() {
 
 bootstrap_local() {
   __process_msg "Installing core components on machines"
-
   source "$REMOTE_SCRIPTS_DIR/installBase.sh" "$INSTALL_MODE"
-
 }
 
 main() {
@@ -149,6 +158,7 @@ main() {
       check_connection
       check_requirements
       export_language
+      setup_node
       bootstrap
     else
       bootstrap_local
