@@ -512,8 +512,6 @@ run_migrations() {
     _copy_script_remote $db_ip $migrations_file_path "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/$migrations_file_name"
   fi
-
-  _update_install_status "migrationsUpdated"
 }
 
 run_migrations_local() {
@@ -532,8 +530,6 @@ run_migrations_local() {
     sudo cp -vr $migrations_file $db_mount_dir
     sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/migrations.sql
   fi
-
-  _update_install_status "migrationsUpdated"
 }
 
 manage_masterIntegrations() {
