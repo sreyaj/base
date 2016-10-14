@@ -34,15 +34,15 @@ generate_state() {
         cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
         local update=$(cat $STATE_FILE \
           | jq '.installMode="'$INSTALL_MODE'"')
-        update=$(echo $machines | jq '.' | tee $STATE_FILE)
+        update=$(echo $update | jq '.' | tee $STATE_FILE)
       fi
     else
       __process_msg "No state.json exists, creating a new state.json from state.json.example."
-      cp -vr $USR_DIR/state.json.example $USR_DIR/state.json
+      cp -vr $USR_DIR/state.json.example $STATE_FILE
       rm $USR_DIR/state.json.backup || true
       local update=$(cat $STATE_FILE \
         | jq '.installMode="'$INSTALL_MODE'"')
-      update=$(echo $machines | jq '.' | tee $STATE_FILE)
+      update=$(echo $update | jq '.' | tee $STATE_FILE)
     fi
   else
     __process_msg "using existing state.json"
