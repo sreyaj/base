@@ -91,7 +91,7 @@ install_release() {
   local release=$1
   local release_file="$VERSIONS_DIR/$release".json
   if [ -f $release_file ]; then
-    type jq >> /dev/null
+    type jq
     __process_marker "Booting shippable installer"
     local install_mode=$(cat $STATE_FILE | jq -r '.installMode')
     local release=$1
