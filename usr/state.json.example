@@ -104,11 +104,8 @@
     },
     {
       "name": "gitlab",
-      "masterIntegrationId": "574ee696d49b091400b75f19",
-      "masterDisplayName": "Internal Gitlab Server",
       "masterName": "Git store",
       "masterType": "scm",
-      "isEnabled": true,
       "formJSONValues": [
         {
           "label": "username",
@@ -131,6 +128,21 @@
           "value": "22"
         }
       ]
+    },
+    {
+      "name": "aws",
+      "masterName": "AWS",
+      "masterType": "cloudproviders",
+      "formJSONValues": [
+       {
+         "label": "accessKey",
+         "value": "xxxx"
+       },
+       {
+         "label": "secretKey",
+         "value": "xxxx"
+       }
+      ],
     }
   ],
   "services": [
