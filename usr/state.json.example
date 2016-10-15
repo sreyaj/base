@@ -133,7 +133,7 @@
       ]
     },
     {
-      "name": "aws",
+      "name": "AWS",
       "masterName": "AWS",
       "masterType": "cloudproviders",
       "formJSONValues": [

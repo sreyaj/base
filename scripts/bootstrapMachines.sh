@@ -139,6 +139,7 @@ bootstrap() {
 bootstrap_local() {
   __process_msg "Installing core components on machines"
   source "$REMOTE_SCRIPTS_DIR/installBase.sh" "$INSTALL_MODE"
+  sudo rm -rf "$LOCAL_SCRIPTS_DIR/gitlab" || true
 }
 
 main() {
