@@ -328,7 +328,31 @@ provision_services() {
   done
 }
 
-remove_services() {
+remove_services_prod() {
+  # local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+  # local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
+  local running_services=$(docker service inspect --format='{{json .Spec.Name}},' $(sudo docker service ls -q))
+  running_services="["${running_services::-1}"]"
+  local required_services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
+  local ship_services=$(cat $release_file | jq -c '[ .serviceConfigs[] | .name]')
+  local running_services_count=$(echo $running_services | jq '. | length')
+  for i in $(seq 1 $running_services_count); do
+    local service=$(echo $running_services | jq -r '.['"$i-1"']')
+    if [[ ! $service =~ .*"local".* ]]; then
+      local required_service=$(echo $ship_services | jq '.[] | select (.=="'$service'")')
+      if [ ! -z "$required_service" ]; then
+        required_service=$(echo $required_services | jq -r '.[] | select (.name=="'$service'") | .name')
+        if [ -z "$required_service" ]; then
+          local removed_service=$(docker service rm $service || true)
+          __process_msg "$removed_service service removed"
+        fi
+      fi
+    fi
+  done
+}
+
+
+remove_services_local() {
   local running_services=$(echo "$(docker inspect --format='{{json .Name}}' $(docker ps -a -q))" | tr '\n' ',')
   local required_services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
   local ship_services=$(cat $release_file | jq -c '[ .serviceConfigs[] | .name]')
@@ -355,7 +379,11 @@ main() {
   load_services
   provision_www
   provision_services
-  remove_services
+  if [ "$INSTALL_MODE" == "production" ]; then
+    remove_services_prod
+  else
+    remove_services_local
+  fi
 }
 
 main
