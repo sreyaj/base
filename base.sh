@@ -80,7 +80,6 @@ install() {
   local release_version=$(cat $STATE_FILE | jq -r '.release')
   readonly RELEASE_VERSION=$release_version
   readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$release_version"
-  exit 0
 
   source "$SCRIPTS_DIR/bootstrapMachines.sh"
   source "$SCRIPTS_DIR/installCore.sh"
@@ -183,14 +182,16 @@ find_latest_release() {
 
 install_release() {
   local release=$1
+  local install_mode=$(cat $STATE_FILE \
+    | jq -r '.installMode')
+  local update=$(cat $STATE_FILE \
+    | jq '.release="'$release'"')
+  _update_state "$update"
   local release_file="$VERSIONS_DIR/$release".json
+
   if [ -f $release_file ]; then
     type jq
     __process_marker "Booting shippable installer"
-    local install_mode=$(cat $STATE_FILE | jq -r '.installMode')
-    local release=$1
-    local update=$(cat $STATE_FILE | jq '.release="'$release'"')
-    _update_state "$update"
     if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
       export INSTALL_MODE="$install_mode"
     else
