@@ -103,7 +103,7 @@ bootstrap_state() {
 
 modify_state() {
   if [ "$INSTALL_MODE" == "production" ]; then
-    __process_msg "default state.json created, do you want to edit it to to update any values ?"
+    __process_msg "Do  you want to edit state.json to to update any values ?"
     __process_msg "enter 'yes' to edit the file, any other key to proceed"
     read response
     if [[ "$response" == "yes" ]]; then
