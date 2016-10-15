@@ -429,6 +429,9 @@ provision_api() {
 
   _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
+
+  __process_msg "waiting 10 seconds for api to shut down "
+  sleep 10
   __process_msg "Successfully provisioned api"
 }
 

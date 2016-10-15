@@ -163,6 +163,8 @@ upsert_systemIntegrations() {
       __process_msg "System integration already present, updating it: $enabled_system_integration_master_name"
       local db_system_integration_id=$(echo $system_integration_in_db \
         | jq -r '.id')
+      local db_system_integration_name=$(echo $system_integration_in_db \
+        | jq -r '.name')
       local db_system_integration_master_name=$(echo $system_integration_in_db \
         | jq -r '.masterName')
       local db_system_integration_master_display_name=$(echo $system_integration_in_db \
@@ -174,6 +176,8 @@ upsert_systemIntegrations() {
         | jq '.masterName="'$db_system_integration_master_name'"')
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.masterDisplayName="'$db_system_integration_master_display_name'"')
+      enabled_system_integration=$(echo $enabled_system_integration \
+        | jq '.name="'$db_system_integration_name'"')
 
       local integrations_put_endpoint="$api_url/systemIntegrations/$db_system_integration_id"
       local post_call_resp_code=$(curl \
@@ -207,8 +211,6 @@ upsert_systemIntegrations() {
       local enabled_master_integration_name=$(echo $enabled_master_integration \
         | jq -r '.name')
 
-      enabled_system_integration=$(echo $enabled_system_integration \
-        | jq '.name="'$enabled_master_integration_display_name'"')
       enabled_system_integration=$(echo $enabled_system_integration \
         | jq '.masterIntegrationId="'$enabled_master_integration_id'"')
       enabled_system_integration=$(echo $enabled_system_integration \
