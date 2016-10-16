@@ -6,11 +6,6 @@ OLD_STATE_FILE="$ROOT_DIR/data/state.json"
 STATE_FILE_TEMPLATE="$USR_DIR/state.json.example"
 STATE_FILE_MIGRATE="$USR_DIR/state.json.migrate"
 
-copy_template() {
-  echo "copying state.json template"
-  cp -vr $STATE_FILE_TEMPLATE $STATE_FILE_MIGRATE
-}
-
 update_release() {
   # update the release version in migrate from versions file
   echo "updating release version and main metadata"
@@ -25,6 +20,7 @@ update_release() {
 update_machines() {
   # copy machines from old state to migrate file
   echo "updating machines"
+  cp -vr $ROOT_DIR/data/machines.json $USR_DIR/machines.json
   local machines=$(cat $OLD_STATE_FILE \
     | jq -c '[ .machines[] ]')
 
@@ -134,19 +130,20 @@ migrate() {
       \"release\": \"\",
       \"services\":[]
     }"
-    touch $STATE_FILE_MIGRATE
-    local pretty_state=$(echo $state_migrate | jq '.' | tee $STATE_FILE_MIGRATE)
+
+    local pretty_state=$(echo $state_migrate \
+      | jq '.' \
+      | tee $STATE_FILE_MIGRATE)
   else
     echo "The old state.json file doesn't exist"
   fi
 }
 
 main() {
-  copy_template
+  migrate
   update_release
   update_machines
   update_install_status
-  migrate
 }
 
 main
