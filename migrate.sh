@@ -174,12 +174,19 @@ update_db_creds() {
     | tee $STATE_FILE_MIGRATE)
 }
 
+copy_keys() {
+  echo "copying key files"
+  sudo cp -vr $ROOT_DIR/data/machinekey $USR_DIR/machinekey
+  sudo cp -vr $ROOT_DIR/data/machinekey.pub $USR_DIR/machinekey.pub
+}
+
 main() {
   migrate
   update_release
   update_machines
   update_install_status
   update_db_creds
+  copy_keys
 }
 
 main
