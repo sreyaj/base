@@ -69,6 +69,14 @@ update_install_status() {
     | jq '.installStatus.gitlabInitialized=true')
   update=$(echo $update \
     | jq '.installStatus.composeInstalled=true')
+  update=$(echo $update \
+    | jq '.installStatus.swarmInstalled=true')
+  update=$(echo $update \
+    | jq '.installStatus.swarmInitialized=true')
+  update=$(echo $update \
+    | jq '.installStatus.ecrInitialized=true')
+  update=$(echo $update \
+    | jq '.installStatus.ecrInstalled=true')
 
   update=$(echo $update \
     | jq '.' \
@@ -139,11 +147,39 @@ migrate() {
   fi
 }
 
+update_db_creds() {
+  echo "updating db credentials"
+  local db_host=$(cat $STATE_FILE_MIGRATE \
+    | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $db_host | jq -r '.ip')
+
+  local update=$(cat $STATE_FILE_MIGRATE \
+    | jq '.systemSettings.dbHost="'$host'"')
+  update=$(echo $update \
+    | jq '.systemSettings.dbPort=5432')
+  update=$(echo $update \
+    | jq '.systemSettings.dbUsername="apiuser"')
+  update=$(echo $update \
+    | jq '.systemSettings.dbPassword="testing1234"')
+  update=$(echo $update \
+    | jq '.systemSettings.dbname="shipdb"')
+  update=$(echo $update \
+    | jq '.systemSettings.dbDialect="postgres"')
+  local db_url="$host:5432"
+  update=$(echo $update \
+    | jq '.systemSettings.dbUrl="'$db_url'"')
+
+  update=$(echo $update \
+    | jq '.' \
+    | tee $STATE_FILE_MIGRATE)
+}
+
 main() {
   migrate
   update_release
   update_machines
   update_install_status
+  update_db_creds
 }
 
 main
