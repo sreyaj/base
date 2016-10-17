@@ -174,6 +174,37 @@ update_db_creds() {
     | tee $STATE_FILE_MIGRATE)
 }
 
+update_amqp_vars() {
+  echo "updating amqp vars"
+  local amqp_user="SHIPPABLETESTUSER"
+  local amqp_pass="SHIPPABLETESTPASS"
+  local amqp_protocol=$(cat $STATE_FILE_MIGRATE \
+    | jq -r '.systemSettings.amqpProtocol')
+  local amqp_host=$(cat $STATE_FILE_MIGRATE \
+    | jq -r '.systemSettings.amqpHost')
+  local amqp_port=$(cat $STATE_FILE_MIGRATE \
+    | jq -r '.systemSettings.amqpPort')
+  local amqp_admin_protocol=$(cat $STATE_FILE_MIGRATE \
+    | jq -r '.systemSettings.amqpAdminProtocol')
+  local amqp_admin_port=$(cat $STATE_FILE_MIGRATE \
+    | jq -r '.systemSettings.amqpAdminPort')
+
+  local amqp_url_updated="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host/shippable"
+  local amqp_url_root="$amqp_protocol://$amqp_user:$amqp_pass@$amqp_host/shippableRoot"
+  local amqp_url_admin="$amqp_admin_protocol://$amqp_user:$amqp_pass@$amqp_host:$amqp_admin_port"
+
+  local update=$(cat $STATE_FILE_MIGRATE \
+    | jq '.systemSettings.amqpUrl="'$amqp_url_updated'"')
+  update=$(echo $update \
+    | jq '.systemSettings.amqpUrlRoot="'$amqp_url_root'"')
+  update=$(echo $update \
+    | jq '.systemSettings.amqpUrlAdmin="'$amqp_url_admin'"')
+
+  update=$(echo $update \
+    | jq '.' \
+    | tee $STATE_FILE_MIGRATE)
+}
+
 copy_keys() {
   echo "copying key files"
   sudo cp -vr $ROOT_DIR/data/machinekey $USR_DIR/machinekey
@@ -187,6 +218,7 @@ main() {
   update_install_status
   update_db_creds
   copy_keys
+  update_amqp_vars
 }
 
 main
