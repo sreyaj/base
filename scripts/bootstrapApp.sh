@@ -525,18 +525,6 @@ manage_systemIntegrations() {
   source "$SCRIPTS_DIR/_manageSystemIntegrations.sh"
 }
 
-insert_providers_local() {
-  __process_msg "Inserting data into Providers"
-  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
-  local db_name="shipdb"
-
-  local providers_file=$REMOTE_SCRIPTS_DIR/providers_data.sql
-  local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
-
-  sudo cp -vr $providers_file $db_mount_dir
-  sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/providers_data.sql
-}
-
 insert_system_machine_image() {
   __process_msg "Inserting system machine image"
   local api_url=""
@@ -662,7 +650,7 @@ main() {
     manage_systemIntegrations
     insert_system_machine_image
     update_service_list
-    #restart_api_local
+    restart_api_local
   fi
 }
 
