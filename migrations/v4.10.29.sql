@@ -2261,6 +2261,9 @@ do $$
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'customHostDockerVersion') then
       alter table "systemConfigs" add column "customHostDockerVersion" varchar(24);
     end if;
+
+    -- update Git Store integration type
+    update "masterIntegrations" set "level" = 'system' where "masterIntegrationId" = 1 and "name" = 'Git store' and type = 'scm';
   end
 $$;
 
