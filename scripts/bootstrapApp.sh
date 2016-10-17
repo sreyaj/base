@@ -548,17 +548,17 @@ insert_system_machine_image() {
   local system_machine_images=$(cat $release_file | jq -r '.systemMachineImages')
   local system_machine_images_length=$(echo $system_machine_images | jq -r '. | length')
 
-  local response=$(curl \
+  local existing_system_machine_images=$(curl \
     -H "Content-Type: application/json" \
     -H "Authorization: apiToken $api_token" \
     -X GET $system_machine_image_post_endpoint \
     --silent)
-  response=$(echo $response | jq '.')
+  existing_system_machine_images=$(echo $existing_system_machine_images | jq '.')
 
   for i in $(seq 1 $system_machine_images_length); do
     local system_machine_image=$(echo $system_machine_images | jq '.['"$i-1"']')
     local system_machine_image_name=$(echo $system_machine_image | jq -r '.name')
-    local system_machine_image_db=$(echo $response | jq '.[] | select (.name=="'$system_machine_image_name'")')
+    local system_machine_image_db=$(echo $existing_system_machine_images | jq '.[] | select (.name=="'$system_machine_image_name'")')
     if [ -z "$system_machine_image_db" ]; then
       local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
         -X POST -d "$system_machine_image" $system_machine_image_post_endpoint \
