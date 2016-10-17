@@ -74,11 +74,83 @@ __check_dependencies() {
   }
 }
 
+use_latest_release() {
+  __process_msg "Using latest release"
+
+
+  local release_major_versions="[]"
+  local release_minor_versions=""
+  local release_patch_versions=""
+
+  for filepath in $VERSIONS_DIR/*; do
+    local filename=$(basename $filepath)
+    local file_major_version=""
+    if [[ $filename =~ ^v([0-9]).([0-9])([0-9])*.([0-9])([0-9])*.json$ ]]; then
+      local file_major_version="${BASH_REMATCH[1]}"
+      file_major_version=$(python -c "print int($file_major_version)")
+      release_major_versions="$file_major_version,"
+    fi
+  done
+
+  release_major_versions="["${release_major_versions::-1}"]"
+  local release_major_versions_count=$(echo $release_major_versions | jq '. | length')
+  local release_file_major_version=0
+  for i in $(seq 1 $release_major_versions_count); do
+    local major_version=$(echo $release_major_versions | jq -r '.['"$i-1"']')
+    if [ $major_version -gt $release_file_major_version ]; then
+      release_file_major_version=$major_version
+    fi
+  done
+
+  for filepath in $VERSIONS_DIR/*; do
+    local filename=$(basename $filepath)
+    local file_minor_version=""
+    if [[ $filename =~ ^v($release_file_major_version).([0-9])([0-9])*.([0-9])([0-9])*.json$ ]]; then
+      local file_minor_version="${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
+      file_minor_version=$(python -c "print int($file_minor_version)")
+      release_minor_versions="$file_minor_version,"
+    fi
+  done
+
+  release_minor_versions="["${release_minor_versions::-1}"]"
+  release_minor_versions_count=$(echo $release_minor_versions | jq '. | length')
+  local release_file_minor_version=0
+  for i in $(seq 1 $release_minor_versions_count); do
+    local minor_version=$(echo $release_minor_versions | jq -r '.['"$i-1"']')
+    if [ $minor_version -gt $release_file_minor_version ]; then
+      release_file_minor_version=$minor_version
+    fi
+  done
+
+  for filepath in $VERSIONS_DIR/*; do
+    local filename=$(basename $filepath)
+    local file_patch_version=""
+    if [[ $filename =~ ^v($release_file_major_version).($release_file_minor_version).([0-9])([0-9])*.json$ ]]; then
+      local file_patch_version="${BASH_REMATCH[3]}${BASH_REMATCH[4]}"
+      file_patch_version=$(python -c "print int($file_patch_version)")
+      release_patch_versions="$file_patch_version,"
+    fi
+  done
+
+  release_patch_versions="["${release_patch_versions::-1}"]"
+  release_patch_versions_count=$(echo $release_patch_versions | jq '. | length')
+  local release_file_patch_version=0
+  for i in $(seq 1 $release_patch_versions_count); do
+    local patch_version=$(echo $release_patch_versions | jq -r '.['"$i-1"']')
+    if [ $patch_version -gt $release_file_patch_version ]; then
+      release_file_patch_version=$patch_version
+    fi
+  done
+
+  local latest_release="v"$release_file_major_version"."$release_file_minor_version"."$release_file_patch_version
+  __process_msg "Latest release version :: "$latest_release
+
+  readonly RELEASE_VERSION=$latest_release
+}
+
 install() {
-  __check_dependencies
   source "$SCRIPTS_DIR/getConfigs.sh"
   local release_version=$(cat $STATE_FILE | jq -r '.release')
-  readonly RELEASE_VERSION=$release_version
   readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$release_version"
 
   source "$SCRIPTS_DIR/bootstrapMachines.sh"
@@ -228,86 +300,6 @@ install_file() {
   fi
 }
 
-use_latest_release() {
-  __process_msg "Using latest release"
-
-  {
-    type jq &> /dev/null && __process_msg "'jq' already installed, skipping"
-  } || {
-    __process_msg "Installing 'jq'"
-    apt-get install -y jq
-  }
-
-  local release_major_versions="[]"
-  local release_minor_versions=""
-  local release_patch_versions=""
-
-  for filepath in $VERSIONS_DIR/*; do
-    local filename=$(basename $filepath)
-    local file_major_version=""
-    if [[ $filename =~ ^v([0-9]).([0-9])([0-9])*.([0-9])([0-9])*.json$ ]]; then
-      local file_major_version="${BASH_REMATCH[1]}"
-      file_major_version=$(python -c "print int($file_major_version)")
-      release_major_versions="$file_major_version,"
-    fi
-  done
-
-  release_major_versions="["${release_major_versions::-1}"]"
-  local release_major_versions_count=$(echo $release_major_versions | jq '. | length')
-  local release_file_major_version=0
-  for i in $(seq 1 $release_major_versions_count); do
-    local major_version=$(echo $release_major_versions | jq -r '.['"$i-1"']')
-    if [ $major_version -gt $release_file_major_version ]; then
-      release_file_major_version=$major_version
-    fi
-  done
-
-  for filepath in $VERSIONS_DIR/*; do
-    local filename=$(basename $filepath)
-    local file_minor_version=""
-    if [[ $filename =~ ^v($release_file_major_version).([0-9])([0-9])*.([0-9])([0-9])*.json$ ]]; then
-      local file_minor_version="${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
-      file_minor_version=$(python -c "print int($file_minor_version)")
-      release_minor_versions="$file_minor_version,"
-    fi
-  done
-
-  release_minor_versions="["${release_minor_versions::-1}"]"
-  release_minor_versions_count=$(echo $release_minor_versions | jq '. | length')
-  local release_file_minor_version=0
-  for i in $(seq 1 $release_minor_versions_count); do
-    local minor_version=$(echo $release_minor_versions | jq -r '.['"$i-1"']')
-    if [ $minor_version -gt $release_file_minor_version ]; then
-      release_file_minor_version=$minor_version
-    fi
-  done
-
-  for filepath in $VERSIONS_DIR/*; do
-    local filename=$(basename $filepath)
-    local file_patch_version=""
-    if [[ $filename =~ ^v($release_file_major_version).($release_file_minor_version).([0-9])([0-9])*.json$ ]]; then
-      local file_patch_version="${BASH_REMATCH[3]}${BASH_REMATCH[4]}"
-      file_patch_version=$(python -c "print int($file_patch_version)")
-      release_patch_versions="$file_patch_version,"
-    fi
-  done
-
-  release_patch_versions="["${release_patch_versions::-1}"]"
-  release_patch_versions_count=$(echo $release_patch_versions | jq '. | length')
-  local release_file_patch_version=0
-  for i in $(seq 1 $release_patch_versions_count); do
-    local patch_version=$(echo $release_patch_versions | jq -r '.['"$i-1"']')
-    if [ $patch_version -gt $release_file_patch_version ]; then
-      release_file_patch_version=$patch_version
-    fi
-  done
-
-  local latest_release="v"$release_file_major_version"."$release_file_minor_version"."$release_file_patch_version
-  __process_msg "Latest release version :: "$latest_release
-  local update=$(cat $STATE_FILE | jq '.release="'$latest_release'"')
-  _update_state "$update"
-}
-
 __print_help_install() {
   echo "
   usage: ./base.sh --install [local | production]
@@ -359,12 +351,14 @@ if [[ $# -gt 0 ]]; then
       if [[ ! $# -eq 1 ]]; then
         __process_msg "Mention the release version to be installed."
       else
+        __check_dependencies
         install_release $1
       fi
       ;;
     -i|--install)
       shift
       __process_marker "Booting shippable installer"
+      __check_dependencies
       use_latest_release
       if [[ $# -eq 1 ]]; then
         install_mode=$1
