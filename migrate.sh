@@ -199,6 +199,8 @@ update_amqp_vars() {
     | jq '.systemSettings.amqpUrlRoot="'$amqp_url_root'"')
   update=$(echo $update \
     | jq '.systemSettings.amqpUrlAdmin="'$amqp_url_admin'"')
+  update=$(echo $update \
+    | jq '.systemSettings.amqpDefaultExchange="shippableEx"')
 
   update=$(echo $update \
     | jq '.' \
