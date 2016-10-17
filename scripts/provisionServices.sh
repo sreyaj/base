@@ -329,8 +329,7 @@ provision_services() {
 }
 
 remove_services_prod() {
-  # local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  # local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
+  #TODO: Handle the scenario where the installer is not running on the swarm machine
   local running_services=$(docker service inspect --format='{{json .Spec.Name}},' $(sudo docker service ls -q))
   running_services="["${running_services::-1}"]"
   local required_services=$(cat $STATE_FILE | jq -c '[ .services[] ]')
@@ -350,7 +349,6 @@ remove_services_prod() {
     fi
   done
 }
-
 
 remove_services_local() {
   local running_services=$(echo "$(docker inspect --format='{{json .Name}}' $(docker ps -a -q))" | tr '\n' ',')
