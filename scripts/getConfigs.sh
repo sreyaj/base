@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-export RELEASE_VERSION="v4.10.29"
+export RELEASE_VERSION="v4.10.31"
 
 ###########################################################
 validate_version() {
