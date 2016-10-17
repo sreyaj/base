@@ -352,6 +352,9 @@ if [[ $# -gt 0 ]]; then
         __process_msg "Mention the release version to be installed."
       else
         __check_dependencies
+        release_version=$(cat $STATE_FILE \
+          | jq -r '.release')
+        readonly RELEASE_VERSION=$latest_release
         install_release $1
       fi
       ;;
