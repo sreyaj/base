@@ -548,15 +548,37 @@ insert_system_machine_image() {
   local system_machine_images=$(cat $release_file | jq -r '.systemMachineImages')
   local system_machine_images_length=$(echo $system_machine_images | jq -r '. | length')
 
+  local existing_system_machine_images=$(curl \
+    -H "Content-Type: application/json" \
+    -H "Authorization: apiToken $api_token" \
+    -X GET $system_machine_image_post_endpoint \
+    --silent)
+  existing_system_machine_images=$(echo $existing_system_machine_images | jq '.')
+
   for i in $(seq 1 $system_machine_images_length); do
     local system_machine_image=$(echo $system_machine_images | jq '.['"$i-1"']')
-    local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
-      -X POST -d "$system_machine_image" $system_machine_image_post_endpoint \
-        --write-out "%{http_code}\n" --silent --output /dev/null)
-    if [ "$post_call_resp_code" -gt "299" ]; then
-      echo "Error inserting system machine image(status code $post_call_resp_code)"
+    local system_machine_image_name=$(echo $system_machine_image | jq -r '.name')
+    local system_machine_image_db=$(echo $existing_system_machine_images | jq '.[] | select (.name=="'$system_machine_image_name'")')
+    if [ -z "$system_machine_image_db" ]; then
+      local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
+        -X POST -d "$system_machine_image" $system_machine_image_post_endpoint \
+          --write-out "%{http_code}\n" --silent --output /dev/null)
+      if [ "$post_call_resp_code" -gt "299" ]; then
+        echo "Error inserting system machine image(status code $post_call_resp_code)"
+      else
+        echo "Sucessfully inserted system machine image"
+      fi
     else
-      echo "Sucessfully inserted system machine image"
+      local system_machine_image_db_id=$(echo $system_machine_image_db | jq -r '.id')
+      local put_system_machine_image_endpoint=$system_machine_image_post_endpoint"/"$system_machine_image_db_id
+      local put_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
+        -X PUT -d "$system_machine_image" $put_system_machine_image_endpoint \
+          --write-out "%{http_code}\n" --silent --output /dev/null)
+      if [ "$put_call_resp_code" -gt "299" ]; then
+        echo "Error updating system machine image(status code $put_call_resp_code)"
+      else
+        echo "Sucessfully updated system machine image"
+      fi
     fi
   done
 }
