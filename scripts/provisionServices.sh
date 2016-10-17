@@ -152,8 +152,23 @@ __save_service_config() {
   env_values=""
   for i in $(seq 1 $env_vars_count); do
     local env_var=$(echo $env_vars | jq -r '.['"$i-1"']')
-    __map_env_vars $env_var $component $job_type
-    env_values="$env_values -e $env_var=$env_value"
+
+    if [ "$env_var" == "JOB_TYPE" ] || \
+      [ "$env_var" == "COMPONENT" ]; then
+
+      if [ $service == "deploy" ] || [ $service == "manifest" ] \
+        || [ $service == "release" ] || [ $service == "rSync" ]; then
+          __map_env_vars $env_var "stepExec" "$service"
+        env_values="$env_values -e $env_var=$env_value"
+      else
+        __map_env_vars $env_var $component $job_type
+        env_values="$env_values -e $env_var=$env_value"
+      fi
+    else
+      __map_env_vars $env_var $component $job_type
+      env_values="$env_values -e $env_var=$env_value"
+    fi
+
   done
 
   # Proxy
