@@ -145,13 +145,14 @@ use_latest_release() {
   local latest_release="v"$release_file_major_version"."$release_file_minor_version"."$release_file_patch_version
   __process_msg "Latest release version :: "$latest_release
 
-  readonly RELEASE_VERSION=$latest_release
+  export RELEASE_VERSION=$latest_release
 }
 
 install() {
   source "$SCRIPTS_DIR/getConfigs.sh"
   local release_version=$(cat $STATE_FILE | jq -r '.release')
   readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$release_version"
+  export RELEASE_VERSION=$release_version
 
   source "$SCRIPTS_DIR/bootstrapMachines.sh"
   source "$SCRIPTS_DIR/installCore.sh"
@@ -354,7 +355,7 @@ if [[ $# -gt 0 ]]; then
         __check_dependencies
         release_version=$(cat $STATE_FILE \
           | jq -r '.release')
-        readonly RELEASE_VERSION=$latest_release
+        export RELEASE_VERSION=$latest_release
         install_release $1
       fi
       ;;
