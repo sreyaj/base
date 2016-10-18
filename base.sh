@@ -28,6 +28,7 @@ readonly SSH_PUBLIC_KEY=$USR_DIR/machinekey.pub
 readonly LOCAL_BRIDGE_IP=172.17.42.1
 export LC_ALL=C
 export RELEASE_VERSION=""
+export DEPLOY_TAG=""
 
 source "$SCRIPTS_DIR/_execScriptRemote.sh"
 source "$SCRIPTS_DIR/_copyScriptRemote.sh"
@@ -149,6 +150,12 @@ use_latest_release() {
 }
 
 install() {
+  __process_msg "Running installer steps"
+
+  if [ -z "$DEPLOY_TAG" ]; then
+    export DEPLOY_TAG=$RELEASE_VERSION
+  fi
+
   source "$SCRIPTS_DIR/getConfigs.sh"
   local release_version=$(cat $STATE_FILE | jq -r '.release')
   readonly SCRIPT_DIR_REMOTE="/tmp/shippable/$release_version"
@@ -160,126 +167,47 @@ install() {
   source "$SCRIPTS_DIR/provisionServices.sh"
 }
 
-find_latest_release() {
-  # release version format = v4.10.12.json
-  # check if release file exists,
-  # if not, copy the last release to new release
-  local release="$1"
-
-  local release_version_file="$VERSIONS_DIR/$RELEASE_VERSION".json
-  if [ ! -f "$release_version_file" ]; then
-
-    local release_major_versions=""
-    local release_minor_versions=""
-    local release_patch_versions=""
-
-    for filepath in $VERSIONS_DIR/*; do
-      local filename=$(basename $filepath)
-      local file_major_version=""
-      local file_minor_version=""
-      if [[ $filename =~ ^v([0-9]).([0-9])([0-9])*.([0-9])([0-9])*.json$ ]]; then
-        local file_major_version="${BASH_REMATCH[1]}"
-        file_major_version=$(python -c "print int($file_major_version)")
-
-        local file_minor_version="${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
-        file_minor_version=$(python -c "print int($file_minor_version)")
-
-        local file_patch_version="${BASH_REMATCH[4]}${BASH_REMATCH[5]}"
-        file_patch_version=$(python -c "print int($file_patch_version)")
-
-        release_major_versions="$release_major_versions $file_major_version"
-        release_minor_versions="$release_minor_versions $file_minor_version"
-        release_patch_versions="$release_patch_versions $file_patch_version"
-      else
-        __process_msg "Version file name is in incorrect syntax: $filename"
-        exit 1
-      fi
-    done
-
-    local release_file_major_version=0
-    for major_version in $release_major_versions; do
-      if [ $major_version -gt $release_file_major_version ]; then
-        release_file_major_version=$major_version
-      fi
-    done
-
-    local release_file_minor_version=0
-    for minor_version in $release_minor_versions; do
-      if [ $minor_version -gt $release_file_minor_version ]; then
-        release_file_minor_version=$minor_version
-      fi
-    done
-
-    local release_file_patch_version=0
-    for patch_version in $release_patch_versions; do
-      if [ $patch_version -gt $release_file_patch_version ]; then
-        release_file_patch_version=$patch_version
-      fi
-    done
-
-    local latest_release=$(printf \
-      "v%d.%d.%d" \
-      "$release_file_major_version" \
-      "$release_file_minor_version" \
-      "$release_file_patch_version")
-    __process_msg "latest available release is $latest_release"
-
-    if [[ $release =~ ^v([0-9]).([0-9])([0-9])*.([0-9])([0-9])*$ ]]; then
-      local major_version="${BASH_REMATCH[1]}"
-      major_version=$(python -c "print int($major_version)")
-
-      local minor_version="${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
-      minor_version=$(python -c "print int($minor_version)")
-
-      local patch_version="${BASH_REMATCH[4]}${BASH_REMATCH[5]}"
-      patch_version=$(python -c "print int($patch_version)")
-
-      if [ $major_version -ne $release_file_major_version ] \
-        || [ $minor_version -ne $release_file_minor_version ] \
-        || [ $patch_version -ne $release_file_patch_version ]; then
-        __process_msg "Creating versions file for $release"
-        cp -vr $VERSIONS_DIR/$latest_release.json $VERSIONS_DIR/$release.json
-        __process_msg "Created new version file $VERSIONS_DIR/$release.json"
-      else
-        __process_msg "Version file for release $release already exist"
-      fi
-
-    else
-      __process_msg "Invalid release number provided. the format is v4.10.12"
-      exit 1
-    fi
-  else
-    __process_msg "version file for the release found, using it $release_version_file"
-  fi
-}
-
 install_release() {
-  local release=$1
-  local install_mode=$(cat $STATE_FILE \
-    | jq -r '.installMode')
-  local update=$(cat $STATE_FILE \
-    | jq '.release="'$release'"')
-  _update_state "$update"
-  local release_file="$VERSIONS_DIR/$release".json
+  # parse release
+  local deploy_tag="$1"
+  if [[ $deploy_tag =~ ^v([0-9]).([0-9])([0-9])*.([0-9])([0-9])*.*$ ]]; then
+    __process_msg "Valid release version, parsing"
+    local major_version="${BASH_REMATCH[1]}"
+    major_version=$(python -c "print int($major_version)")
 
-  if [ -f $release_file ]; then
-    type jq
-    __process_marker "Booting shippable installer"
-    if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
+    local minor_version="${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
+    minor_version=$(python -c "print int($minor_version)")
+
+    local patch_version="${BASH_REMATCH[4]}${BASH_REMATCH[5]}"
+    patch_version=$(python -c "print int($patch_version)")
+
+    local release=$(printf \
+      "v%d.%d.%d" \
+      "$major_version" \
+      "$minor_version" \
+      "$patch_version")
+
+    __process_msg "Parsed release number: $release"
+
+    local release_file_path="$VERSIONS_DIR/$release".json
+    if [ -f $release_file_path ]; then
+      __process_msg "Release file found: $release_file_path"
+      local install_mode=$(cat $STATE_FILE \
+        | jq -r '.installMode')
       export INSTALL_MODE="$install_mode"
-    else
-      __process_msg "Running installer in default 'local' mode"
-    fi
-    install
-  else
-    if [[ $release =~ ^v([0-9]).([0-9])([0-9])*.([0-9])([0-9])*$ ]]; then
-      __process_msg "Valid release number provided, finding latest release file version"
-      find_latest_release "$release"
+
+      __process_msg "Running installer for release $deploy_tag"
+
+      export RELEASE_VERSION=$release
+      export DEPLOY_TAG=$deploy_tag
       install
     else
-      __process_msg "Invalid release number provided. the format is v4.10.12"
+      __process_msg "No release file found at : $release_file_path, exiting"
       exit 1
     fi
+  else
+    __process_msg "Invalid release provided, exiting"
+    exit 1
   fi
 }
 

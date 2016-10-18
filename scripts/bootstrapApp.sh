@@ -285,8 +285,8 @@ generate_api_config() {
 
   local system_images_registry=$(cat $STATE_FILE | jq -r '.systemSettings.systemImagesRegistry')
   local api_service_repository=$(echo $api_service | jq -r '.repository')
-  local api_service_tag=$RELEASE_VERSION
-  local api_service_image="$system_images_registry/$api_service_repository:$RELEASE_VERSION"
+  local api_service_tag=$(cat $STATE_FILE | jq -r '.deployTag')
+  local api_service_image="$system_images_registry/$api_service_repository:$api_service_tag"
   __process_msg "Successfully read from state.json: api.image ($api_service_image)"
 
   local api_env_vars=$(cat $release_file | jq '.serviceConfigs[] | select (.name=="api") | .envs')

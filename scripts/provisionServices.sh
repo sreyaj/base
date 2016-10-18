@@ -118,14 +118,9 @@ __save_service_config() {
   local service_repository=$(cat $release_file | jq -r --arg service "$service" '
     .serviceConfigs[] |
     select (.name==$service) | .repository')
-  local service_tag=$service"."$RELEASE_VERSION
-  if [ $service == "www" ] || [ $service == "api" ] \
-    || [ $service == "nexec" ]; then
-    service_tag=$RELEASE_VERSION
-  elif [ $service == "deploy" ] || [ $service == "manifest" ] \
-    || [ $service == "release" ] || [ $service == "rSync" ]; then
-    service_tag="stepExec".$RELEASE_VERSION
-  fi
+  #local service_tag=$service"."$RELEASE_VERSION
+  local service_tag=$(cat $STATE_FILE \
+      | jq -r '.deployTag')
   local service_image="$system_images_registry/$service_repository:$service_tag"
   __process_msg "Image version generated for $service : $service_image"
   local image_update=$(cat $STATE_FILE | jq --arg service "$service" '
