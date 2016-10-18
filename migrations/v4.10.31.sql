@@ -1267,6 +1267,12 @@ do $$
       values (136, '57e8ea9c14d3ef88e56fecb5', 'region', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    -- Add S3 systemIntegartion
+
+    if not exists (select 1 from "systemIntegrations" where "name" = 'S3'  and "masterType" = 'artifact') then
+      insert into "systemIntegrations" ("id", "systemIntegrationId", "name", "masterDisplayName", "masterIntegrationId", "masterName", "masterType", "formJSONValues","isEnabled","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('574ee745d49b091400b76276', 7, 'S3', 'Amazon S3', '57e8ea9c14d3ef88e56fecb5', 'S3', 'artifact', '', true, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
     -- Add systemImages
 
     if not exists (select 1 from "systemImages" where "systemImageId" = 1) then
