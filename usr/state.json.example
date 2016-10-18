@@ -42,6 +42,122 @@
     {
       "type": "scm",
       "name": "bitbucketServer"
+    },
+    {
+      "type": "cloudproviders",
+      "name": "AWS"
+    },
+    {
+      "type": "notification",
+      "name": "SMTP"
+    },
+    {
+      "name": "mailgun",
+      "type": "notification"
+    },
+    {
+      "name": "githubEnterprise",
+      "type": "auth"
+    },
+    {
+      "type": "hub",
+      "name": "Docker"
+    },
+    {
+      "type": "hub",
+      "name": "Private Docker Registry"
+    },
+    {
+      "type": "notification",
+      "name": "Slack"
+    },
+    {
+      "type": "notification",
+      "name": "webhook"
+    },
+    {
+      "type": "hub",
+      "name": "GCR"
+    },
+    {
+      "type": "deploy",
+      "name": "AWS"
+    },
+    {
+      "type": "deploy",
+      "name": "AWS_IAM"
+    },
+    {
+      "type": "cloudproviders",
+      "name": "AWS"
+    },
+    {
+      "type": "deploy",
+      "name": "GKE"
+    },
+    {
+      "type": "deploy",
+      "name": "DCL"
+    },
+    {
+      "type": "deploy",
+      "name": "ACS"
+    },
+    {
+      "type": "notification",
+      "name": "Email"
+    },
+    {
+      "type": "hub",
+      "name": "Quay.io"
+    },
+    {
+      "type": "key",
+      "name": "ssh-key"
+    },
+    {
+      "type": "key",
+      "name": "pem-key"
+    },
+    {
+      "type": "notification",
+      "name": "hipchat"
+    },
+    {
+      "type": "hub",
+      "name": "Docker Trusted Registry"
+    },
+    {
+      "type": "deploy",
+      "name": "DDC"
+    },
+    {
+      "type": "deploy",
+      "name": "TRIPUB"
+    },
+    {
+      "name": "mailgun",
+      "type": "notification"
+    },
+    {
+      "name": "CLUSTER",
+      "type": "deploy"
+    },
+    {
+      "name": "artifactory",
+      "type": "hub"
+    },
+    {
+      "name": "Jenkins",
+      "type": "externalci"
+    },
+    {
+      "name": "gitlab",
+      "type": "scm"
+    },
+    {
+      "type": "scm",
+      "name": "ghe"
     }
   ],
   "systemIntegrations": [
@@ -146,6 +262,156 @@
          "label": "secretKey",
          "value": "xxxx"
        }
+      ]
+    },
+    {
+      "name": "amazons3",
+      "masterName": "amazons3",
+      "masterType": "cloudproviders",
+      "formJSONValues": [
+       {
+         "label": "accessKey",
+         "value": "xxxx"
+       },
+       {
+         "label": "secretKey",
+         "value": "xxxx"
+       },
+       {
+         "label": "bucketname",
+         "value": "xxxx"
+       }
+      ]
+    },
+    {
+      "name": "github.com",
+      "masterName": "github",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "secretClientId"
+        },
+        {
+          "label": "clientSecret",
+          "value": "xxx"
+        },
+        {
+          "label": "wwwUrl",
+          "value": "http://localhost:50001"
+        },
+        {
+          "label": "url",
+          "value": "https://api.github.com"
+        }
+      ]
+    },
+    {
+      "name": "bitbucket.com",
+      "masterName": "bitbucket",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "secretClientId"
+        },
+        {
+          "label": "clientSecret",
+          "value": "xxx"
+        },
+        {
+          "label": "wwwUrl",
+          "value": "http://localhost:50001"
+        },
+        {
+          "label": "url",
+          "value": "https://api.bitbucket.org"
+        }
+      ]
+    },
+    {
+      "name": "smtp",
+      "masterName": "SMTP",
+      "masterType": "notification",
+      "formJSONValues": [
+        {
+          "label": "emailAuthUser",
+          "value": ""
+        },
+        {
+          "label": "emailAuthPassword",
+          "value": "xxx"
+        },
+        {
+          "label": "emailSender",
+          "value": "noreply@shippable.com"
+        },
+        {
+          "label": "host",
+          "value": ""
+        },
+        {
+          "label": "port",
+          "value": ""
+        },
+        {
+          "label": "secure",
+          "value": ""
+        },
+        {
+          "label": "hostname",
+          "value": ""
+        },
+        {
+          "label": "proxy",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "mailgun",
+      "masterName": "mailgun",
+      "masterType": "notification",
+      "formJSONValues": [
+        {
+          "label": "apiKey",
+          "value": ""
+        },
+        {
+          "label": "domain",
+          "value": "xxx"
+        },
+        {
+          "label": "emailSender",
+          "value": "noreply@shippable.com"
+        },
+        {
+          "label": "proxy",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "github enterprise auth",
+      "masterName": "githubEnterprise",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "value": "superSecret",
+          "label": "clientSecret"
+        },
+        {
+          "value": "someClientId",
+          "label": "clientId"
+        },
+        {
+          "value": "",
+          "label": "url"
+        },
+        {
+          "value": "",
+          "label": "wwwUrl"
+        }
       ]
     }
   ],
