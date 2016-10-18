@@ -95,6 +95,9 @@ bootstrap_state() {
 
     __process_msg "state.json bootstrapped with default values"
   else
+    local deploy_tag=$(cat $STATE_FILE \
+      | jq '.deployTag="'$DEPLOY_TAG'"')
+    update=$(echo $deploy_tag | jq '.' | tee $STATE_FILE)
     __process_msg "using existing state.json for version $release_version"
   fi
 }
