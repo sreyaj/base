@@ -153,7 +153,7 @@ install() {
   __process_msg "Running installer steps"
 
   if [ -z "$DEPLOY_TAG" ]; then
-    export DEPLOY_TAG=$RELEASE_VERSION
+    export DEPLOY_TAG=$RELEASE_VERSION-alpha
   fi
 
   source "$SCRIPTS_DIR/getConfigs.sh"

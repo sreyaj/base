@@ -505,7 +505,10 @@ run_migrations_local() {
 
   ##TODO: this should be the latest release file
   ##TODO update the version in state after migration is run
-  local migrations_file="$MIGRATIONS_DIR/$RELEASE_VERSION".sql
+  echo "========================================="
+  local migrations_file="$MIGRATIONS_DIR/$RELEASE_VERSION.sql"
+  echo $migrations_file
+  echo "========================================="
   if [ ! -f $migrations_file ]; then
     __process_msg "No migrations found for this release, skipping"
   else
