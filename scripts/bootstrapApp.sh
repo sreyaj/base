@@ -527,14 +527,13 @@ manage_systemIntegrations() {
 }
 
 insert_system_machine_image() {
-  __process_msg "Inserting system machine image"
+  __process_msg "Inserting system machine images"
   local api_url=""
   local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
   local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   local system_machine_image_post_endpoint="$api_url/systemMachineImages"
 
-  local release_file="$VERSIONS_DIR/$RELEASE_VERSION".json
-  local system_machine_images=$(cat $release_file | jq -r '.systemMachineImages')
+  local system_machine_images=$(cat $STATE_FILE | jq -r '.systemMachineImages')
   local system_machine_images_length=$(echo $system_machine_images | jq -r '. | length')
 
   local existing_system_machine_images=$(curl \
@@ -555,7 +554,7 @@ insert_system_machine_image() {
       if [ "$post_call_resp_code" -gt "299" ]; then
         echo "Error inserting system machine image(status code $post_call_resp_code)"
       else
-        echo "Sucessfully inserted system machine image"
+        echo "Sucessfully inserted system machine image: $system_machine_image_name"
       fi
     else
       local system_machine_image_db_id=$(echo $system_machine_image_db | jq -r '.id')
@@ -566,10 +565,11 @@ insert_system_machine_image() {
       if [ "$put_call_resp_code" -gt "299" ]; then
         echo "Error updating system machine image(status code $put_call_resp_code)"
       else
-        echo "Sucessfully updated system machine image"
+        __process_msg "Sucessfully updated system machine image: $system_machine_image_db_id"
       fi
     fi
   done
+  __process_msg "Successfully insertd system machine images"
 }
 
 restart_api() {
