@@ -102,22 +102,6 @@ bootstrap_state() {
   fi
 }
 
-modify_state() {
-  if [ "$INSTALL_MODE" == "production" ]; then
-    __process_msg "Do  you want to edit state.json to to update any values ?"
-    __process_msg "enter 'yes' to edit the file, any other key to proceed"
-    read response
-    if [[ "$response" == "yes" ]]; then
-      __process_msg "Edit 'usr/state.json' to update desired values and run installer again"
-      exit 0
-    else
-      __process_msg "state.json manual configuration skipped"
-    fi
-  else
-    __process_msg "Installer running locally, skipping optional configuration edit"
-  fi
-}
-
 validate_state() {
   __process_msg "validating state.json"
   # parse from jq
@@ -145,7 +129,6 @@ main() {
   generate_state
   validate_install_mode
   bootstrap_state
-  modify_state
   validate_state
 }
 
