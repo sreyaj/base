@@ -2146,6 +2146,11 @@ do $$
       alter table "routePermissions" add column "isSuperUser" BOOLEAN default false not null;
     end if;
 
+    -- Adds isFreeUser column in routePermissions table
+    if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'isFreeUser') then
+      alter table "routePermissions" add column "isFreeUser" BOOLEAN default false not null;
+    end if;
+
     -- Deletes entry for duplicate routePattern for /projects/postScm in routePermissions
     if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'allowedRoles') then
       delete from "routePermissions" where "httpVerb" = 'POST' and "routePattern" = '/projects/postScm' and "allowedRoles" = '["superUser","owner"]' and "roleCode" = 6020;
@@ -2291,7 +2296,7 @@ $$;
 
 create or replace function set_route_permission(
   httpVerb varchar, routePattern varchar,
-  roleCode int, isPublic boolean, isSuperUser boolean)
+  roleCode int, isPublic boolean, isSuperUser boolean, isFreeUser boolean)
 
   returns void as $$
   begin
@@ -2304,15 +2309,15 @@ create or replace function set_route_permission(
         ("roleCode" = roleCode OR "roleCode" IS NULL)
     ) then
       insert into "routePermissions" ("httpVerb", "routePattern",
-        "roleCode", "isPublic", "isSuperUser", "createdAt", "updatedAt")
+        "roleCode", "isPublic", "isSuperUser", "isFreeUser", "createdAt", "updatedAt")
       values (httpVerb, routePattern,
-        roleCode, isPublic, isSuperUser, now(), now());
+        roleCode, isPublic, isSuperUser, isFreeUser, now(), now());
       return;
     end if;
 
   -- update
     update "routePermissions"
-    set "roleCode" = roleCode, "isPublic" = isPublic, "isSuperUser" = isSuperUser
+    set "roleCode" = roleCode, "isPublic" = isPublic, "isSuperUser" = isSuperUser, "isFreeUser" = isFreeUser
     where "httpVerb" = httpVerb and
     "routePattern" = routePattern and
     ("roleCode" = roleCode OR "roleCode" IS NULL);
@@ -2331,7 +2336,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2339,7 +2345,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2347,7 +2354,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2355,7 +2363,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2363,7 +2372,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2371,7 +2381,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2379,7 +2390,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2387,7 +2399,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2395,7 +2408,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2403,7 +2417,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2411,7 +2426,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2419,7 +2435,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2427,7 +2444,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2435,7 +2453,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2443,7 +2462,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2451,7 +2471,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2459,7 +2480,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2467,7 +2489,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set accountCards routePermissions
@@ -2477,7 +2500,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2485,7 +2509,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2493,7 +2518,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2501,7 +2527,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2509,7 +2536,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2517,7 +2545,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2525,7 +2554,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2533,7 +2563,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2541,7 +2572,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2549,7 +2581,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set accountIntegrations routePermissions
@@ -2559,7 +2592,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2567,7 +2601,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2575,7 +2610,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2583,7 +2619,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2591,7 +2628,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2599,7 +2637,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2607,7 +2646,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2615,7 +2655,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2623,7 +2664,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2631,7 +2673,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2639,7 +2682,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2647,7 +2691,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2655,7 +2700,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2663,7 +2709,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2671,7 +2718,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2679,7 +2727,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2687,7 +2736,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2695,7 +2745,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set accountProfiles routePermissions
@@ -2705,7 +2756,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2713,7 +2765,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2721,7 +2774,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set accountTokens routePermissions
@@ -2731,7 +2785,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2739,7 +2794,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2747,7 +2803,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2755,7 +2812,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2763,7 +2821,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2771,7 +2830,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2779,7 +2839,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2787,7 +2848,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set betaUsers routePermissions
@@ -2797,7 +2859,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2805,7 +2868,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2813,7 +2877,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set buildJobs routePermissions
@@ -2823,7 +2888,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2831,7 +2897,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2839,7 +2906,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2847,7 +2915,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2855,7 +2924,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2863,7 +2933,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2871,7 +2942,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2879,7 +2951,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2887,7 +2960,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2895,7 +2969,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2903,7 +2978,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2911,7 +2987,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set buildJobConsoles routePermissions
@@ -2921,7 +2998,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2929,7 +3007,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2937,7 +3016,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2945,7 +3025,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2953,7 +3034,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2961,7 +3043,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2969,7 +3052,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set builds routePermissions
@@ -2979,7 +3063,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2987,7 +3072,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -2995,7 +3081,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3003,7 +3090,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3011,7 +3099,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3019,7 +3108,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3027,7 +3117,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3035,7 +3126,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3043,7 +3135,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3051,7 +3144,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3059,7 +3153,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3067,7 +3162,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set clusterNodes routePermissions
@@ -3077,7 +3173,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3085,7 +3182,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3093,7 +3191,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3101,7 +3200,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3109,7 +3209,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3117,7 +3218,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3125,7 +3227,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3133,7 +3236,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3141,7 +3245,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3149,7 +3254,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3157,7 +3263,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3165,7 +3272,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3173,7 +3281,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3181,7 +3290,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3189,7 +3299,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3197,7 +3308,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3205,7 +3317,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3213,7 +3326,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3221,7 +3335,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3229,7 +3344,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3237,7 +3353,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3245,7 +3362,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set clusterNodeConsoles routePermissions
@@ -3255,7 +3373,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3263,7 +3382,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3271,7 +3391,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3279,7 +3400,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3287,7 +3409,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3295,7 +3418,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set clusterNodeStats routePermissions
@@ -3305,7 +3429,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3313,7 +3438,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3321,7 +3447,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3329,7 +3456,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3337,7 +3465,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3345,7 +3474,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3353,7 +3483,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3361,7 +3492,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3369,7 +3501,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set dailyAggs routePermissions
@@ -3379,7 +3512,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3387,7 +3521,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3395,7 +3530,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set jobConsoles routePermissions
@@ -3405,7 +3541,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3413,7 +3550,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3421,7 +3559,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3429,7 +3568,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3437,7 +3577,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3445,7 +3586,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3453,7 +3595,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set jobCoverageReports routePermissions
@@ -3463,7 +3606,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3471,7 +3615,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3479,7 +3624,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3487,7 +3633,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3495,7 +3642,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3503,7 +3651,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3511,7 +3660,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set job routePermissions
@@ -3521,7 +3671,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3529,7 +3680,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3537,7 +3689,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3545,7 +3698,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3553,7 +3707,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3561,7 +3716,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3569,7 +3725,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3577,7 +3734,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3585,7 +3743,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3593,7 +3752,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3601,7 +3761,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set jobDependencies routePermissions
@@ -3611,7 +3772,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3619,7 +3781,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3627,7 +3790,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3635,7 +3799,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set jobTestReports routePermissions
@@ -3645,7 +3810,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3653,7 +3819,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3661,7 +3828,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3669,7 +3837,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3677,7 +3846,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3685,7 +3855,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3693,7 +3864,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set masterIntegrationFields routePermissions
@@ -3703,7 +3875,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set masterIntegrations routePermissions
@@ -3713,7 +3886,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3721,7 +3895,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3729,7 +3904,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set passthrough routePermissions
@@ -3739,7 +3915,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3747,7 +3924,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3755,7 +3933,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3763,7 +3942,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3771,7 +3951,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3779,7 +3960,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3787,7 +3969,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set payments routePermissions
@@ -3797,7 +3980,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3805,7 +3989,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3813,7 +3998,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set plans routePermissions
@@ -3823,7 +4009,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3831,7 +4018,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3839,7 +4027,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set projects routePermissions
@@ -3849,7 +4038,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3857,7 +4047,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3865,7 +4056,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3873,7 +4065,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3881,7 +4074,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3889,7 +4083,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3897,7 +4092,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3905,7 +4101,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3913,7 +4110,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3921,7 +4119,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3929,7 +4128,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- Changing the roleCode to a different value won't update the existing row
@@ -3939,7 +4139,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3947,7 +4148,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3955,7 +4157,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3963,7 +4166,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3971,7 +4175,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -3979,7 +4184,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := true
     );
 
     perform set_route_permission(
@@ -3987,7 +4193,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := true
     );
 
     perform set_route_permission(
@@ -3995,7 +4202,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4003,7 +4211,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set projectDailyAggs routePermissions
@@ -4013,7 +4222,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4021,7 +4231,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4029,7 +4240,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4037,7 +4249,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4045,7 +4258,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4053,7 +4267,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set projectAccounts routePermissions
@@ -4063,7 +4278,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4071,7 +4287,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4079,7 +4296,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4087,7 +4305,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4095,7 +4314,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set providers routePermissions
@@ -4105,7 +4325,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4113,7 +4334,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4121,7 +4343,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4129,7 +4352,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4137,7 +4361,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4145,7 +4370,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set resources routePermissions
@@ -4155,7 +4381,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4163,7 +4390,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4171,7 +4399,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4179,7 +4408,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := true
     );
 
     perform set_route_permission(
@@ -4187,7 +4417,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := true
     );
 
     perform set_route_permission(
@@ -4195,7 +4426,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := true
     );
 
     perform set_route_permission(
@@ -4203,7 +4435,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4211,7 +4444,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4219,7 +4453,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4227,7 +4462,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4235,7 +4471,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4243,7 +4480,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4251,7 +4489,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4259,7 +4498,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4267,7 +4507,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4275,7 +4516,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4283,7 +4525,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4291,7 +4534,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4299,7 +4543,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4307,7 +4552,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4315,7 +4561,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4323,7 +4570,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4331,7 +4579,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set runs routePermissions
@@ -4341,7 +4590,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4349,7 +4599,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4357,7 +4608,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4365,7 +4617,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4373,7 +4626,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4381,7 +4635,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4389,7 +4644,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4397,7 +4653,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4405,7 +4662,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4413,7 +4671,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4421,7 +4680,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4429,7 +4689,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4437,7 +4698,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4445,7 +4707,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4453,7 +4716,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4461,7 +4725,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4469,7 +4734,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4477,7 +4743,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4485,7 +4752,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4493,7 +4761,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4501,7 +4770,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4509,7 +4779,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set subscriptionAccounts routePermissions
@@ -4519,7 +4790,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4527,7 +4799,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4535,7 +4808,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4543,7 +4817,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4551,7 +4826,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set subscriptions routePermissions
@@ -4561,7 +4837,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4569,7 +4846,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4577,7 +4855,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4585,7 +4864,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4593,7 +4873,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4601,7 +4882,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4609,7 +4891,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4617,7 +4900,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4625,7 +4909,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4633,7 +4918,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4641,7 +4927,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4649,7 +4936,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4657,7 +4945,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4665,7 +4954,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4673,7 +4963,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4681,7 +4972,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4689,7 +4981,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4697,7 +4990,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4705,7 +4999,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4713,7 +5008,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set subscriptionIntegrations routePermissions
@@ -4723,7 +5019,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4731,7 +5028,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4739,7 +5037,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4747,7 +5046,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4755,7 +5055,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4763,7 +5064,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4771,7 +5073,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4779,7 +5082,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4787,7 +5091,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4795,7 +5100,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4803,7 +5109,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4811,7 +5118,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4819,7 +5127,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set subscriptionIntegrationPermissions routePermissions
@@ -4829,7 +5138,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4837,7 +5147,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4845,7 +5156,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4853,7 +5165,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4861,7 +5174,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4869,7 +5183,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4877,7 +5192,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set superUsers routePermissions
@@ -4887,7 +5203,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4895,7 +5212,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4903,7 +5221,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set systemCodes routePermissions
@@ -4913,7 +5232,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4921,7 +5241,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4929,7 +5250,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set systemConfigs routePermissions
@@ -4939,7 +5261,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set systemImages routePermissions
@@ -4949,7 +5272,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4957,7 +5281,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4965,7 +5290,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set systemIntegrations routePermissions
@@ -4975,7 +5301,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4983,7 +5310,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4991,7 +5319,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -4999,7 +5328,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5007,7 +5337,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5015,7 +5346,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set systemMachineImages routePermissions
@@ -5025,7 +5357,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5033,7 +5366,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5041,7 +5375,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5049,7 +5384,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5057,7 +5393,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5065,7 +5402,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5073,7 +5411,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5081,7 +5420,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set systemNodes routePermissions
@@ -5091,7 +5431,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5099,7 +5440,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5107,7 +5449,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5115,7 +5458,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5123,7 +5467,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5131,7 +5476,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5139,7 +5485,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5147,7 +5494,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5155,7 +5503,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6010,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5163,7 +5512,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020,
       isPublic := true,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5171,7 +5521,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set systemNodeConsoles routePermissions
@@ -5181,7 +5532,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5189,7 +5541,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5197,7 +5550,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set systemNodeStats routePermissions
@@ -5207,7 +5561,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5215,7 +5570,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5223,7 +5579,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set systemProperties routePermissions
@@ -5233,7 +5590,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set transactions routePermissions
@@ -5243,7 +5601,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5251,7 +5610,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5259,7 +5619,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
 
@@ -5268,7 +5629,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5276,7 +5638,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5284,7 +5647,8 @@ do $$
       httpVerb := 'PUT',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     -- set versions routePermissions
@@ -5294,7 +5658,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5302,7 +5667,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5310,7 +5676,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5318,7 +5685,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5326,7 +5694,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5334,7 +5703,8 @@ do $$
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5342,7 +5712,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := true
     );
 
     perform set_route_permission(
@@ -5350,7 +5721,8 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := true
     );
 
     perform set_route_permission(
@@ -5358,7 +5730,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6010,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5366,7 +5739,8 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     -- set vortex routePermissions
@@ -5376,7 +5750,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5384,7 +5759,8 @@ do $$
       httpVerb := 'POST',
       roleCode := null,
       isPublic := false,
-      isSuperUser := true
+      isSuperUser := true,
+      isFreeUser := false
     );
 
     perform set_route_permission(
@@ -5392,7 +5768,8 @@ do $$
       httpVerb := 'GET',
       roleCode := null,
       isPublic := false,
-      isSuperUser := false
+      isSuperUser := false,
+      isFreeUser := false
     );
 
   end
