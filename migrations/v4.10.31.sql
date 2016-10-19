@@ -1,6 +1,16 @@
 do $$
   begin
 
+    -- Remove vault systemIntegration
+      delete from "systemIntegrations" where "name" = 'vault';
+
+    -- Remove masterIntegrationFields for Vault
+      delete from "masterIntegrationFields" where "masterIntegrationId"= (select id from "masterIntegrations" where "typeCode" = 5006 and
+  "name" = 'VAULT');
+
+    -- Remove vault masterIntegration
+      delete from "masterIntegrations" where "typeCode" = 5006 and "name" = 'VAULT';
+
     -- Remove old masterIntegrationFields from github auth
     delete from "masterIntegrationFields" where id in (76, 77, 78);
 
@@ -1820,16 +1830,6 @@ do $$
     if exists (select 1 from information_schema.columns where table_name = 'buildJobs' and column_name = 'projectId') then
       alter table "buildJobs" alter column "projectId" set not null;
     end if;
-
-  -- Remove vault systemIntegration
-    delete from "systemIntegrations" where "name" = 'vault';
-
-  -- Remove masterIntegrationFields for Vault
-    delete from "masterIntegrationFields" where "masterIntegrationId"= (select id from "masterIntegrations" where "typeCode" = 5006 and
-"name" = 'VAULT');
-
-  -- Remove vault masterIntegration
-    delete from "masterIntegrations" where "typeCode" = 5006 and "name" = 'VAULT';
 
   -- Rename systemConfigs.braintreeEnabled to systemConfigs.serverEnabled
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'braintreeEnabled') then
