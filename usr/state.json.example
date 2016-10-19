@@ -4,160 +4,160 @@
   "installMode": "local",
   "masterIntegrations": [
     {
-      "type": "scm",
-      "name": "Git store"
-    },
-    {
-      "name": "braintree",
-      "type": "payment"
-    },
-    {
-      "name": "amazons3",
-      "type": "cloudproviders"
-    },
-    {
-      "name": "github",
-      "type": "auth"
+      "name": "S3",
+      "type": "artifact"
     },
     {
       "name": "bitbucket",
       "type": "auth"
-    },
-    {
-      "name": "github",
-      "type": "scm"
-    },
-    {
-      "name": "bitbucket",
-      "type": "scm"
-    },
-    {
-      "name": "ECR",
-      "type": "hub"
     },
     {
       "name": "bitbucketServer",
       "type": "auth"
     },
     {
-      "type": "scm",
-      "name": "bitbucketServer"
-    },
-    {
-      "type": "cloudproviders",
-      "name": "AWS"
-    },
-    {
-      "type": "notification",
-      "name": "SMTP"
-    },
-    {
-      "name": "mailgun",
-      "type": "notification"
+      "name": "github",
+      "type": "auth"
     },
     {
       "name": "githubEnterprise",
       "type": "auth"
     },
     {
-      "type": "hub",
-      "name": "Docker"
+      "name": "amazons3",
+      "type": "cloudproviders"
     },
     {
-      "type": "hub",
-      "name": "Private Docker Registry"
+      "name": "AWS",
+      "type": "cloudproviders"
     },
     {
-      "type": "notification",
-      "name": "Slack"
+      "name": "ACS",
+      "type": "deploy"
     },
     {
-      "type": "notification",
-      "name": "webhook"
+      "name": "AWS",
+      "type": "deploy"
     },
     {
-      "type": "hub",
-      "name": "GCR"
-    },
-    {
-      "type": "deploy",
-      "name": "AWS"
-    },
-    {
-      "type": "deploy",
-      "name": "AWS_IAM"
-    },
-    {
-      "type": "cloudproviders",
-      "name": "AWS"
-    },
-    {
-      "type": "deploy",
-      "name": "GKE"
-    },
-    {
-      "type": "deploy",
-      "name": "DCL"
-    },
-    {
-      "type": "deploy",
-      "name": "ACS"
-    },
-    {
-      "type": "notification",
-      "name": "Email"
-    },
-    {
-      "type": "hub",
-      "name": "Quay.io"
-    },
-    {
-      "type": "key",
-      "name": "ssh-key"
-    },
-    {
-      "type": "key",
-      "name": "pem-key"
-    },
-    {
-      "type": "notification",
-      "name": "hipchat"
-    },
-    {
-      "type": "hub",
-      "name": "Docker Trusted Registry"
-    },
-    {
-      "type": "deploy",
-      "name": "DDC"
-    },
-    {
-      "type": "deploy",
-      "name": "TRIPUB"
-    },
-    {
-      "name": "mailgun",
-      "type": "notification"
+      "name": "AWS_IAM",
+      "type": "deploy"
     },
     {
       "name": "CLUSTER",
       "type": "deploy"
     },
     {
-      "name": "artifactory",
-      "type": "hub"
+      "name": "DCL",
+      "type": "deploy"
+    },
+    {
+      "name": "DDC",
+      "type": "deploy"
+    },
+    {
+      "name": "GKE",
+      "type": "deploy"
+    },
+    {
+      "name": "TRIPUB",
+      "type": "deploy"
     },
     {
       "name": "Jenkins",
       "type": "externalci"
     },
     {
-      "name": "gitlab",
+      "name": "artifactory",
+      "type": "hub"
+    },
+    {
+      "name": "Docker",
+      "type": "hub"
+    },
+    {
+      "name": "Docker Trusted Registry",
+      "type": "hub"
+    },
+    {
+      "name": "ECR",
+      "type": "hub"
+    },
+    {
+      "name": "GCR",
+      "type": "hub"
+    },
+    {
+      "name": "Private Docker Registry",
+      "type": "hub"
+    },
+    {
+      "name": "Quay.io",
+      "type": "hub"
+    },
+    {
+      "name": "pem-key",
+      "type": "key"
+    },
+    {
+      "name": "ssh-key",
+      "type": "key"
+    },
+    {
+      "name": "Email",
+      "type": "notification"
+    },
+    {
+      "name": "gmail",
+      "type": "notification"
+    },
+    {
+      "name": "hipchat",
+      "type": "notification"
+    },
+    {
+      "name": "mailgun",
+      "type": "notification"
+    },
+    {
+      "name": "Slack",
+      "type": "notification"
+    },
+    {
+      "name": "SMTP",
+      "type": "notification"
+    },
+    {
+      "name": "webhook",
+      "type": "notification"
+    },
+    {
+      "name": "braintree",
+      "type": "payment"
+    },
+    {
+      "name": "bitbucket",
       "type": "scm"
     },
     {
-      "type": "scm",
-      "name": "ghe"
+      "name": "bitbucketServer",
+      "type": "scm"
+    },
+    {
+      "name": "ghe",
+      "type": "scm"
+    },
+    {
+      "name": "github",
+      "type": "scm"
+    },
+    {
+      "name": "Git store",
+      "type": "scm"
+    },
+    {
+      "name": "gitlab",
+      "type": "scm"
     }
   ],
   "systemIntegrations": [
@@ -377,6 +377,29 @@
       ]
     },
     {
+      "name": "gmail",
+      "masterName": "gmail",
+      "masterType": "notification",
+      "formJSONValues": [
+        {
+          "label": "username",
+          "value": ""
+        },
+        {
+          "label": "password",
+          "value": "xxx"
+        },
+        {
+          "label": "emailSender",
+          "value": "noreply@shippable.com"
+        },
+        {
+          "label": "proxy",
+          "value": ""
+        }
+      ]
+    },
+    {
       "name": "github enterprise auth",
       "masterName": "githubEnterprise",
       "masterType": "auth",
@@ -396,6 +419,25 @@
         {
           "value": "wwwUrl",
           "label": "wwwUrl"
+        }
+      ]
+    },
+    {
+      "name": "s3",
+      "masterName": "S3",
+      "masterType": "artifact",
+      "formJSONValues": [
+        {
+          "value": "xxx",
+          "label": "key"
+        },
+        {
+          "value": "xxx",
+          "label": "secret"
+        },
+        {
+          "value": "",
+          "label": "region"
         }
       ]
     }
