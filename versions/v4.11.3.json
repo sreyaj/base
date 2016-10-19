@@ -614,20 +614,5 @@
       "name": "drydock/u14nod",
       "isActive": true
     }
-  ],
-  "systemMachineImages": [
-    {
-      "externalId": "ami-abcdefgh",
-      "provider": "AWS",
-      "description": "Stable AMI",
-      "name": "Stable",
-      "isAvailable": true,
-      "isDefault": true,
-      "region": "us-east-1",
-      "keyName": "shippable-beta",
-      "execImage": "shipimg/mexec:master.11241",
-      "runShImage": "shipimg/runSh:v4.10.24",
-      "securityGroup": "sg-123456"
-    }
   ]
 }
