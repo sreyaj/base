@@ -297,8 +297,8 @@ __run_service() {
     boot_cmd="$boot_cmd $image"
     _exec_remote_cmd "$swarm_manager_host" "docker service rm $service || true"
 
-    if [ $delay != "null" ]; then
-      __process_msg "Waiting "$delay"s before WWW restart..."
+    if [ ! -z "$delay" ]; then
+      __process_msg "Waiting "$delay"s before "$1" restart..."
       sleep $delay
     fi
 
