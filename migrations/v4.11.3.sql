@@ -1671,6 +1671,10 @@ do $$
     if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'privateJobCount') then
       alter table "subscriptions" add column "privateJobCount" INTEGER default 0 not null;
     end if;
+    -- Update "privateJobCount" columns without a default
+    if exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'privateJobCount' and column_default is null) then
+      alter table "subscriptions" alter column "privateJobCount" set DEFAULT 0;
+    end if;
 
     -- Add "privateJobQuotaResetsAt" to subscriptions table
     if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'privateJobQuotaResetsAt') then
@@ -1761,12 +1765,28 @@ do $$
 
   -- Add discount in transactions
      if not exists (select 1 from information_schema.columns where table_name = 'transactions' and column_name = 'discount') then
-       alter table "transactions" add column "discount" float NOT NULL DEFAULT 0;
+       alter table "transactions" add column "discount" numeric NOT NULL DEFAULT 0;
+     end if;
+  -- Update discount columns with the wrong type
+     if exists (select 1 from information_schema.columns where table_name = 'transactions' and column_name = 'discount' and data_type = 'double precision') then
+       alter table "transactions" alter column "discount" type numeric;
+     end if;
+  -- Update discount columns without a default
+     if exists (select 1 from information_schema.columns where table_name = 'transactions' and column_name = 'discount' and column_default is null) then
+       alter table "transactions" alter column "discount" set DEFAULT 0;
      end if;
 
   -- Add price in transactions
      if not exists (select 1 from information_schema.columns where table_name = 'transactions' and column_name = 'price') then
-       alter table "transactions" add column "price" float NOT NULL DEFAULT 0;
+       alter table "transactions" add column "price" numeric NOT NULL DEFAULT 0;
+     end if;
+  -- Update price columns with the wrong type
+     if exists (select 1 from information_schema.columns where table_name = 'transactions' and column_name = 'price' and data_type = 'double precision') then
+       alter table "transactions" alter column "price" type numeric;
+     end if;
+  -- Update price columns without a default
+     if exists (select 1 from information_schema.columns where table_name = 'transactions' and column_name = 'price' and column_default is null) then
+       alter table "transactions" alter column "price" set DEFAULT 0;
      end if;
 
   -- Adds serviceUser account details in accounts table for local
