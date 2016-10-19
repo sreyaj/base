@@ -327,8 +327,9 @@ __run_service() {
 }
 
 provision_www() {
+  local sleep_time=30
   __save_service_config www " --publish 50001:50001/tcp" " --name www --network ingress --with-registry-auth --endpoint-mode vip"
-  __run_service "www" 30
+  __run_service "www" $sleep_time
 }
 
 provision_services() {
