@@ -429,11 +429,11 @@
       "formJSONValues": [
         {
           "value": "xxx",
-          "label": "key"
+          "label": "accessKey"
         },
         {
           "value": "xxx",
-          "label": "secret"
+          "label": "secretKey"
         },
         {
           "value": "",
