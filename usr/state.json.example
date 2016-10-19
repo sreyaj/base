@@ -4,44 +4,160 @@
   "installMode": "local",
   "masterIntegrations": [
     {
-      "type": "scm",
-      "name": "Git store"
-    },
-    {
-      "name": "braintree",
-      "type": "payment"
-    },
-    {
-      "name": "amazons3",
-      "type": "cloudproviders"
-    },
-    {
-      "name": "github",
-      "type": "auth"
+      "name": "S3",
+      "type": "artifact"
     },
     {
       "name": "bitbucket",
       "type": "auth"
-    },
-    {
-      "name": "github",
-      "type": "scm"
-    },
-    {
-      "name": "bitbucket",
-      "type": "scm"
-    },
-    {
-      "name": "ECR",
-      "type": "hub"
     },
     {
       "name": "bitbucketServer",
       "type": "auth"
     },
     {
-      "type": "scm",
-      "name": "bitbucketServer"
+      "name": "github",
+      "type": "auth"
+    },
+    {
+      "name": "githubEnterprise",
+      "type": "auth"
+    },
+    {
+      "name": "amazons3",
+      "type": "cloudproviders"
+    },
+    {
+      "name": "AWS",
+      "type": "cloudproviders"
+    },
+    {
+      "name": "ACS",
+      "type": "deploy"
+    },
+    {
+      "name": "AWS",
+      "type": "deploy"
+    },
+    {
+      "name": "AWS_IAM",
+      "type": "deploy"
+    },
+    {
+      "name": "CLUSTER",
+      "type": "deploy"
+    },
+    {
+      "name": "DCL",
+      "type": "deploy"
+    },
+    {
+      "name": "DDC",
+      "type": "deploy"
+    },
+    {
+      "name": "GKE",
+      "type": "deploy"
+    },
+    {
+      "name": "TRIPUB",
+      "type": "deploy"
+    },
+    {
+      "name": "Jenkins",
+      "type": "externalci"
+    },
+    {
+      "name": "artifactory",
+      "type": "hub"
+    },
+    {
+      "name": "Docker",
+      "type": "hub"
+    },
+    {
+      "name": "Docker Trusted Registry",
+      "type": "hub"
+    },
+    {
+      "name": "ECR",
+      "type": "hub"
+    },
+    {
+      "name": "GCR",
+      "type": "hub"
+    },
+    {
+      "name": "Private Docker Registry",
+      "type": "hub"
+    },
+    {
+      "name": "Quay.io",
+      "type": "hub"
+    },
+    {
+      "name": "pem-key",
+      "type": "key"
+    },
+    {
+      "name": "ssh-key",
+      "type": "key"
+    },
+    {
+      "name": "Email",
+      "type": "notification"
+    },
+    {
+      "name": "gmail",
+      "type": "notification"
+    },
+    {
+      "name": "hipchat",
+      "type": "notification"
+    },
+    {
+      "name": "mailgun",
+      "type": "notification"
+    },
+    {
+      "name": "Slack",
+      "type": "notification"
+    },
+    {
+      "name": "SMTP",
+      "type": "notification"
+    },
+    {
+      "name": "webhook",
+      "type": "notification"
+    },
+    {
+      "name": "braintree",
+      "type": "payment"
+    },
+    {
+      "name": "bitbucket",
+      "type": "scm"
+    },
+    {
+      "name": "bitbucketServer",
+      "type": "scm"
+    },
+    {
+      "name": "ghe",
+      "type": "scm"
+    },
+    {
+      "name": "github",
+      "type": "scm"
+    },
+    {
+      "name": "Git store",
+      "type": "scm"
+    },
+    {
+      "name": "gitlab",
+      "type": "scm"
     }
   ],
   "systemIntegrations": [
@@ -92,17 +208,71 @@
       ]
     },
     {
-      "name": "Internal Shippable ECR",
-      "masterName": "ECR",
-      "masterType": "hub",
+      "name": "github enterprise auth",
+      "masterName": "githubEnterprise",
+      "masterType": "auth",
       "formJSONValues": [
         {
-          "value": null,
-          "label": "aws_access_key_id"
+          "value": "superSecret",
+          "label": "clientSecret"
         },
         {
-          "value": null,
-          "label": "aws_secret_access_key"
+          "value": "someClientId",
+          "label": "clientId"
+        },
+        {
+          "value": "url",
+          "label": "url"
+        },
+        {
+          "value": "wwwUrl",
+          "label": "wwwUrl"
+        }
+      ]
+    },
+    {
+      "name": "github.com",
+      "masterName": "github",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "secretClientId"
+        },
+        {
+          "label": "clientSecret",
+          "value": "xxx"
+        },
+        {
+          "label": "wwwUrl",
+          "value": "http://localhost:50001"
+        },
+        {
+          "label": "url",
+          "value": "https://api.github.com"
+        }
+      ]
+    },
+    {
+      "name": "bitbucket.com",
+      "masterName": "bitbucket",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "secretClientId"
+        },
+        {
+          "label": "clientSecret",
+          "value": "xxx"
+        },
+        {
+          "label": "wwwUrl",
+          "value": "http://localhost:50001"
+        },
+        {
+          "label": "url",
+          "value": "https://api.bitbucket.org"
         }
       ]
     },
@@ -147,18 +317,132 @@
          "value": "xxxx"
        }
       ]
-    }
-  ],
-  "services": [
+    },
     {
-      "name": "api",
-      "url": "",
-      "status": "running",
-      "port": "--publish 50000:50000/tcp",
-      "env": "-e FOO=bar -e FOO1=bar1",
-      "opts": "--mode global --network ingress"
+      "name": "amazons3",
+      "masterName": "amazons3",
+      "masterType": "cloudproviders",
+      "formJSONValues": [
+       {
+         "label": "accessKey",
+         "value": "xxxx"
+       },
+       {
+         "label": "secretKey",
+         "value": "xxxx"
+       },
+       {
+         "label": "bucketname",
+         "value": "xxxx"
+       }
+      ]
+    },
+    {
+      "name": "smtp",
+      "masterName": "SMTP",
+      "masterType": "notification",
+      "formJSONValues": [
+        {
+          "label": "emailAuthUser",
+          "value": ""
+        },
+        {
+          "label": "emailAuthPassword",
+          "value": "xxx"
+        },
+        {
+          "label": "emailSender",
+          "value": "noreply@shippable.com"
+        },
+        {
+          "label": "host",
+          "value": ""
+        },
+        {
+          "label": "port",
+          "value": ""
+        },
+        {
+          "label": "secure",
+          "value": ""
+        },
+        {
+          "label": "hostname",
+          "value": ""
+        },
+        {
+          "label": "proxy",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "mailgun",
+      "masterName": "mailgun",
+      "masterType": "notification",
+      "formJSONValues": [
+        {
+          "label": "apiKey",
+          "value": ""
+        },
+        {
+          "label": "domain",
+          "value": "xxx"
+        },
+        {
+          "label": "emailSender",
+          "value": "noreply@shippable.com"
+        },
+        {
+          "label": "proxy",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "gmail",
+      "masterName": "gmail",
+      "masterType": "notification",
+      "formJSONValues": [
+        {
+          "label": "username",
+          "value": ""
+        },
+        {
+          "label": "password",
+          "value": "xxx"
+        },
+        {
+          "label": "emailSender",
+          "value": "noreply@shippable.com"
+        },
+        {
+          "label": "proxy",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "s3",
+      "masterName": "S3",
+      "masterType": "artifact",
+      "formJSONValues": [
+        {
+          "value": "xxx",
+          "label": "key"
+        },
+        {
+          "value": "xxx",
+          "label": "secret"
+        },
+        {
+          "value": "",
+          "label": "region"
+        }
+      ]
     }
   ],
+  "services": [],
   "systemSettings": {
     "systemImagesRegistry": "374168611083.dkr.ecr.us-east-1.amazonaws.com",
     "serviceUserToken": "",
@@ -207,36 +491,7 @@
     "allowCustomNodes": true,
     "customHostDockerVersion": "1.12.1"
   },
-  "machines": [
-    {
-      "name": "db",
-      "ip": "45.55.49.134",
-      "keysUpdated": "false",
-      "sshSuccessful": "false",
-      "isConsistent": "false"
-    },
-    {
-      "name": "swarm",
-      "ip": "45.55.49.134",
-      "keysUpdated": "false",
-      "sshSuccessful": "false",
-      "isConsistent": "false"
-    },
-    {
-      "name": "services1",
-      "ip": "45.55.49.134",
-      "keysUpdated": "false",
-      "sshSuccessful": "false",
-      "isConsistent": "false"
-    },
-    {
-      "name": "services2",
-      "ip": "45.55.49.134",
-      "keysUpdated": "false",
-      "sshSuccessful": "false",
-      "isConsistent": "false"
-    }
-  ],
+  "machines": [],
   "installStatus": {
     "machinesSSHSuccessful": false,
     "machinesBootstrapped": false,
