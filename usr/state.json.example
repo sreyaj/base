@@ -208,21 +208,6 @@
       ]
     },
     {
-      "name": "Internal Shippable ECR",
-      "masterName": "ECR",
-      "masterType": "hub",
-      "formJSONValues": [
-        {
-          "value": null,
-          "label": "aws_access_key_id"
-        },
-        {
-          "value": null,
-          "label": "aws_secret_access_key"
-        }
-      ]
-    },
-    {
       "name": "gitlab",
       "masterName": "Git store",
       "masterType": "scm",
@@ -405,11 +390,11 @@
           "label": "clientId"
         },
         {
-          "value": "",
+          "value": "url",
           "label": "url"
         },
         {
-          "value": "",
+          "value": "wwwUrl",
           "label": "wwwUrl"
         }
       ]
