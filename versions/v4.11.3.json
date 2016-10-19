@@ -249,13 +249,11 @@
         "DBPASSWORD",
         "DBDIALECT",
         "SHIPPABLE_API_URL"
-      ],
-      "replicas": 2
+      ]
     },
     {
       "name": "www",
       "repository": "www",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_VORTEX_URL",
