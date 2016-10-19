@@ -83,7 +83,7 @@ do $$
         update "systemConfigs" SET
             "defaultMinionCount"={{DEFAULT_MINION_COUNT}},
             "defaultPipelineCount"={{DEFAULT_PIPELINE_COUNT}},
-            "serverEnabled"="serverEnabled",
+            "serverEnabled"={{SERVER_ENABLED}},
             "buildTimeoutMS"={{BUILD_TIMEOUT_MS}},
             "defaultPrivateJobQuota"={{DEFAULT_PRIVATE_JOB_QUOTA}},
             "serviceUserToken"='{{SERVICE_USER_TOKEN}}',
