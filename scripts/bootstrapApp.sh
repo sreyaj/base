@@ -238,7 +238,7 @@ create_system_config() {
 
   SKIP_STEP=false
   _check_component_status "systemConfigUpdated"
-  if [ "$SKIP_STEP" = false ]; then
+  if [ "$SKIP_STEP" == false ]; then
     local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
     local db_ip=$(echo $db_host | jq -r '.ip')
     local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
@@ -248,6 +248,7 @@ create_system_config() {
 
     _copy_script_remote $db_ip "$USR_DIR/system_configs.sql" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs.sql"
+    _update_install_status "systemConfigUpdated"
     __process_msg "Successfully created systemConfigs table"
   else
     __process_msg "system configs already updated, skipping"
@@ -257,7 +258,7 @@ create_system_config() {
 create_system_config_local() {
   SKIP_STEP=false
   _check_component_status "systemConfigUpdated"
-  if [ "$SKIP_STEP" = false ]; then
+  if [ "$SKIP_STEP" == false ]; then
     __process_msg "Creating systemConfigs table on local db"
 
     local system_configs_file="$USR_DIR/system_configs.sql"
