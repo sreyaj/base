@@ -208,6 +208,75 @@
       ]
     },
     {
+      "name": "github enterprise auth",
+      "masterName": "githubEnterprise",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "value": "superSecret",
+          "label": "clientSecret"
+        },
+        {
+          "value": "someClientId",
+          "label": "clientId"
+        },
+        {
+          "value": "url",
+          "label": "url"
+        },
+        {
+          "value": "wwwUrl",
+          "label": "wwwUrl"
+        }
+      ]
+    },
+    {
+      "name": "github.com",
+      "masterName": "github",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "secretClientId"
+        },
+        {
+          "label": "clientSecret",
+          "value": "xxx"
+        },
+        {
+          "label": "wwwUrl",
+          "value": "http://localhost:50001"
+        },
+        {
+          "label": "url",
+          "value": "https://api.github.com"
+        }
+      ]
+    },
+    {
+      "name": "bitbucket.com",
+      "masterName": "bitbucket",
+      "masterType": "auth",
+      "formJSONValues": [
+        {
+          "label": "clientId",
+          "value": "secretClientId"
+        },
+        {
+          "label": "clientSecret",
+          "value": "xxx"
+        },
+        {
+          "label": "wwwUrl",
+          "value": "http://localhost:50001"
+        },
+        {
+          "label": "url",
+          "value": "https://api.bitbucket.org"
+        }
+      ]
+    },
+    {
       "name": "gitlab",
       "masterName": "Git store",
       "masterType": "scm",
@@ -266,52 +335,6 @@
          "label": "bucketname",
          "value": "xxxx"
        }
-      ]
-    },
-    {
-      "name": "github.com",
-      "masterName": "github",
-      "masterType": "auth",
-      "formJSONValues": [
-        {
-          "label": "clientId",
-          "value": "secretClientId"
-        },
-        {
-          "label": "clientSecret",
-          "value": "xxx"
-        },
-        {
-          "label": "wwwUrl",
-          "value": "http://localhost:50001"
-        },
-        {
-          "label": "url",
-          "value": "https://api.github.com"
-        }
-      ]
-    },
-    {
-      "name": "bitbucket.com",
-      "masterName": "bitbucket",
-      "masterType": "auth",
-      "formJSONValues": [
-        {
-          "label": "clientId",
-          "value": "secretClientId"
-        },
-        {
-          "label": "clientSecret",
-          "value": "xxx"
-        },
-        {
-          "label": "wwwUrl",
-          "value": "http://localhost:50001"
-        },
-        {
-          "label": "url",
-          "value": "https://api.bitbucket.org"
-        }
       ]
     },
     {
@@ -400,29 +423,6 @@
       ]
     },
     {
-      "name": "github enterprise auth",
-      "masterName": "githubEnterprise",
-      "masterType": "auth",
-      "formJSONValues": [
-        {
-          "value": "superSecret",
-          "label": "clientSecret"
-        },
-        {
-          "value": "someClientId",
-          "label": "clientId"
-        },
-        {
-          "value": "url",
-          "label": "url"
-        },
-        {
-          "value": "wwwUrl",
-          "label": "wwwUrl"
-        }
-      ]
-    },
-    {
       "name": "s3",
       "masterName": "S3",
       "masterType": "artifact",
@@ -442,16 +442,7 @@
       ]
     }
   ],
-  "services": [
-    {
-      "name": "api",
-      "url": "",
-      "status": "running",
-      "port": "--publish 50000:50000/tcp",
-      "env": "-e FOO=bar -e FOO1=bar1",
-      "opts": "--mode global --network ingress"
-    }
-  ],
+  "services": [],
   "systemSettings": {
     "systemImagesRegistry": "374168611083.dkr.ecr.us-east-1.amazonaws.com",
     "serviceUserToken": "",
@@ -500,36 +491,7 @@
     "allowCustomNodes": true,
     "customHostDockerVersion": "1.12.1"
   },
-  "machines": [
-    {
-      "name": "db",
-      "ip": "45.55.49.134",
-      "keysUpdated": "false",
-      "sshSuccessful": "false",
-      "isConsistent": "false"
-    },
-    {
-      "name": "swarm",
-      "ip": "45.55.49.134",
-      "keysUpdated": "false",
-      "sshSuccessful": "false",
-      "isConsistent": "false"
-    },
-    {
-      "name": "services1",
-      "ip": "45.55.49.134",
-      "keysUpdated": "false",
-      "sshSuccessful": "false",
-      "isConsistent": "false"
-    },
-    {
-      "name": "services2",
-      "ip": "45.55.49.134",
-      "keysUpdated": "false",
-      "sshSuccessful": "false",
-      "isConsistent": "false"
-    }
-  ],
+  "machines": [],
   "installStatus": {
     "machinesSSHSuccessful": false,
     "machinesBootstrapped": false,
