@@ -528,6 +528,7 @@ do $$
       values ('5553a8333566980c00a3bf1b', 6, 'GCR', 'GCR', 'hub', true, 'account', 5001, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
+    -- Braintree
     if not exists (select 1 from "masterIntegrations" where "name" = 'braintree' and "typeCode" = 5008) then
       insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
       values ('57aafd0673ea26cb053fe1ca', 32, 'braintree', 'braintree', 'payment', true, 'system', 5008, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
@@ -2257,32 +2258,25 @@ do $$
     delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6020;
 
-    if exists (select 1 from "systemConfigs" where "serverEnabled" = false) then
-      if not exists (select 1 from "masterIntegrations" where "name" = 'braintree' and "typeCode" = 5008) then
-        insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-        values ('57aafd0673ea26cb053fe1ca', 32, 'braintree', 'braintree', 'payment', true, 'system', 5008, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-      end if;
+    -- masterIntegrationFields for Braintree
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 137 and "name" = 'braintreeEnvironment') then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (137, '57aafd0673ea26cb053fe1ca', 'braintreeEnvironment', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
 
-      -- masterIntegrationFields for Braintree
-      if not exists (select 1 from "masterIntegrationFields" where "id" = 134 and "name" = 'braintreeEnvironment') then
-        insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-        values (134, '57aafd0673ea26cb053fe1ca', 'braintreeEnvironment', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-      end if;
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 138 and "name" = 'braintreeMerchantId') then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (138, '57aafd0673ea26cb053fe1ca', 'braintreeMerchantId', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
 
-      if not exists (select 1 from "masterIntegrationFields" where "id" = 135 and "name" = 'braintreeMerchantId') then
-        insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-        values (135, '57aafd0673ea26cb053fe1ca', 'braintreeMerchantId', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-      end if;
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 139 and "name" = 'braintreePrivateKey') then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (139, '57aafd0673ea26cb053fe1ca', 'braintreePrivateKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+    end if;
 
-      if not exists (select 1 from "masterIntegrationFields" where "id" = 136 and "name" = 'braintreePrivateKey') then
-        insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-        values (136, '57aafd0673ea26cb053fe1ca', 'braintreePrivateKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-      end if;
-
-      if not exists (select 1 from "masterIntegrationFields" where "id" = 137 and "name" = 'braintreePublicKey') then
-        insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-        values (137, '57aafd0673ea26cb053fe1ca', 'braintreePublicKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-      end if;
+    if not exists (select 1 from "masterIntegrationFields" where "id" = 140 and "name" = 'braintreePublicKey') then
+      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
+      values (140, '57aafd0673ea26cb053fe1ca', 'braintreePublicKey', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- Add "customHostDockerVersion" to systemConfigs table
