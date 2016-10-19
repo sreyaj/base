@@ -429,10 +429,10 @@ provision_api() {
   local rm_api_cmd="docker service rm api || true"
 
   _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
+  __process_msg "waiting 15 seconds for api to shut down "
+  sleep 15
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
 
-  __process_msg "waiting 10 seconds for api to shut down "
-  sleep 10
   __process_msg "Successfully provisioned api"
 }
 
