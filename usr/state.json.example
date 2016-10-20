@@ -162,29 +162,6 @@
   ],
   "systemIntegrations": [
     {
-      "name": "github.com",
-      "masterName": "github",
-      "masterType": "auth",
-      "formJSONValues": [
-        {
-          "value": "superSecret",
-          "label": "clientSecret"
-        },
-        {
-          "value": "someClientId",
-          "label": "clientId"
-        },
-        {
-          "label": "http://localhost:50001",
-          "value": "wwwUrl"
-        },
-        {
-          "value": "https://api.github.com",
-          "label": "url"
-        }
-      ]
-    },
-    {
       "name": "bitbucket server auth",
       "masterName": "bitbucketServer",
       "masterType": "auth",
@@ -272,7 +249,7 @@
         },
         {
           "label": "url",
-          "value": "https://api.bitbucket.org"
+          "value": "https://bitbucket.org"
         }
       ]
     },
@@ -440,6 +417,30 @@
           "label": "region"
         }
       ]
+    },
+    {
+      "formJSONValues": [
+        {
+          "value": "",
+          "label": "braintreeMerchantId"
+        },
+        {
+          "value": "",
+          "label": "braintreePrivateKey"
+        },
+        {
+          "value": "",
+          "label": "braintreeEnvironment"
+        },
+        {
+          "value": "",
+          "label": "braintreePublicKey"
+        }
+      ],
+      "masterDisplayName": "braintree",
+      "masterName": "braintree",
+      "masterType": "payment",
+      "name": "braintree"
     }
   ],
   "systemMachineImages": [
