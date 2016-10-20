@@ -453,8 +453,8 @@
       "isDefault": true,
       "region": "us-east-1",
       "keyName": "shippable-beta",
-      "execImage": "shipimg/mexec:master.11241",
-      "runShImage": "shipimg/runSh:v4.10.24",
+      "execImage": "shipimg/mexec:v4.11.3-alpha.15",
+      "runShImage": "shipimg/runsh:v4.11.3-alpha.15",
       "securityGroup": "sg-123456"
     }
   ],
