@@ -1565,6 +1565,9 @@ do $$
     -- Add resourceNextTriggerTimeI Index on resources
     create index if not exists "resourceNextTriggerTimeI" on "resources" using btree("nextTriggerTime");
 
+    -- Add subsIntPermsProjIdI Index on subscriptionIntegrationPermissions
+    create index if not exists "subsIntPermsProjIdI" on "subscriptionIntegrationPermissions" using btree("projectId");
+
     -- Remove accountIntegrationId in resources
     if exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'accountIntegrationId') then
       alter table "resources" drop column "accountIntegrationId";
@@ -1592,8 +1595,12 @@ do $$
 
     -- Add isConsistent to resources and set it as false
     if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'isConsistent') then
-      alter table "resources" add column "isConsistent" boolean;
-      UPDATE "resources" SET "isConsistent" = false;
+      alter table "resources" add column "isConsistent" boolean NOT NULL DEFAULT false;
+    end if;
+    if exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'isConsistent' and column_default IS NULL) then
+      alter table "resources" alter column "isConsistent" SET DEFAULT false;
+      update "resources" set "isConsistent"=false WHERE "isConsistent" IS NULL;
+      alter table "resources" alter column "isConsistent" SET NOT NULL;
     end if;
 
     -- Set default values true for buildJobs.isSerial
@@ -2111,12 +2118,17 @@ do $$
     -- Adds roleCode column in routePermissions table
     if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'roleCode') then
       alter table "routePermissions" add column "roleCode" integer;
-      alter table "routePermissions" add constraint "routePermissions_systemCode_fkey" foreign key ("roleCode") references "systemCodes"(code) on update restrict on delete restrict;
+    end if;
+    if exists (select 1 from pg_constraint where conname = 'routePermissions_systemCode_fkey') then
+      alter table "routePermissions" drop constraint "routePermissions_systemCode_fkey";
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'routePermissions_roleCode_fkey') then
+      alter table "routePermissions" add constraint "routePermissions_roleCode_fkey" foreign key ("roleCode") references "systemCodes"(code) on update restrict on delete restrict;
     end if;
 
     -- Adds isPublic column in routePermissions table
     if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'isPublic') then
-      alter table "routePermissions" add column "isPublic" BOOLEAN;
+      alter table "routePermissions" add column "isPublic" BOOLEAN NOT NULL DEFAULT false;
     end if;
 
     -- Reindex routePermissionRoutePatternHttpVerbU to routePermissionRoutePatternHttpVerbRoleCodeU in routePermissions table
