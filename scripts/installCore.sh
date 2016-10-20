@@ -448,7 +448,7 @@ install_rabbitmq() {
     __process_msg "AMQP PORT in state file: $amqp_port"
     __process_msg "AMQP PROTOCOL in state file: $amqp_protocol"
 
-    if [ -z "$amqp_port" ]; then
+    if [ -z "$amqp_port" ] || [ "$amqp_port" == "None" ]; then
       # hostname provided as a fqdn
       # this can only happen when user has manually updated it,
       # use the host from statefile
