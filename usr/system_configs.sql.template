@@ -67,8 +67,12 @@ do $$
       -- add default value
     end if;
 
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'customHostDockerVersion' and data_type = 'integer') then
+      alter table "systemConfigs" alter column "customHostDockerVersion" type VARCHAR(24);
+    end if;
+
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'customHostDockerVersion') then
-      alter table "systemConfigs" add column "customHostDockerVersion" INT;
+      alter table "systemConfigs" add column "customHostDockerVersion" VARCHAR(24);
       -- add default value
     end if;
 
@@ -111,7 +115,7 @@ do $$
             "allowCustomNodes"={{ALLOW_CUSTOM_NODES}},
             "consoleMaxLifespan"={{CONSOLE_MAX_LIFESPAN}},
             "consoleCleanupHour"={{CONSOLE_CLEANUP_HOUR}},
-            "customHostDockerVersion"={{CONSOLE_CLEANUP_HOUR}}
+            "customHostDockerVersion"={{CUSTOM_HOST_DOCKER_VERSION}}
         where id=1;
     end if;
 
@@ -156,7 +160,8 @@ do $$
             "allowDynamicNodes",
             "allowCustomNodes",
             "consoleMaxLifespan",
-            "consoleCleanupHour"
+            "consoleCleanupHour",
+            "customHostDockerVersion"
           )
         values
           (
@@ -191,7 +196,8 @@ do $$
             {{ALLOW_DYNAMIC_NODES}},
             {{ALLOW_CUSTOM_NODES}},
             {{CONSOLE_MAX_LIFESPAN}},
-            {{CONSOLE_CLEANUP_HOUR}}
+            {{CONSOLE_CLEANUP_HOUR}},
+            '{{CUSTOM_HOST_DOCKER_VERSION}}'
           );
     end if;
   end
