@@ -3147,6 +3147,15 @@ do $$
     );
 
     perform set_route_permission(
+      routePattern := '/subscriptions/:subscriptionId/buildStatus',
+      httpVerb := 'GET',
+      roleCode := 6000,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
+    perform set_route_permission(
       routePattern := '/builds',
       httpVerb := 'POST',
       roleCode := 6010,
