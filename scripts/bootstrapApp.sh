@@ -139,10 +139,6 @@ generate_system_config() {
   local vault_refresh_time=$(cat $STATE_FILE | jq -r '.systemSettings.vaultRefreshTimeInSec')
   sed -i "s#{{VAULT_REFRESH_TIME_SEC}}#$vault_refresh_time#g" $system_configs_sql
 
-  __process_msg "Updating : cachingEnabled"
-  local caching_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.cachingEnabled')
-  sed -i "s#{{CACHING_ENABLED}}#$caching_enabled#g" $system_configs_sql
-
   __process_msg "Updating : hubspotEnabled"
   local hubspot_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotEnabled')
   sed -i "s#{{HUBSPOT_ENABLED}}#$hubspot_enabled#g" $system_configs_sql
