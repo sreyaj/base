@@ -2,14 +2,20 @@ do $$
   begin
 
     -- Remove vault systemIntegration
-      delete from "systemIntegrations" where "name" = 'vault';
+    delete from "systemIntegrations" where "name" = 'vault';
 
     -- Remove masterIntegrationFields for Vault
-      delete from "masterIntegrationFields" where "masterIntegrationId"= (select id from "masterIntegrations" where "typeCode" = 5006 and
+    delete from "masterIntegrationFields" where "masterIntegrationId"= (select id from "masterIntegrations" where "typeCode" = 5006 and
   "name" = 'VAULT');
 
+    -- Remove amazons3 masterIntegration
+    delete from "masterIntegrations" where "typeCode" = 5005 and "name" = 'amazons3';
+
+    -- Remove old masterIntegrationFields from amazons3
+    delete from "masterIntegrationFields" where id in (90, 91, 92);
+
     -- Remove vault masterIntegration
-      delete from "masterIntegrations" where "typeCode" = 5006 and "name" = 'VAULT';
+    delete from "masterIntegrations" where "typeCode" = 5006 and "name" = 'VAULT';
 
     -- Remove old masterIntegrationFields from github auth
     delete from "masterIntegrationFields" where id in (76, 77, 78);
@@ -1053,28 +1059,6 @@ do $$
     if not exists (select 1 from "masterIntegrationFields" where "id" = 130) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (130, '57cea8056ce9c71800d31ab3', 'proxy', 'string', false, false, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- Amazon S3
-    if not exists (select 1 from "masterIntegrations" where "name" = 'amazons3' and "typeCode" = 5005) then
-      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
-      values ('57cecf81c3d9bb70153d8249', 34, 'amazons3', 'Amazon S3', 'cloudproviders', true, 'system', 5005, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    -- masterIntegrationFields for Amazon S3
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 90) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (90, '57cecf81c3d9bb70153d8249', 'bucketName', 'string', true, false,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 91) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (91, '57cecf81c3d9bb70153d8249', 'accessKey', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
-    end if;
-
-    if not exists (select 1 from "masterIntegrationFields" where "id" = 92) then
-      insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
-      values (92, '57cecf81c3d9bb70153d8249', 'secretKey', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- bitbucket server auth
