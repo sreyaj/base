@@ -172,7 +172,6 @@ do $$
             '{{VAULT_URL}}',
             '{{VAULT_TOKEN}}',
             {{VAULT_REFRESH_TIME_SEC}},
-            {{CACHING_ENABLED}},
             {{HUBSPOT_ENABLED}},
             '{{AMQP_URL}}',
             '{{AMQP_URL_ROOT}}',
