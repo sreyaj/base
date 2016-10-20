@@ -115,7 +115,7 @@ do $$
             "allowCustomNodes"={{ALLOW_CUSTOM_NODES}},
             "consoleMaxLifespan"={{CONSOLE_MAX_LIFESPAN}},
             "consoleCleanupHour"={{CONSOLE_CLEANUP_HOUR}},
-            "customHostDockerVersion"={{CUSTOM_HOST_DOCKER_VERSION}}
+            "customHostDockerVersion"='{{CUSTOM_HOST_DOCKER_VERSION}}'
         where id=1;
     end if;
 

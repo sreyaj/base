@@ -444,6 +444,10 @@ install_rabbitmq() {
     local amqp_admin_protocol=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url_admin').scheme")
     local amqp_admin_port=$(python -c "from urlparse import urlparse; print urlparse('$amqp_url_admin').port")
 
+    __process_msg "AMQP HOST in state file: $amqp_host_state"
+    __process_msg "AMQP PORT in state file: $amqp_port"
+    __process_msg "AMQP PROTOCOL in state file: $amqp_protocol"
+
     if [ -z "$amqp_port" ]; then
       # hostname provided as a fqdn
       # this can only happen when user has manually updated it,
