@@ -1992,10 +1992,12 @@ do $$
       alter table "projectDailyAggs" add constraint "projectDailyAggs_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
     end if;
 
-  -- Adds foreign key relationships for transactions
-    if not exists (select 1 from pg_constraint where conname = 'transactions_accountId_fkey') then
-      alter table "transactions" add constraint "transactions_accountId_fkey" foreign key ("accountId") references "accounts"(id) on update restrict on delete restrict;
+  -- Removes accountId foreign key from transactions
+    if exists (select 1 from pg_constraint where conname = 'transactions_accountId_fkey') then
+      alter table "transactions" drop constraint "transactions_accountId_fkey";
     end if;
+
+  -- Adds foreign key relationships for transactions
     if not exists (select 1 from pg_constraint where conname = 'transactions_subscriptionId_fkey') then
       alter table "transactions" add constraint "transactions_subscriptionId_fkey" foreign key ("subscriptionId") references "subscriptions"(id) on update restrict on delete restrict;
     end if;
