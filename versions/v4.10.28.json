@@ -412,6 +412,22 @@
       ]
     },
     {
+      "name": "irc",
+      "repository": "micro",
+      "replicas": 1,
+      "envs": [
+        "SHIPPABLE_ROOT_AMQP_URL",
+        "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
+        "SHIPPABLE_API_URL",
+        "SHIPPABLE_API_TOKEN",
+        "SHIPPABLE_WWW_URL",
+        "RUN_MODE",
+        "COMPONENT",
+        "IRC_BOT_NICK",
+        "SHIPPABLE_VORTEX_URL"
+      ]
+    },
+    {
       "name": "jobRequest",
       "repository": "micro50",
       "replicas": 1,
