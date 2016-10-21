@@ -130,6 +130,10 @@ generate_system_config() {
   local server_enabled=$(cat $STATE_FILE | jq -r '.systemSettings.serverEnabled')
   sed -i "s#{{SERVER_ENABLED}}#$server_enabled#g" $system_configs_sql
 
+ __process_msg "Updating : autoSelectBuilderToken"
+  local auto_select_builder_token=$(cat $STATE_FILE | jq -r '.systemSettings.autoSelectBuilderToken')
+  sed -i "s#{{AUTO_SELECT_BUILDER_TOKEN}}#$auto_select_builder_token#g" $system_configs_sql
+
   __process_msg "Updating : buildTimeout"
   local build_timeout=$(cat $STATE_FILE | jq -r '.systemSettings.buildTimeoutMS')
   sed -i "s#{{BUILD_TIMEOUT_MS}}#$build_timeout#g" $system_configs_sql
