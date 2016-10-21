@@ -1859,9 +1859,13 @@ do $$
       alter table "buildJobs" alter column "projectId" set not null;
     end if;
 
-  -- Rename systemConfigs.braintreeEnabled to systemConfigs.serverEnabled
+  -- Remove systemConfigs.braintreeEnabled
     if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'braintreeEnabled') then
       alter table "systemConfigs" drop column "braintreeEnabled";
+    end if;
+
+    -- Add systemConfigs.serverEnabled
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'serverEnabled') then
       alter table "systemConfigs" add column "serverEnabled" boolean NOT NULL DEFAULT true;
     end if;
 
