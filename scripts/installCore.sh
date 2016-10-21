@@ -307,6 +307,11 @@ install_vault() {
   else
     __process_msg "Vault already installed, skipping"
   fi
+}
+
+initialize_vault() {
+  local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local host=$(echo $vault_host | jq '.ip')
 
   SKIP_STEP=false
   _check_component_status "vaultInitialized"
@@ -338,6 +343,23 @@ install_vault() {
 
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/bootstrapVault.sh" "$SCRIPT_DIR_REMOTE"
     _exec_remote_cmd_proxyless "$host" "$SCRIPT_DIR_REMOTE/bootstrapVault.sh $db_username $db_name $db_ip $vault_url"
+
+    __process_msg "Saving vault credentials in state.json"
+    local VAULT_FILE="/tmp/shippable/vaultConfig.json"
+    local VAULT_JSON_FILE="/etc/vault.d/vaultConfig.json"
+
+    local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+    local host=$(echo $vault_host | jq -r '.ip')
+    local vault_url="http://$host:8200"
+    result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultUrl = "'$vault_url'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
+
+    _copy_script_local $host $VAULT_JSON_FILE
+
+    local vault_token=$(cat $VAULT_FILE | jq -r '.vaultToken')
+    result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultToken = "'$vault_token'"')
+    update=$(echo $result | jq '.' | tee $STATE_FILE)
+    __process_msg "Vault credentials successfully saved to state.json"
     _update_install_status "vaultInitialized"
   else
     __process_msg "Vault already initialized, skipping"
@@ -384,25 +406,6 @@ initialize_vault_local() {
   else
     __process_msg "Vault already initialized, skipping"
   fi
-}
-
-save_vault_credentials() {
-  __process_msg "Saving vault credentials in state.json"
-  local VAULT_FILE="/tmp/shippable/vaultConfig.json"
-  local VAULT_JSON_FILE="/etc/vault.d/vaultConfig.json"
-
-  local vault_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-  local host=$(echo $vault_host | jq -r '.ip')
-  local vault_url="http://$host:8200"
-  result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultUrl = "'$vault_url'"')
-  update=$(echo $result | jq '.' | tee $STATE_FILE)
-
-  _copy_script_local $host $VAULT_JSON_FILE
-
-  local vault_token=$(cat $VAULT_FILE | jq -r '.vaultToken')
-  result=$(cat $STATE_FILE | jq -r '.systemSettings.vaultToken = "'$vault_token'"')
-  update=$(echo $result | jq '.' | tee $STATE_FILE)
-  __process_msg "Vault credentials successfully saved to state.json"
 }
 
 install_rabbitmq() {
@@ -684,7 +687,7 @@ main() {
     save_db_credentials_in_statefile
     save_db_credentials
     install_vault
-    save_vault_credentials
+    initialize_vault
     install_rabbitmq
     install_gitlab
     install_ecr
