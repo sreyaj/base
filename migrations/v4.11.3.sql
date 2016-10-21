@@ -4,6 +4,9 @@ do $$
     -- Remove vault systemIntegration
     delete from "systemIntegrations" where "name" = 'vault';
 
+    -- Remove amazons3 systemIntegration
+    delete from "systemIntegrations" where "name" = 'amazons3';
+
     -- Remove masterIntegrationFields for Vault
     delete from "masterIntegrationFields" where "masterIntegrationId"= (select id from "masterIntegrations" where "typeCode" = 5006 and
   "name" = 'VAULT');
