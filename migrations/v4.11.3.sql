@@ -2247,6 +2247,7 @@ do $$
     -- Remove unused route permissions
     delete from "routePermissions" where "routePattern" = '/projectPermissions';
     delete from "routePermissions" where "routePattern" = '/subscriptionPermissions';
+    delete from "routePermissions" where "routePattern" = '/accountIntegrations/:id/validateOwnerToken';
     delete from "routePermissions" where "routePattern"='/buildJobs'                              and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/buildJobs/:id'                          and "httpVerb"='PUT'    and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/buildJobs/:id'                          and "httpVerb"='DELETE' and "roleCode"=6000;
@@ -2720,7 +2721,7 @@ do $$
     );
 
     perform set_route_permission(
-      routePattern := '/accountIntegrations/:id/validateOwnerToken',
+      routePattern := '/accountIntegrations/:id/validateProjectOwnerToken',
       httpVerb := 'GET',
       roleCode := 6000,
       isPublic := false,
@@ -2729,7 +2730,7 @@ do $$
     );
 
     perform set_route_permission(
-      routePattern := '/accountIntegrations/:id/validateOwnerToken',
+      routePattern := '/accountIntegrations/:id/validateProjectOwnerToken',
       httpVerb := 'GET',
       roleCode := 6010,
       isPublic := false,
@@ -2738,7 +2739,7 @@ do $$
     );
 
     perform set_route_permission(
-      routePattern := '/accountIntegrations/:id/validateOwnerToken',
+      routePattern := '/accountIntegrations/:id/validateProjectOwnerToken',
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
