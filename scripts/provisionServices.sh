@@ -87,7 +87,7 @@ __map_env_vars() {
   elif [ "$1" == "JOB_TYPE" ]; then
     env_value=$3
   elif [ "$1" == "IRC_BOT_NICK" ]; then
-    env_value=shippable-betaone
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.ircBotNick')
   else
     echo "No handler for env : $1, exiting"
     exit 1
