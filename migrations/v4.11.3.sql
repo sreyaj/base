@@ -1869,6 +1869,16 @@ do $$
       alter table "systemConfigs" add column "serverEnabled" boolean NOT NULL DEFAULT true;
     end if;
 
+    -- Add systemConfigs.autoSelectBuilderToken
+    if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'autoSelectBuilderToken') then
+      alter table "systemConfigs" add column "autoSelectBuilderToken" boolean NOT NULL DEFAULT false;
+    end if;
+
+    -- Add projects.ownerAccountId
+    if not exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'ownerAccountId') then
+      alter table "projects" add column "ownerAccountId" varchar(24);
+    end if;
+
     -- Add column nodeTypeCode to subscriptions table
     if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'nodeTypeCode') then
       alter table "subscriptions" add column "nodeTypeCode" integer;
