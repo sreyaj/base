@@ -2329,6 +2329,11 @@ do $$
 
     -- update Git Store integration type
     update "masterIntegrations" set "level" = 'system' where "masterIntegrationId" = 1 and "name" = 'Git store' and type = 'scm';
+
+    -- Add column subnetId in systemMachineImages table
+    if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'subnetId') then
+      alter table "systemMachineImages" add column "subnetId" varchar(80);
+    end if;
   end
 $$;
 
