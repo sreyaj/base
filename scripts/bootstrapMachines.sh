@@ -162,6 +162,7 @@ main() {
       setup_node
       bootstrap
     else
+      create_ssh_keys
       bootstrap_local
     fi
 
