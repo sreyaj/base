@@ -455,7 +455,8 @@
       "keyName": "shippable-beta",
       "execImage": "shipimg/mexec:v4.11.3-alpha.15",
       "runShImage": "shipimg/runsh:v4.11.3-alpha.15",
-      "securityGroup": "sg-123456"
+      "securityGroup": "sg-123456",
+      "subnetId": "subnet-123456"
     }
   ],
   "services": [],
