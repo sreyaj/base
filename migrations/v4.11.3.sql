@@ -1877,6 +1877,7 @@ do $$
     -- Add projects.ownerAccountId
     if not exists (select 1 from information_schema.columns where table_name = 'projects' and column_name = 'ownerAccountId') then
       alter table "projects" add column "ownerAccountId" varchar(24);
+      update projects set "ownerAccountId" = "enabledBy";
     end if;
 
     -- Add column nodeTypeCode to subscriptions table
