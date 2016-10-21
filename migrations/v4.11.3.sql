@@ -2705,6 +2705,33 @@ do $$
     );
 
     perform set_route_permission(
+      routePattern := '/accountIntegrations/:id/validateOwnerToken',
+      httpVerb := 'GET',
+      roleCode := 6000,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/accountIntegrations/:id/validateOwnerToken',
+      httpVerb := 'GET',
+      roleCode := 6010,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/accountIntegrations/:id/validateOwnerToken',
+      httpVerb := 'GET',
+      roleCode := 6020,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
+    perform set_route_permission(
       routePattern := '/accountIntegrations',
       httpVerb := 'POST',
       roleCode := 6000,
