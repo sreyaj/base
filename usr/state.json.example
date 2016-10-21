@@ -505,7 +505,8 @@
     "allowSystemNodes": true,
     "allowDynamicNodes": true,
     "allowCustomNodes": true,
-    "customHostDockerVersion": "1.12.1"
+    "customHostDockerVersion": "1.12.1",
+    "ircBotNick": "shippable"
   },
   "machines": [],
   "installStatus": {
