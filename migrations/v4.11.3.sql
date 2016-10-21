@@ -1871,7 +1871,7 @@ do $$
 
     -- Add systemConfigs.autoSelectBuilderToken
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'autoSelectBuilderToken') then
-      alter table "systemConfigs" add column "autoSelectBuilderToken" boolean NOT NULL DEFAULT false;
+      alter table "systemConfigs" add column "autoSelectBuilderToken" boolean DEFAULT false;
     end if;
 
     -- Add projects.ownerAccountId
