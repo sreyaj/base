@@ -4,6 +4,9 @@ do $$
     -- Remove vault systemIntegration
     delete from "systemIntegrations" where "name" = 'vault';
 
+    -- Remove amazons3 systemIntegration
+    delete from "systemIntegrations" where "name" = 'amazons3';
+
     -- Remove masterIntegrationFields for Vault
     delete from "masterIntegrationFields" where "masterIntegrationId"= (select id from "masterIntegrations" where "typeCode" = 5006 and
   "name" = 'VAULT');
@@ -2708,6 +2711,33 @@ do $$
 
     perform set_route_permission(
       routePattern := '/accountIntegrations/:id/dependencies',
+      httpVerb := 'GET',
+      roleCode := 6020,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/accountIntegrations/:id/validateOwnerToken',
+      httpVerb := 'GET',
+      roleCode := 6000,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/accountIntegrations/:id/validateOwnerToken',
+      httpVerb := 'GET',
+      roleCode := 6010,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/accountIntegrations/:id/validateOwnerToken',
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
