@@ -68,10 +68,6 @@ __map_env_vars() {
     env_value=true
   elif [ "$1" == "SHIPPABLE_AWS_ACCOUNT_ID" ]; then
     env_value=null
-  elif [ "$1" == "REGISTRY_ACCOUNT_ID" ]; then
-    env_value=null
-  elif [ "$1" == "REGISTRY_REGION" ]; then
-    env_value=null
   # TODO: Populate this
   elif [ "$1" == "GITHUB_LINK_SYSINT_ID" ]; then
     env_value=null

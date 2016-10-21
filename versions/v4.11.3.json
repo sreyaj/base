@@ -438,9 +438,7 @@
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
         "SHIPPABLE_WWW_URL",
         "RUN_MODE",
-        "COMPONENT",
-        "REGISTRY_REGION",
-        "REGISTRY_ACCOUNT_ID"
+        "COMPONENT"
       ]
     },
     {
