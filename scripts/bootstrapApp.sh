@@ -94,6 +94,21 @@ update_docker_creds_local() {
   eval "$docker_login_cmd"
 }
 
+update_system_node_keys() {
+  local private_key=""
+  while read line; do
+    private_key=$private_key""$line"\n"
+  done <$SSH_PRIVATE_KEY
+  local public_key=""
+  while read line; do
+    public_key=$public_key""$line"\n"
+  done <$SSH_PUBLIC_KEY
+  local update=$(cat $STATE_FILE | jq '.systemSettings.systemNodePublicKey="'$public_key'"')
+  _update_state "$update"
+  local update=$(cat $STATE_FILE | jq '.systemSettings.systemNodePrivateKey="'$private_key'"')
+  _update_state "$update"
+}
+
 generate_system_config() {
   __process_msg "Inserting data into systemConfigs Table"
 
@@ -235,43 +250,29 @@ generate_system_config() {
 
 create_system_config() {
   __process_msg "Creating systemConfigs table"
+  local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
+  local db_ip=$(echo $db_host | jq -r '.ip')
+  local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
 
-  SKIP_STEP=false
-  _check_component_status "systemConfigUpdated"
-  if [ "$SKIP_STEP" == false ]; then
-    local db_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="db")')
-    local db_ip=$(echo $db_host | jq -r '.ip')
-    local db_username=$(cat $STATE_FILE | jq -r '.systemSettings.dbUsername')
+  #TODO: fetch db_name from state.json
+  local db_name="shipdb"
 
-    #TODO: fetch db_name from state.json
-    local db_name="shipdb"
-
-    _copy_script_remote $db_ip "$USR_DIR/system_configs.sql" "$SCRIPT_DIR_REMOTE"
-    _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs.sql"
-    _update_install_status "systemConfigUpdated"
-    __process_msg "Successfully created systemConfigs table"
-  else
-    __process_msg "system configs already updated, skipping"
-  fi
+  _copy_script_remote $db_ip "$USR_DIR/system_configs.sql" "$SCRIPT_DIR_REMOTE"
+  _exec_remote_cmd $db_ip "psql -U $db_username -h $db_ip -d $db_name -f $SCRIPT_DIR_REMOTE/system_configs.sql"
+  _update_install_status "systemConfigUpdated"
+  __process_msg "Successfully created systemConfigs table"
 }
 
 create_system_config_local() {
-  SKIP_STEP=false
-  _check_component_status "systemConfigUpdated"
-  if [ "$SKIP_STEP" == false ]; then
-    __process_msg "Creating systemConfigs table on local db"
+  __process_msg "Creating systemConfigs table on local db"
+  local system_configs_file="$USR_DIR/system_configs.sql"
+  local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
 
-    local system_configs_file="$USR_DIR/system_configs.sql"
-    local db_mount_dir="$LOCAL_SCRIPTS_DIR/data"
+  sudo cp -vr $system_configs_file $db_mount_dir
+  sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/system_configs.sql
 
-    sudo cp -vr $system_configs_file $db_mount_dir
-    sudo docker exec local_postgres_1 psql -U $db_username -d $db_name -f /tmp/data/system_configs.sql
-
-    _update_install_status "systemConfigUpdated"
-    __process_msg "Successfully created systemConfigs table on local db"
-  else
-    __process_msg "system configs already updated, skipping"
-  fi
+  _update_install_status "systemConfigUpdated"
+  __process_msg "Successfully created systemConfigs table on local db"
 }
 
 generate_api_config() {
@@ -628,6 +629,7 @@ main() {
 
   if [ "$INSTALL_MODE" == "production" ]; then
     update_docker_creds
+    update_system_node_keys
     generate_system_config
     create_system_config
     generate_api_config
@@ -641,6 +643,7 @@ main() {
     restart_api
   else
     update_docker_creds_local
+    update_system_node_keys
     generate_system_config
     create_system_config_local
     generate_api_config

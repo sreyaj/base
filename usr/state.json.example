@@ -506,7 +506,9 @@
     "allowDynamicNodes": true,
     "allowCustomNodes": true,
     "customHostDockerVersion": "1.12.1",
-    "ircBotNick": "shippable"
+    "ircBotNick": "shippable",
+    "systemNodePrivateKey": "",
+    "systemNodePublicKey": ""
   },
   "machines": [],
   "installStatus": {
@@ -527,7 +529,6 @@
     "swarmInitialized": false,
     "redisInstalled": false,
     "redisInitialized": false,
-    "serviceuserTokenGenerated": false,
-    "systemConfigUpdated": false
+    "serviceuserTokenGenerated": false
   }
 }
