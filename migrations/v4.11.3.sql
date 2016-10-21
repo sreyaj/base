@@ -11,11 +11,12 @@ do $$
     delete from "masterIntegrationFields" where "masterIntegrationId"= (select id from "masterIntegrations" where "typeCode" = 5006 and
   "name" = 'VAULT');
 
+   -- Remove old masterIntegrationFields from amazons3
+   delete from "masterIntegrationFields" where "masterIntegrationId"= (select id from "masterIntegrations" where "typeCode" = 5005 and
+ "name" = 'amazons3');
+
     -- Remove amazons3 masterIntegration
     delete from "masterIntegrations" where "typeCode" = 5005 and "name" = 'amazons3';
-
-    -- Remove old masterIntegrationFields from amazons3
-    delete from "masterIntegrationFields" where id in (90, 91, 92);
 
     -- Remove vault masterIntegration
     delete from "masterIntegrations" where "typeCode" = 5006 and "name" = 'VAULT';
