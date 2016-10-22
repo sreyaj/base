@@ -2339,6 +2339,11 @@ do $$
     if not exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'subnetId') then
       alter table "systemMachineImages" add column "subnetId" varchar(80);
     end if;
+
+    -- drop NOT NULL from subnetId in systemMachineImages table
+    if exists (select 1 from information_schema.columns where table_name = 'systemMachineImages' and column_name = 'subnetId') then
+      alter table "systemMachineImages" alter column "subnetId" DROP NOT NULL;
+    end if;
   end
 $$;
 
