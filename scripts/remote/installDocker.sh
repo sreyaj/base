@@ -8,8 +8,7 @@ readonly DOCKER_VERSION_PRODUCTION=1.12.1-0~trusty
 readonly DOCKER_VERSION_LOCAL=1.9.1-0~trusty
 
 purge_docker() {
-  sudo apt-get purge -y lxc-docker || true
-  sudo apt-get purge -y docker || true
+  sudo apt-get purge -y docker-engine || true
 }
 
 docker_install() {
