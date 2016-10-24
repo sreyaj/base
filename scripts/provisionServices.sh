@@ -82,6 +82,8 @@ __map_env_vars() {
     env_value=$2
   elif [ "$1" == "JOB_TYPE" ]; then
     env_value=$3
+  elif [ "$1" == "TRUCK" ]; then
+    env_value=true
   elif [ "$1" == "IRC_BOT_NICK" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.ircBotNick')
   else
@@ -143,6 +145,11 @@ __save_service_config() {
   env_values=""
   for i in $(seq 1 $env_vars_count); do
     local env_var=$(echo $env_vars | jq -r '.['"$i-1"']')
+
+    # Never apply TRUCK env in production mode
+    if [ "$env_var" == "TRUCK" ] && [ "$INSTALL_MODE" == "production" ]; then
+      continue
+    fi
 
     if [ "$env_var" == "JOB_TYPE" ] || \
       [ "$env_var" == "COMPONENT" ]; then

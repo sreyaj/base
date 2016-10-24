@@ -4,7 +4,8 @@
 export docker_restart=false
 export INSTALL_MODE="$1"
 
-readonly DOCKER_VERSION=1.12.1-0~trusty
+readonly DOCKER_VERSION_PRODUCTION=1.12.1-0~trusty
+readonly DOCKER_VERSION_LOCAL=1.9.1-0~trusty
 
 purge_docker() {
   sudo apt-get purge -y lxc-docker || true
@@ -20,8 +21,11 @@ docker_install() {
     sudo apt-get install -y linux-image-extra-`uname -r`
   fi
 
-  sudo apt-get update
-  sudo apt-get install -y docker-engine=$DOCKER_VERSION
+  if [ "$INSTALL_MODE" == "production" ]; then
+    sudo apt-get install -y docker-engine=$DOCKER_VERSION_PRODUCTION
+  else
+    sudo apt-get install -y docker-engine=$DOCKER_VERSION_LOCAL
+  fi
 }
 
 check_docker_opts() {
