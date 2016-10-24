@@ -11,11 +11,13 @@ version of code
 - `ssh` into the `manager` machine
 
 - install `git` using following
+
 ```
 $ sudo apt-get install git-core
 ```
 
 - clone the installer
+
 ```
 $ git clone https://github.com/Shippable/base.git
 $ cd base
@@ -23,7 +25,8 @@ $ cd base
 
 - checkout release version, if only a specific release needs to be installed. 
 Installer releases are listed [here](https://github.com/Shippable/base/releases)
-``
+
+```
 $ git checkout <release_version>
 ```
 
