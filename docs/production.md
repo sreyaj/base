@@ -149,8 +149,203 @@ when there are no integrations set up in system
                           webhook notification
 
 ```
+- This is the global list of available master integrations. They need to be enabled in the `usr/state.json` file
+to be used.
+- As an example, we'll enable `github` login for SASS version and `bitbucketserver` for Server version.
 
 
-## SASS version specific configuration
+### SASS version specific configuration
+
+- for Server version integration configuration, skip to the next section
+- Enable `masterIntegrations`
+Edit `usr/state.json`. Edit the `masterIntegrations` array and change it to following
+
+```
+masterIntegrations: [
+  {
+    "name": "Git store",
+    "type": "scm"
+  },
+  {
+    "name": "github",
+    "type": "auth"
+  },
+  {
+    "name": "github",
+    "type": "scm"
+  }
+]
+```
+Save and close.
+Note that the `name` and `type` of any integration is the same as the ones provided in full master integration list
+
+-  Enable `systemIntegrations`  
+Edit `usr/state.json`. Edit the `systemIntegrations` array and change it to following
+
+```
+systemIntegrations: [
+  {
+    "name": "gitlab",
+    "masterDisplayName": "Internal Gitlab Server",
+    "masterName": "Git store",
+    "masterType": "scm",
+    "isEnabled": true,
+    "formJSONValues": [
+      {
+        "label": "username",
+        "value": "root"
+      },
+      {
+        "label": "subscriptionProjectLimit",
+        "value": "100"
+      },
+      {
+        "label": "password",
+        "value": "shippable1234"
+      },
+      {
+        "label": "url",
+        "value": "http://<manager-ip>/api/v3"
+      },
+      {
+        "label": "sshPort",
+        "value": "22"
+      }
+    ]
+  },
+  {
+    "isEnabled": true,
+    "formJSONValues": [
+      {
+        "value": "<github app client id>",
+        "label": "clientId"
+      },
+      {
+        "value": "<github app client secret>",
+        "label": "clientSecret"
+      },
+      {
+        "value": "<internet routable address of ui>",
+        "label": "wwwUrl"
+      },
+      {
+        "value": "https://api.github.com",
+        "label": "url"
+      }
+    ],
+    "masterType": "auth",
+    "masterName": "github",
+    "masterDisplayName": "github auth",
+    "name": "github.com"
+  }
+]
+```
+Save and close.
+Note that the `masterName` and `masterType` of the `systemIntegrations` are the same as the enabled
+`masterIntegrations`
+
 
 ## Server version specific configuration
+
+- Enable `masterIntegrations`  
+Edit `usr/state.json`. Edit the `masterIntegrations` array and change it to following
+
+```
+masterIntegrations: [
+  {   
+    "name": "Git store",
+    "type": "scm"
+  },  
+  {   
+    "name": "bitbucketServer",
+    "type": "auth"
+  },  
+  {   
+    "name": "bitbucketServer",
+    "type": "scm"
+  }
+]
+```
+Save and close.  
+Note that the `name` and `type` of any integration is the same as the ones provided in full master integration list
+
+-  Enable `systemIntegrations`  
+Edit `usr/state.json`. Edit the `systemIntegrations` array and change it to following
+
+```
+systemIntegrations: [
+  {
+    "name": "gitlab",
+    "masterDisplayName": "Internal Gitlab Server",
+    "masterName": "Git store",
+    "masterType": "scm",
+    "isEnabled": true,
+    "formJSONValues": [
+      {
+        "label": "username",
+        "value": "root"
+      },
+      {
+        "label": "subscriptionProjectLimit",
+        "value": "100"
+      },
+      {
+        "label": "password",
+        "value": "shippable1234"
+      },
+      {
+        "label": "url",
+        "value": "http://<manager-ip>/api/v3"
+      },
+      {
+        "label": "sshPort",
+        "value": "22"
+      }
+    ]
+  },
+  {   
+    "formJSONValues": [
+      {
+        "label": "clientSecret",
+        "value": "<bitbucket server private key>"
+      },
+      {
+        "label": "clientId",
+        "value": "Shippable"
+      },
+      {
+        "label": "url",
+        "value": "<bitbucket server api url>:7990"
+      },
+      {
+        "label": "wwwUrl",
+        "value": "<internet routable address of ui> "
+      }
+    ],  
+    "masterType": "auth",
+    "masterName": "bitbucketServer",
+    "name": "bitbucket server auth"
+  }  
+]
+```
+Save and close.
+Note that the `masterName` and `masterType` of the `systemIntegrations` are the same as the enabled
+`masterIntegrations`
+
+### Run installer  
+
+- integration configuration is the last manual step. Once this is done, run the installer again
+
+- run the following command to start installer  
+```
+$ ./base.sh --install production
+```
+
+- This time, installer will do the following after booting up api
+  - run migrations
+  - enable all the `masterIntegrations` listed in the array
+  - insert all the `systemIntegrations` listed in the array
+  - restart api
+  - start www
+  - start other services
+
