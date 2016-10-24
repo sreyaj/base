@@ -4062,6 +4062,24 @@ do $$
       isFreeUser := false
     );
 
+    perform set_route_permission(
+      routePattern := '/passthrough/jobs/:id/reports',
+      httpVerb := 'GET',
+      roleCode := 6010,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
+    perform set_route_permission(
+      routePattern := '/passthrough/jobs/:id/reports',
+      httpVerb := 'GET',
+      roleCode := 6020,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
     -- set payments routePermissions
 
     perform set_route_permission(
