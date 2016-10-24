@@ -346,7 +346,8 @@
         "SHIPPABLE_ROOT_AMQP_URL",
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
         "RUN_MODE",
-        "COMPONENT"
+        "COMPONENT",
+        "TRUCK"
       ],
       "volumes": [
         "/home/shippable/cexec/logs:/home/shippable/cexec/logs",
