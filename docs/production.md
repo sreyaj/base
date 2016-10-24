@@ -101,7 +101,7 @@ proceed to configuring integrations
 - For the first run, there are no integrations set up by default, so the installer shows following message
 when there are no integrations set up in system
 
-```
+  ```
 ... earlier logs 
 
 |___ Please enable 'masterIntegrations' in state.json and run installer again
@@ -148,7 +148,8 @@ when there are no integrations set up in system
                            TRIPUB     deploy
                           webhook notification
 
-```
+  ```
+
 - This is the global list of available master integrations. They need to be enabled in the `usr/state.json` file
 to be used.
 - As an example, we'll enable `github` login for SASS version and `bitbucketserver` for Server version.
@@ -160,7 +161,7 @@ to be used.
 - Enable `masterIntegrations`
 Edit `usr/state.json`. Edit the `masterIntegrations` array and change it to following  
 
-```json
+  ```
 masterIntegrations: [
   {
     "name": "Git store",
@@ -175,7 +176,7 @@ masterIntegrations: [
     "type": "scm"
   }
 ]
-```
+  ```
 
 Save and close.
 Note that the `name` and `type` of any integration is the same as the ones provided in full master integration list
@@ -183,7 +184,7 @@ Note that the `name` and `type` of any integration is the same as the ones provi
 -  Enable `systemIntegrations`  
 Edit `usr/state.json`. Edit the `systemIntegrations` array and change it to following
 
-```
+  ```
 systemIntegrations: [
   {
     "name": "gitlab",
@@ -240,7 +241,8 @@ systemIntegrations: [
     "name": "github.com"
   }
 ]
-```
+  ```
+
 Save and close.
 Note that the `masterName` and `masterType` of the `systemIntegrations` are the same as the enabled
 `masterIntegrations`
@@ -251,7 +253,7 @@ Note that the `masterName` and `masterType` of the `systemIntegrations` are the 
 - Enable `masterIntegrations`  
 Edit `usr/state.json`. Edit the `masterIntegrations` array and change it to following
 
-```
+  ```
 masterIntegrations: [
   {   
     "name": "Git store",
@@ -266,14 +268,14 @@ masterIntegrations: [
     "type": "scm"
   }
 ]
-```
+  ```
 Save and close.  
 Note that the `name` and `type` of any integration is the same as the ones provided in full master integration list
 
 -  Enable `systemIntegrations`  
 Edit `usr/state.json`. Edit the `systemIntegrations` array and change it to following
 
-```
+  ```
 systemIntegrations: [
   {
     "name": "gitlab",
@@ -328,7 +330,8 @@ systemIntegrations: [
     "name": "bitbucket server auth"
   }  
 ]
-```
+  ```
+  
 Save and close.
 Note that the `masterName` and `masterType` of the `systemIntegrations` are the same as the enabled
 `masterIntegrations`
