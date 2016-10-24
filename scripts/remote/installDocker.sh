@@ -7,36 +7,23 @@ export INSTALL_MODE="$1"
 readonly DOCKER_VERSION_PRODUCTION=1.12.1-0~trusty
 readonly DOCKER_VERSION_LOCAL=1.9.1-0~trusty
 
-purge_docker() {
-  sudo apt-get purge -y docker-engine || true
+docker_install_local() {
+  echo "Installing docker"
+  sudo apt-get install -y linux-image-extra-`uname -r`
+  sudo apt-get install -y --force-yes docker-engine=$DOCKER_VERSION_LOCAL
 }
 
-docker_install() {
+docker_install_prod() {
   echo "Installing docker"
-
-  if [ "$INSTALL_MODE" == "production" ]; then
-    sudo apt-get install -y linux-image-extra-`uname -r` linux-image-extra-virtual
-  else
-    sudo apt-get install -y linux-image-extra-`uname -r`
-  fi
-
-  if [ "$INSTALL_MODE" == "production" ]; then
-    sudo apt-get install -y docker-engine=$DOCKER_VERSION_PRODUCTION
-  else
-    sudo apt-get install -y docker-engine=$DOCKER_VERSION_LOCAL
-  fi
+  sudo apt-get install -y linux-image-extra-`uname -r` linux-image-extra-virtual
+  sudo apt-get install -y --force-yes docker-engine=$DOCKER_VERSION_PRODUCTION
 }
 
 check_docker_opts() {
   echo "Checking docker options"
 
   SHIPPABLE_DOCKER_OPTS='DOCKER_OPTS="$DOCKER_OPTS -H unix:///var/run/docker.sock -g=/data --storage-driver aufs"'
-  if [ "$INSTALL_MODE" == "local" ]; then
-    SHIPPABLE_DOCKER_OPTS='DOCKER_OPTS="$DOCKER_OPTS -H unix:///var/run/docker.sock -g=/data --storage-driver aufs --bip=172.17.42.1/16"'
-  fi
-
   opts_exist=$(sh -c "grep '$SHIPPABLE_DOCKER_OPTS' /etc/default/docker || echo ''")
-
   if [ -z "$opts_exist" ]; then
     ## docker opts do not exist
     echo "appending DOCKER_OPTS to /etc/default/docker"
@@ -62,10 +49,13 @@ restart_docker_service() {
 }
 
 main() {
-  purge_docker
-  docker_install
-  check_docker_opts
-  restart_docker_service
+  if [ "$INSTALL_MODE" == "local" ]; then
+    docker_install_local
+  else
+    docker_install_prod
+    check_docker_opts
+    restart_docker_service
+  fi
 }
 
 main
