@@ -88,20 +88,20 @@ $ cat usr/state.json | jq '.'
 
 ## FAQ
 
-Q: What happens if I accidently terminate installer?
+Q: What happens if I accidently terminate installer?  
 A: As long as the state file (`usr/state.json`) is preset, installer can be run any number of times without any issues.
 
-Q: Does installer install components like database, rabbitmq etc every time it runs?
+Q: Does installer install components like database, rabbitmq etc every time it runs?  
 A: No, once the components are installed, installer never installs them again. It keeps track of installed components
 in state file and every component has a flag asssociated with it. Only if that flag is reset, the installer will
 re-install the component
 
-Q: How do I enable more master integrations?
+Q: How do I enable more master integrations?  
 A: Just add the required master integrations in `masterIntegrations` array in `usr/state.json` and run installer again.
 
-Q: How do I disable master integrations?
+Q: How do I disable master integrations?  
 A: Remove the master integrations from `usr/state.json` and run installer again.
 
-Q: Are there any templates for integrations?
+Q: Are there any templates for integrations?  
 A: Yes, the templates for all the `masterIntegrations` and `systemIntegrations` are available in `usr/state.json.example`. These
 can be copied over to `usr/state.json` as is. Once the required fields are updated, run installer again to sync these with database.
