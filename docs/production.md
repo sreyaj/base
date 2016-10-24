@@ -158,9 +158,9 @@ to be used.
 
 - for Server version integration configuration, skip to the next section
 - Enable `masterIntegrations`
-Edit `usr/state.json`. Edit the `masterIntegrations` array and change it to following
+Edit `usr/state.json`. Edit the `masterIntegrations` array and change it to following  
 
-```
+```json
 masterIntegrations: [
   {
     "name": "Git store",
@@ -176,6 +176,7 @@ masterIntegrations: [
   }
 ]
 ```
+
 Save and close.
 Note that the `name` and `type` of any integration is the same as the ones provided in full master integration list
 
