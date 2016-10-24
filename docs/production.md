@@ -53,23 +53,25 @@ into all the machines in the topology.
 ### Update configuration  
 
 - This steps is to configure the `usr/state.json` file. The user need not update all the variables
-here, just a few settings need to be changes. These are listed below:  
+here, just a few settings need to be changes. These are listed below:   
+
   ```
-  systemSettings.serverEnabled    // to install in SASS mode or Server mode
-  systemSettings.apiUrl           // should be the internet-routable api lb address
-  systemSettings.wwwUrl           // should be the internet-routable UI lb address
-  systemSettings.amqpUrl          // should be internet routable message queue address
-  systemSettings.amqpUrlRoot      // should be internet routable message queue root vhost
-  systemSettings.amqpUrlAdmin     // should be internet routable message queue admin address
-  systemSettings.installerAccessKey // ECR access key to pull Shippable images from
-  systemSettings.installerSecretKey // ECR secret key to pull Shippable images from
+systemSettings.serverEnabled    // to install in SASS mode or Server mode
+systemSettings.apiUrl           // should be the internet-routable api lb address
+systemSettings.wwwUrl           // should be the internet-routable UI lb address
+systemSettings.amqpUrl          // should be internet routable message queue address
+systemSettings.amqpUrlRoot      // should be internet routable message queue root vhost
+systemSettings.amqpUrlAdmin     // should be internet routable message queue admin address
+systemSettings.installerAccessKey // ECR access key to pull Shippable images from
+systemSettings.installerSecretKey // ECR secret key to pull Shippable images from
   ```
 
 ### Run installer
 - run the following command to start installer again
-```
+
+  ```
 $ ./base.sh --install production
-```
+  ```
 
 - this time, answer `y` to the prompt that asks for keys update
 - once this is done, installer should do the following. Note that no user action is required
