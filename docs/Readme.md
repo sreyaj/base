@@ -24,7 +24,7 @@ The installer supports two modes of installation: `local` and `production`.
 These can be used via following cli statement
 
 ```
-./base.sh --install [local|production]
+$ ./base.sh --install [local|production]
 ```
 
 If no value is provided, `local` is considered by default
@@ -37,18 +37,19 @@ local development. When run in `local` mode, installer does not install any unde
 starts them with `net=host` option. This makes sure all the ports are mapped to the host and can be used
 easily by other services.
 
-To start installer
-
+To start installer in `local` mode, follow instructions [here](local.md).
 
 ### `production` installation mode
 
 This mode assumes that all Shippable components are being installed on a topology of at least 4 servers.
-The (recommended)composition of servers should be:
+The (recommended)composition of servers should be:  
 
 - core: for database, rabbitmq and vault
 - manager: for swarm master, gitlab, redis
 - services-1: for running microservices
 - services-2: for running microservices
+
+To start installer in `production` mode, follow instructions [here](production.md).
 
 ## SSH Keys
 
@@ -63,7 +64,7 @@ The state of the system is kept in a file at the location `usr/state.json`. This
 installation and all installation-specific data like keys to pull docker images, message queue credentials, 
 proxy configuration, docker version for custom hosts and generated tokens. This will be used to recover the system
 and for debugging purposes. This file should **NEVER** be deleted. Some values can be alterted manually but the user
-has to be absolutely sure about what is being changed. 
+has to be absolutely sure about what is being changed.   
 In almost all cases, installer will take care of updating and backing up this file
 
 ## Load balancers
@@ -76,3 +77,12 @@ For `production` installation, Shippable requires three loadbalancers
 
 These should be internet-routable (or be accessible within the VPN) and should be configured before the
 installer is run.
+
+## Updating System Configs
+TODO
+
+## Updating Master Integrations
+TODO
+
+## Updating System Integrations
+TODO
