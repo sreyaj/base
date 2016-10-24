@@ -129,7 +129,7 @@ __save_service_config() {
     )'
   )
   update=$(echo $image_update | jq '.' | tee $STATE_FILE)
-  __process_msg "Successfully updated $service port mapping"
+  __process_msg "Successfully updated $service image"
 
   __process_msg "Saving config for $service"
   local env_vars=$(cat $release_file | jq --arg service "$service" '
@@ -214,13 +214,36 @@ __save_service_config() {
     __process_msg "Successfully updated $service replicas"
   fi
 
+  local volumes=$(cat $release_file | jq --arg service "$service" '
+    .serviceConfigs[] |
+    select (.name==$service) | .volumes')
+  if [ "$volumes" != "null" ]; then
+    local volumes_update=""
+    local volumes_count=$(echo $volumes | jq '. | length')
+    for i in $(seq 1 $volumes_count); do
+      local volume=$(echo $volumes | jq -r '.['"$i-1"']')
+      volumes_update="$volumes_update -v $volume"
+    done
+    volumes_update=$(cat $STATE_FILE | jq --arg service "$service" '
+      .services  |=
+      map(if .name == $service then
+          .volumes = "'$volumes_update'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $volumes_update | jq '.' | tee $STATE_FILE)
+    __process_msg "Successfully updated $service volumes"
+  fi
+
   # Ports
-  __process_msg "Generating $service port mapping"
   # TODO: Fetch from systemConfig
   local port_mapping=$ports
-  __process_msg "$service port mapping : $port_mapping"
 
   if [ ! -z $ports ]; then
+    __process_msg "Generating $service port mapping"
+    __process_msg "$service port mapping : $port_mapping"
     local port_update=$(cat $STATE_FILE | jq --arg service "$service" '
       .services  |=
       map(if .name == $service then
@@ -235,12 +258,12 @@ __save_service_config() {
   fi
 
   # Opts
-  __process_msg "Generating $service opts"
   # TODO: Fetch from systemConfig
   local opts=$3
   __process_msg "$service opts : $opts"
 
   if [ ! -z $opts ]; then
+    __process_msg "Generating $service opts"
     local opt_update=$(cat $STATE_FILE | jq --arg service "$service" '
       .services  |=
       map(if .name == $service then
@@ -268,6 +291,7 @@ __run_service() {
   local opts=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .opts')
   local image=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .image')
   local replicas=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .replicas')
+  local volumes=$(cat $STATE_FILE | jq --arg service "$service" -r '.services[] | select (.name==$service) | .volumes')
 
   if [ "$INSTALL_MODE" == "production" ]; then
     local boot_cmd="docker service create"
@@ -310,6 +334,10 @@ __run_service() {
 
     if [ $env_variables != "null" ]; then
       boot_cmd="$boot_cmd $env_variables"
+    fi
+
+    if [ $volumes != "null" ]; then
+      boot_cmd="$boot_cmd $volumes"
     fi
 
     boot_cmd="$boot_cmd \
