@@ -350,10 +350,10 @@
         "TRUCK"
       ],
       "volumes": [
-        "/home/shippable/cexec/logs:/home/shippable/cexec/logs",
         "/usr/bin/docker:/usr/bin/docker",
         "/var/run/docker.sock:/var/run/docker.sock",
-        "/tmp/cexec:/cexec"
+        "/tmp/cexec:/tmp/cexec",
+        "/usr/lib/x86_64-linux-gnu/libapparmor.so.1.1.0:/lib/x86_64-linux-gnu/libapparmor.so.1"
       ]
     },
     {
