@@ -86,3 +86,11 @@ TODO
 
 ## Updating System Integrations
 TODO
+
+## Troubleshooting
+
+- to verify the json after any changes in `usr/state.json` run following command
+
+```
+$ cat usr/state.json | jq '.'
+```
