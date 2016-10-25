@@ -583,7 +583,7 @@ update_dynamic_nodes_integration_id() {
   local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   local system_integration_endpoint="$api_url/systemIntegrations"
 
-  local query="masterType=cloudproviders&name=AWS-ROOT"
+  local query="?masterType=cloudproviders&name=AWS-ROOT"
   local system_integrations=$(curl \
     -H "Content-Type: application/json" \
     -H "Authorization: apiToken $api_token" \
@@ -591,14 +591,11 @@ update_dynamic_nodes_integration_id() {
     --silent)
 
     local system_integrations_length=$(echo $system_integrations | jq -r '. | length')
-
     if [ $system_integrations_length -gt 0 ]; then
       local system_integration=$(echo $system_integrations | jq '.[0]')
       local system_integration_id=$(echo $system_integration | jq -r '.id')
       local update=$(cat $STATE_FILE | jq '.systemSettings.dynamicNodesSystemIntegrationId="'$system_integration_id'"')
       _update_state "$update"
-      generate_system_config
-      create_system_config
     fi
   __process_msg "Successfully updated dynamic node system integartion id"
 }
@@ -671,6 +668,8 @@ main() {
     manage_systemIntegrations
     insert_system_machine_image
     update_dynamic_nodes_integration_id
+    generate_system_config
+    create_system_config
     update_service_list
     restart_api
   else
@@ -685,6 +684,9 @@ main() {
     manage_masterIntegrations
     manage_systemIntegrations
     insert_system_machine_image
+    update_dynamic_nodes_integration_id
+    generate_system_config
+    create_system_config_local
     update_service_list
     restart_api_local
   fi
