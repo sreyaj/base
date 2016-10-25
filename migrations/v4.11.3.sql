@@ -4168,6 +4168,15 @@ do $$
     );
 
     perform set_route_permission(
+      routePattern := '/projects/:id/owners',
+      httpVerb := 'GET',
+      roleCode := 6020,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := false
+    );
+
+    perform set_route_permission(
       routePattern := '/projects/:id/validOwner',
       httpVerb := 'GET',
       roleCode := null,
