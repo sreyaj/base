@@ -537,18 +537,20 @@ insert_system_machine_image() {
   local system_machine_images=$(cat $STATE_FILE | jq -r '.systemMachineImages')
   local system_machine_images_length=$(echo $system_machine_images | jq -r '. | length')
 
-  local existing_system_machine_images=$(curl \
-    -H "Content-Type: application/json" \
-    -H "Authorization: apiToken $api_token" \
-    -X GET $system_machine_image_post_endpoint \
-    --silent)
-  existing_system_machine_images=$(echo $existing_system_machine_images | jq '.')
-
   for i in $(seq 1 $system_machine_images_length); do
     local system_machine_image=$(echo $system_machine_images | jq '.['"$i-1"']')
-    local system_machine_image_name=$(echo $system_machine_image | jq -r '.name')
-    local system_machine_image_db=$(echo $existing_system_machine_images | jq '.[] | select (.name=="'$system_machine_image_name'")')
-    if [ -z "$system_machine_image_db" ]; then
+    local system_machine_image_provider=$(echo $system_machine_image | jq -r '.provider')
+    local system_machine_image_externalId=$(echo $system_machine_image | jq -r '.externalId')
+    local query="?provider="$system_machine_image_provider"&externalId="$system_machine_image_externalId
+    local existing_system_machine_image=$(curl \
+      -H "Content-Type: application/json" \
+      -H "Authorization: apiToken $api_token" \
+      -X GET $system_machine_image_post_endpoint$query \
+      --silent)
+
+    local existing_system_machine_image_length=$(echo $existing_system_machine_image | jq -r '. | length')
+
+    if [ $existing_system_machine_image_length -eq 0 ]; then
       local post_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
         -X POST -d "$system_machine_image" $system_machine_image_post_endpoint \
           --write-out "%{http_code}\n" --silent --output /dev/null)
@@ -558,6 +560,7 @@ insert_system_machine_image() {
         echo "Sucessfully inserted system machine image: $system_machine_image_name"
       fi
     else
+      local system_machine_image_db=$(echo $existing_system_machine_image | jq '.['"0"']')
       local system_machine_image_db_id=$(echo $system_machine_image_db | jq -r '.id')
       local put_system_machine_image_endpoint=$system_machine_image_post_endpoint"/"$system_machine_image_db_id
       local put_call_resp_code=$(curl -H "Content-Type: application/json" -H "Authorization: apiToken $api_token" \
@@ -570,7 +573,7 @@ insert_system_machine_image() {
       fi
     fi
   done
-  __process_msg "Successfully insertd system machine images"
+  __process_msg "Successfully inserted system machine images"
 }
 
 restart_api() {
