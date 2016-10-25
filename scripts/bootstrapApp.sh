@@ -594,6 +594,7 @@ main() {
     update_system_node_keys
     generate_system_config
     create_system_config
+    run_migrations
     generate_api_config
     provision_api
     test_api_endpoint
@@ -611,6 +612,7 @@ main() {
     generate_system_config
     create_system_config_local
     generate_api_config
+    run_migrations_local
     provision_api_local
     test_api_endpoint
     run_migrations_local
