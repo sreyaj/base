@@ -29,39 +29,6 @@ generate_serviceuser_token() {
   fi
 }
 
-update_docker_creds() {
-  __process_msg "Updating docker credentials to pull shippable images"
-  local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
-  local host=$(echo "$gitlab_host" | jq '.ip')
-
-  local credentials_template="$REMOTE_SCRIPTS_DIR/credentials.template"
-  local credentials_file="$USR_DIR/credentials"
-
-  __process_msg "Updating : installerAccessKey"
-  local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
-  if [ -z "$aws_access_key" ]; then
-    __process_msg "Please update 'systemSettings.installerAccessKey' in state.json and run installer again"
-    exit 1
-  fi
-  sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
-
-  __process_msg "Updating : installerSecretKey"
-  local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
-  if [ -z "$aws_secret_key" ]; then
-    __process_msg "Please update 'systemSettings.installerSecretKey' in state.json and run installer again"
-    exit 1
-  fi
-  sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
-
-  _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
-  local save_docker_login_cmd='aws ecr --region us-east-1 get-login > /tmp/docker_login.sh'
-  _exec_remote_cmd $host "$save_docker_login_cmd"
-  local update_perm='chmod +x /tmp/docker_login.sh'
-  _exec_remote_cmd $host "$update_perm"
-  local docker_login_cmd='/tmp/docker_login.sh'
-  _exec_remote_cmd $host "$docker_login_cmd"
-}
-
 update_docker_creds_local() {
   __process_msg "Updating docker credentials to pull shippable images"
 
@@ -656,7 +623,6 @@ main() {
   generate_serviceuser_token
 
   if [ "$INSTALL_MODE" == "production" ]; then
-    update_docker_creds
     update_system_node_keys
     generate_system_config
     create_system_config
