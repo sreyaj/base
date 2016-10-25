@@ -104,6 +104,38 @@ install_docker_local() {
   fi
 }
 
+initialize_docker_local() {
+  __process_msg "Updating docker credentials to pull shippable images"
+
+  local credentials_template="$REMOTE_SCRIPTS_DIR/credentials.template"
+  local credentials_file="$REMOTE_SCRIPTS_DIR/credentials"
+
+  __process_msg "Updating : installerAccessKey"
+  local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
+  if [ -z "$aws_access_key" ]; then
+    __process_msg "Please update 'systemSettings.installerAccessKey' in state.json and run installer again"
+    exit 1
+  fi
+
+  sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
+
+  __process_msg "Updating : installerSecretKey"
+  local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
+  if [ -z "$aws_secret_key" ]; then
+    __process_msg "Please update 'systemSettings.installerSecretKey' in state.json and run installer again"
+    exit 1
+  fi
+  sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
+
+  mkdir -p ~/.aws
+  cp -v $credentials_file $HOME/.aws/
+  echo "aws ecr --region us-east-1 get-login" | sudo tee /tmp/docker_login.sh
+  sudo chmod +x /tmp/docker_login.sh
+  local docker_login_cmd=$(eval "/tmp/docker_login.sh")
+  __process_msg "Docker login generated, logging into ecr "
+  eval "$docker_login_cmd"
+}
+
 install_swarm() {
   SKIP_STEP=false
   _check_component_status "swarmInstalled"
@@ -735,6 +767,7 @@ main() {
     install_redis
   else
     install_docker_local
+    initialize_docker_local
     install_compose
     install_database_local
     save_db_credentials_in_statefile_local
