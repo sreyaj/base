@@ -2273,6 +2273,7 @@ do $$
     delete from "routePermissions" where "routePattern"='/jobs/:jobId'                            and "httpVerb"='DELETE' and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/jobTestReports'                         and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/jobTestReports/:id'                     and "httpVerb"='DELETE' and "roleCode"=6000;
+    delete from "routePermissions" where "routePattern"='/projects/:id/owners'              and "httpVerb"='GET'   and "roleCode"=6020;
     delete from "routePermissions" where "routePattern"='/projects/:projectId/reset'              and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/projects/:projectId/disable'            and "httpVerb"='POST'   and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/projects/:projectId/enable'             and "httpVerb"='POST'   and "roleCode"=6000;
@@ -4168,7 +4169,7 @@ do $$
     );
 
     perform set_route_permission(
-      routePattern := '/projects/:id/owners',
+      routePattern := '/projects/:projectId/owners',
       httpVerb := 'GET',
       roleCode := 6020,
       isPublic := false,
