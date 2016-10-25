@@ -348,12 +348,6 @@
         "RUN_MODE",
         "COMPONENT",
         "TRUCK"
-      ],
-      "volumes": [
-        "/usr/bin/docker:/usr/bin/docker",
-        "/var/run/docker.sock:/var/run/docker.sock",
-        "/tmp/cexec:/tmp/cexec",
-        "/usr/lib/x86_64-linux-gnu/libapparmor.so.1.1.0:/lib/x86_64-linux-gnu/libapparmor.so.1"
       ]
     },
     {
