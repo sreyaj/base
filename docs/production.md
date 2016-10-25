@@ -253,7 +253,7 @@ Note that the `masterName` and `masterType` of the `systemIntegrations` are the 
 `masterIntegrations`
 
 
-## Server version specific configuration
+### Server version specific configuration
 
 - Enable `masterIntegrations`  
 Edit `usr/state.json`. Edit the `masterIntegrations` array and change it to following
@@ -340,6 +340,32 @@ systemIntegrations: [
 Save and close.
 Note that the `masterName` and `masterType` of the `systemIntegrations` are the same as the enabled
 `masterIntegrations`
+
+### Configure system machine images
+
+- The version of shippable agents that run on build hosts are defined in `systemMachineImages` array. Edit
+the `systemMachineImages` variable in `usr/state.json`, update following
+
+```
+  "systemMachineImages": [
+    {
+      "externalId": "ami-123456",
+      "provider": "AWS",
+      "description": "Stable AMI",
+      "name": "Stable",
+      "isAvailable": true,
+      "isDefault": true,
+      "region": "us-east-1",
+      "keyName": "shippable-build",
+      "execImage": "shipimg/mexec:v4.11.3-rc.2",
+      "runShImage": "shipimg/runsh:v4.11.3-rc.2",
+      "securityGroup": "sg-123456",
+      "subnetId": "subnet-123456"
+    }
+  ]
+```
+
+- Note that if `Dynamic Nodes` are **not** required, then only update the `execImage` and `runShImage` values.
 
 ### Run installer  
 
