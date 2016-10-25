@@ -66,6 +66,7 @@ proxy configuration, docker version for custom hosts and generated tokens. This 
 and for debugging purposes. This file should **NEVER** be deleted. Some values can be alterted manually but the user
 has to be absolutely sure about what is being changed.   
 In almost all cases, installer will take care of updating and backing up this file
+More information on state file can be found [here](state.md)
 
 ## Load balancers
 

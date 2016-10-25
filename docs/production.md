@@ -52,7 +52,7 @@ into all the machines in the topology.
 
 ### Update configuration  
 
-- This steps is to configure the `usr/state.json` file. The user need not update all the variables
+- This step is to configure the `usr/state.json` file. The user need not update all the variables
 here, just a few settings need to be changes. These are listed below:   
 
   ```
