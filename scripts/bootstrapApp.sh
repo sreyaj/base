@@ -531,6 +531,8 @@ update_dynamic_nodes_integration_id() {
       local system_integration_id=$(echo $system_integration | jq -r '.id')
       local update=$(cat $STATE_FILE | jq '.systemSettings.dynamicNodesSystemIntegrationId="'$system_integration_id'"')
       _update_state "$update"
+    else
+      __process_msg "No system integration configured for dynamic nodes, skipping"
     fi
   __process_msg "Successfully updated dynamic node system integartion id"
 }
