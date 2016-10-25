@@ -576,6 +576,34 @@ insert_system_machine_image() {
   __process_msg "Successfully inserted system machine images"
 }
 
+update_dynamic_nodes_integration_id() {
+  __process_msg "Updating dynamic node system integartion id"
+  local api_url=""
+  local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
+  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
+  local system_integration_endpoint="$api_url/systemIntegrations"
+
+  local query="masterType=cloudproviders&name=AWS-ROOT"
+  local system_integrations=$(curl \
+    -H "Content-Type: application/json" \
+    -H "Authorization: apiToken $api_token" \
+    -X GET $system_integration_endpoint$query \
+    --silent)
+
+    local system_integrations_length=$(echo $system_integrations | jq -r '. | length')
+
+    if [ $system_integrations_length -gt 0 ]; then
+      local system_integration=$(echo $system_integrations | jq '.[0]')
+      local system_integration_id=$(echo $system_integration | jq -r '.id')
+      local update=$(cat $STATE_FILE | jq '.systemSettings.dynamicNodesSystemIntegrationId="'$system_integration_id'"')
+      _update_state "$update"
+      generate_system_config
+      create_system_config
+    fi
+  __process_msg "Successfully updated dynamic node system integartion id"
+}
+
+
 restart_api() {
   local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
@@ -642,6 +670,7 @@ main() {
     manage_masterIntegrations
     manage_systemIntegrations
     insert_system_machine_image
+    update_dynamic_nodes_integration_id
     update_service_list
     restart_api
   else
