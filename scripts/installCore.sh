@@ -23,7 +23,7 @@ _check_component_status() {
 
 install_docker() {
   SKIP_STEP=false
-  _check_component_status "dockerInitialized"
+  _check_component_status "dockerInstalled"
   if [ "$SKIP_STEP" == false ]; then
     __process_msg "Installing Docker on management machine"
     local gitlab_host=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
@@ -43,9 +43,48 @@ install_docker() {
     __process_msg "Please configure http_proxy in /etc/default/docker, if proxy needs to be configured. Press any button to continue, once this is done..."
     read response
     _update_install_status "dockerInstalled"
-    _update_install_status "dockerInitialized"
   else
     __process_msg "Docker already installed, skipping"
+  fi
+}
+
+initialize_docker() {
+  SKIP_STEP=false
+  _check_component_status "dockerInitialized"
+  if [ "$SKIP_STEP" == false ]; then
+    __process_msg "Initializing Docker on management machine"
+    local gitlab_host=$(cat $STATE_FILE \
+      | jq '.machines[] | select (.group=="core" and .name=="swarm")')
+    local host=$(echo $gitlab_host \
+      | jq '.ip')
+
+    local credentials_template="$REMOTE_SCRIPTS_DIR/credentials.template"
+    local credentials_file="$USR_DIR/credentials"
+
+    __process_msg "Loading: installerAccessKey"
+    local aws_access_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerAccessKey')
+    if [ -z "$aws_access_key" ]; then
+      __process_msg "Please update 'systemSettings.installerAccessKey' in state.json and run installer again"
+      exit 1
+    fi
+    sed "s#{{aws_access_key}}#$aws_access_key#g" $credentials_template > $credentials_file
+
+    __process_msg "Loading: installerSecretKey"
+    local aws_secret_key=$(cat $STATE_FILE | jq -r '.systemSettings.installerSecretKey')
+    if [ -z "$aws_secret_key" ]; then
+      __process_msg "Please update 'systemSettings.installerSecretKey' in state.json and run installer again"
+      exit 1
+    fi
+    sed -i "s#{{aws_secret_key}}#$aws_secret_key#g" $credentials_file
+
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/docker-credential-ecr-login" "/usr/bin/"
+    _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/config.json" "/root/.docker/"
+    _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
+
+    __process_msg "Initialzing Docker on service machines"
+
+    _update_install_status "dockerInitialized"
+  else
     __process_msg "Docker already initialized, skipping"
   fi
 }
@@ -682,6 +721,7 @@ main() {
   __process_marker "Installing core"
   if [ "$INSTALL_MODE" == "production" ]; then
     install_docker
+    initialize_docker
     install_swarm
     install_database
     save_db_credentials_in_statefile
