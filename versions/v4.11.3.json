@@ -414,8 +414,7 @@
         "RUN_MODE",
         "COMPONENT",
         "DOCKER_VERSION",
-        "SETUP_RUN_SH",
-        "EXEC_IMAGE"
+        "SETUP_RUN_SH"
       ]
     },
     {
@@ -488,8 +487,7 @@
         "SHIPPABLE_WWW_URL",
         "RUN_MODE",
         "COMPONENT",
-        "PROVIDERS",
-        "SHIPPABLE_EXEC_IMAGE"
+        "PROVIDERS"
       ]
     },
     {
