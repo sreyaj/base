@@ -447,6 +447,7 @@
     "dbPassword": "testing1234",
     "defaultPipelineCount": 1,
     "serverEnabled": false,
+    "autoSelectBuilderToken": true,
     "apiUrl": "http://172.17.42.1:50000",
     "dbDialect": "postgres",
     "amqpUrl": "amqp://SHIPPABLETESTUSER:SHIPPABLETESTPASS@172.17.42.1:5672/shippable",

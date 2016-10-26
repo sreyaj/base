@@ -57,6 +57,7 @@ here, just a few settings need to be changes. These are listed below:
 
   ```
 systemSettings.serverEnabled    // to install in SASS mode or Server mode
+systemSettings.autoSelectBuilderToken // to automatically select builder token if builder has not logged in
 systemSettings.apiUrl           // should be the internet-routable api lb address
 systemSettings.wwwUrl           // should be the internet-routable UI lb address
 systemSettings.amqpUrl          // should be internet routable message queue address
