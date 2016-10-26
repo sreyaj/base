@@ -81,7 +81,26 @@ initialize_docker() {
     _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/config.json" "/root/.docker/"
     _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
 
-    __process_msg "Initialzing Docker on service machines"
+    __process_msg "Initialzed Docker on swarm master"
+
+    __process_msg "Initializing Docker on microservice machines"
+    local service_machines_list=$(cat $STATE_FILE \
+      | jq '[ .machines[] | select(.group=="services") ]')
+    local service_machines_count=$(echo $service_machines_list \
+      | jq '. | length')
+    for i in $(seq 1 $service_machines_count); do
+      local machine=$(echo $service_machines_list \
+        | jq '.['"$i-1"']')
+      local host=$(echo $machine \
+        | jq '.ip')
+      __process_msg "Initializing docker on: $host"
+      _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/docker-credential-ecr-login" "/usr/bin/"
+      _copy_script_remote $host "$REMOTE_SCRIPTS_DIR/config.json" "/root/.docker/"
+      _copy_script_remote $host "$USR_DIR/credentials" "/root/.aws/"
+      __process_msg "Successfully initialized docker on: $host"
+    done
+
+    __process_msg "Initialized Docker on all service machines"
 
     _update_install_status "dockerInitialized"
   else
