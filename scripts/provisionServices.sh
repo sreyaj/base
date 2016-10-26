@@ -300,7 +300,7 @@ __pull_image_globally() {
       local host=$(echo $machine \
         | jq '.ip')
       __process_msg "Pulling image: $service_image on host: $host"
-      local pull_command="sudo su -c 'docker pull $service_image'"
+      local pull_command="sudo su -c \'docker pull $service_image\'"
       _exec_remote_cmd "$host" "$pull_command"
       __process_msg "Successfully pulled image: $service_image on host: $host"
     done
