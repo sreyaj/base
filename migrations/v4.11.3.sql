@@ -5843,6 +5843,24 @@ do $$
     );
 
     perform set_route_permission(
+      routePattern := '/v2/versions',
+      httpVerb := 'POST',
+      roleCode := 6010,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := true
+    );
+
+    perform set_route_permission(
+      routePattern := '/v2/versions',
+      httpVerb := 'POST',
+      roleCode := 6020,
+      isPublic := false,
+      isSuperUser := false,
+      isFreeUser := true
+    );
+
+    perform set_route_permission(
       routePattern := '/versions/:id',
       httpVerb := 'DELETE',
       roleCode := 6010,
