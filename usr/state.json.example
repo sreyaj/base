@@ -479,7 +479,7 @@
     "allowSystemNodes": true,
     "allowDynamicNodes": true,
     "allowCustomNodes": true,
-    "customHostDockerVersion": "1.12.1",
+    "customHostDockerVersion": "1.9.1",
     "ircBotNick": "shippable",
     "systemNodePrivateKey": "",
     "systemNodePublicKey": ""
