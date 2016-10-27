@@ -1287,6 +1287,11 @@ do $$
     if not exists (select 1 from "masterIntegrationFields" where "id" = 142) then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
       values (142, '5811a2e9e73d22829eb0ab3c', 'hubspotApiToken', 'string', true, true,'54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
+
+    -- irc
+    if not exists (select 1 from "masterIntegrations" where "name" = 'irc' and "typeCode" = 5003) then
+      insert into "masterIntegrations" ("id", "masterIntegrationId", "name", "displayName", "type", "isEnabled", "level", "typeCode", "createdBy", "updatedBy", "createdAt", "updatedAt")
+      values ('57e8ea9c14d3ef88e56fecb6', 44, 'irc', 'irc', 'notification', true, 'system', 5003, '54188262bc4d591ba438d62a', '54188262bc4d591ba438d62a', '2016-06-01', '2016-06-01');
     end if;
 
     -- Add systemImages

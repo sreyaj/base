@@ -14,9 +14,7 @@
     "timeTrigger",
     "versionTrigger",
     "ini",
-    "nexec",
-    "irc",
-    "nf"
+    "nexec"
   ],
   "integrationServices": [
     {
@@ -189,6 +187,14 @@
       "services": [
         "nf",
         "slack"
+      ]
+    },
+    {
+      "name": "irc",
+      "type": "notification",
+      "services": [
+        "nf",
+        "irc"
       ]
     },
     {
