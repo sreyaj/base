@@ -434,7 +434,7 @@
       "formJSONValues": [
         {
           "label": "hubspotApiEndPoint",
-          "value": "xxx"
+          "value": ""
         },
         {
           "label": "hubspotApiToken",
@@ -508,7 +508,7 @@
     "systemNodePublicKey": "",
     "hubspotShipTimeLimit": 10,
     "hubspotListId": 123,
-    "hubspotShouldSimulate": "false"
+    "hubspotShouldSimulate": "true"
   },
   "machines": [],
   "installStatus": {
