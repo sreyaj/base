@@ -238,6 +238,13 @@
       "services": []
     },
     {
+      "name": "hubspot",
+      "type": "mktg",
+      "services": [
+        "hubspotSync"
+      ]
+    },
+    {
       "name": "VAULT",
       "type": "secretsBackend",
       "services": []
@@ -402,8 +409,6 @@
         "RUN_MODE",
         "COMPONENT",
         "SHIP_TIME_LIMIT",
-        "HUBSPOT_API_ENDPOINT",
-        "HUBSPOT_API_TOKEN",
         "HUBSPOT_LIST_ID",
         "SHOULD_SIMULATE"
       ]
