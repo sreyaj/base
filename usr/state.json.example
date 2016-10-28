@@ -158,6 +158,10 @@
     {
       "name": "gitlab",
       "type": "scm"
+    },
+    {
+      "name": "hubspot",
+      "type": "mktg"
     }
   ],
   "systemIntegrations": [
@@ -422,6 +426,21 @@
       "masterName": "braintree",
       "masterType": "payment",
       "name": "braintree"
+    },
+    {
+      "name": "hubspot",
+      "masterName": "hubspot",
+      "masterType": "mktg",
+      "formJSONValues": [
+        {
+          "label": "hubspotApiEndPoint",
+          "value": ""
+        },
+        {
+          "label": "hubspotApiToken",
+          "value": "xxx"
+        }
+      ]
     }
   ],
   "systemMachineImages": [
@@ -486,7 +505,10 @@
     "customHostDockerVersion": "1.9.1",
     "ircBotNick": "shippable",
     "systemNodePrivateKey": "",
-    "systemNodePublicKey": ""
+    "systemNodePublicKey": "",
+    "hubspotShipTimeLimit": 10,
+    "hubspotListId": 123,
+    "hubspotShouldSimulate": "true"
   },
   "machines": [],
   "installStatus": {

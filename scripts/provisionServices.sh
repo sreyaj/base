@@ -86,6 +86,12 @@ __map_env_vars() {
     env_value=true
   elif [ "$1" == "IRC_BOT_NICK" ]; then
     env_value=$(cat $STATE_FILE | jq -r '.systemSettings.ircBotNick')
+  elif [ "$1" == "SHIP_TIME_LIMIT" ]; then
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotShipTimeLimit')
+  elif [ "$1" == "HUBSPOT_LIST_ID" ]; then
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotListId')
+  elif [ "$1" == "SHOULD_SIMULATE" ]; then
+    env_value=$(cat $STATE_FILE | jq -r '.systemSettings.hubspotShouldSimulate')
   else
     echo "No handler for env : $1, exiting"
     exit 1
