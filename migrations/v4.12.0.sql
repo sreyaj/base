@@ -2380,12 +2380,12 @@ do $$
       alter table "accounts" add column "isSuperUser" boolean NOT NULL DEFAULT false;
     end if;
 
-    -- Add isSuperUser column to accounts
+    -- Add isBetaUser column to accounts
     if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isBetaUser') then
       alter table "accounts" add column "isBetaUser" boolean NOT NULL DEFAULT false;
     end if;
 
-    -- Add isSuperUser column to accounts
+    -- Add isOpsUser column to accounts
     if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isOpsUser') then
       alter table "accounts" add column "isOpsUser" boolean NOT NULL DEFAULT false;
     end if;
