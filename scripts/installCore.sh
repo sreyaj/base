@@ -110,7 +110,7 @@ initialize_docker() {
 
 install_docker_local() {
   SKIP_STEP=false
-  _check_component_status "dockerInitialized"
+  _check_component_status "dockerInstalled"
   if [ "$SKIP_STEP" == false ]; then
     __process_msg "Checking Docker on localhost"
     source "$REMOTE_SCRIPTS_DIR/installDocker.sh" "$INSTALL_MODE"
