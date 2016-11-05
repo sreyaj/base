@@ -6017,5 +6017,48 @@ do $$
       httpVerb := 'GET',
       roleCode := 6060
     );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id/dependencies',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id/sync',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id/generateSSHKeys',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id',
+      httpVerb := 'PUT',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/auth/:systemIntegrationId',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/auth/:systemIntegrationId/link',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
   end
 $$;
