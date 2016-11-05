@@ -6004,8 +6004,7 @@ create or replace function set_route_role(
     update "routeRoles"
     set "roleCode" = roleCode
     where "httpVerb" = httpVerb and
-    "routePattern" = routePattern and
-    ("roleCode" = roleCode OR "roleCode" IS NULL);
+    "routePattern" = routePattern;
 
     return;
   end
