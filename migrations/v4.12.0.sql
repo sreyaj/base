@@ -5988,12 +5988,12 @@ create or replace function set_route_role(
   begin
 
     -- insert if not exists
-    if not exists (select 1 from "routes"
+    if not exists (select 1 from "routeRoles"
       where "httpVerb" = httpVerb and
         "routePattern" = routePattern and
         ("roleCode" = roleCode OR "roleCode" IS NULL)
     ) then
-      insert into "routes" ("httpVerb", "routePattern", "roleCode",
+      insert into "routeRoles" ("httpVerb", "routePattern", "roleCode",
         "createdAt", "updatedAt")
       values (httpVerb, routePattern, roleCode,
         now(), now());
@@ -6001,7 +6001,7 @@ create or replace function set_route_role(
     end if;
 
   -- update
-    update "routes"
+    update "routeRoles"
     set "roleCode" = roleCode
     where "httpVerb" = httpVerb and
     "routePattern" = routePattern and
