@@ -5979,3 +5979,55 @@ do $$
 
   end
 $$;
+
+-- Add route Roles
+create or replace function set_route_role(
+  httpVerb varchar, routePattern varchar, roleCode int)
+
+  returns void as $$
+  begin
+
+    -- insert if not exists
+    if not exists (select 1 from "routeRoles"
+      where "httpVerb" = httpVerb and
+        "routePattern" = routePattern and
+        "roleCode" = roleCode
+    ) then
+      insert into "routeRoles" ("httpVerb", "routePattern", "roleCode",
+        "createdAt", "updatedAt")
+      values (httpVerb, routePattern, roleCode,
+        now(), now());
+    end if;
+  end
+$$ LANGUAGE plpgsql;
+
+do $$
+  begin
+
+    -- set accounts routeRoles
+
+    perform set_route_role(
+      routePattern := '/accounts',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+  end
+$$;
