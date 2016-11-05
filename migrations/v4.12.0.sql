@@ -5997,9 +5997,7 @@ create or replace function set_route_role(
         "createdAt", "updatedAt")
       values (httpVerb, routePattern, roleCode,
         now(), now());
-      return;
     end if;
-
   end
 $$ LANGUAGE plpgsql;
 
