@@ -6000,13 +6000,6 @@ create or replace function set_route_role(
       return;
     end if;
 
-  -- update
-    update "routeRoles"
-    set "roleCode" = roleCode
-    where "httpVerb" = httpVerb and
-    "routePattern" = routePattern;
-
-    return;
   end
 $$ LANGUAGE plpgsql;
 
