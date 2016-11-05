@@ -5991,7 +5991,7 @@ create or replace function set_route_role(
     if not exists (select 1 from "routeRoles"
       where "httpVerb" = httpVerb and
         "routePattern" = routePattern and
-        ("roleCode" = roleCode OR "roleCode" IS NULL)
+        "roleCode" = roleCode
     ) then
       insert into "routeRoles" ("httpVerb", "routePattern", "roleCode",
         "createdAt", "updatedAt")
@@ -6028,12 +6028,6 @@ do $$
       routePattern := '/accounts',
       httpVerb := 'GET',
       roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/accounts',
-      httpVerb := 'GET',
-      roleCode := 6080
     );
   end
 $$;
