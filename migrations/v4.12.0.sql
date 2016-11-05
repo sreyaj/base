@@ -6009,23 +6009,11 @@ do $$
     perform set_route_role(
       routePattern := '/accounts',
       httpVerb := 'GET',
-      roleCode := 6000
+      roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accounts',
-      httpVerb := 'GET',
-      roleCode := 6010
-    );
-
-    perform set_route_role(
-      routePattern := '/accounts',
-      httpVerb := 'GET',
-      roleCode := 6020
-    );
-
-    perform set_route_role(
-      routePattern := '/accounts',
+      routePattern := '/accounts/:id',
       httpVerb := 'GET',
       roleCode := 6060
     );
