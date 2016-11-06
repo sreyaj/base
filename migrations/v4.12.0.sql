@@ -6009,25 +6009,56 @@ do $$
     perform set_route_role(
       routePattern := '/accounts',
       httpVerb := 'GET',
-      roleCode := 6000
+      roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accounts',
-      httpVerb := 'GET',
-      roleCode := 6010
-    );
-
-    perform set_route_role(
-      routePattern := '/accounts',
-      httpVerb := 'GET',
-      roleCode := 6020
-    );
-
-    perform set_route_role(
-      routePattern := '/accounts',
+      routePattern := '/accounts/:id',
       httpVerb := 'GET',
       roleCode := 6060
     );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id/dependencies',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id/sync',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id/generateSSHKeys',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id',
+      httpVerb := 'PUT',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/auth/:systemIntegrationId',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/auth/:systemIntegrationId/link',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
   end
 $$;
