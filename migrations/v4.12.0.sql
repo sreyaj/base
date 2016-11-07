@@ -2362,6 +2362,14 @@ do $$
     delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6000;
     delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6020;
 
+    -- remove outdated routeRoles
+    delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='GET';
+    delete from "routeRoles" where "routePattern"='/accounts/:id/dependencies' and "httpVerb"='GET';
+    delete from "routeRoles" where "routePattern"='/accounts/:id/sync' and "httpVerb"='GET';
+    delete from "routeRoles" where "routePattern"='/accounts/:id/generateSSHKeys' and "httpVerb"='POST';
+    delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='PUT';
+    delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='DELETE';
+
     -- masterIntegrationFields for Braintree
     if not exists (select 1 from "masterIntegrationFields" where "id" = 137 and "name" = 'braintreeEnvironment') then
       insert into "masterIntegrationFields" ("id", "masterIntegrationId", "name", "dataType", "isRequired", "isSecure","createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -6013,37 +6021,37 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/accounts/:id',
+      routePattern := '/accounts/:accountId',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accounts/:id/dependencies',
+      routePattern := '/accounts/:accountId/dependencies',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accounts/:id/sync',
+      routePattern := '/accounts/:accountId/sync',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accounts/:id/generateSSHKeys',
+      routePattern := '/accounts/:accountId/generateSSHKeys',
       httpVerb := 'POST',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accounts/:id',
+      routePattern := '/accounts/:accountId',
       httpVerb := 'PUT',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accounts/:id',
+      routePattern := '/accounts/:accountId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
