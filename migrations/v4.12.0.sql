@@ -2363,12 +2363,14 @@ do $$
     delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6020;
 
     -- remove outdated routeRoles
-    delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='GET';
-    delete from "routeRoles" where "routePattern"='/accounts/:id/dependencies' and "httpVerb"='GET';
-    delete from "routeRoles" where "routePattern"='/accounts/:id/sync' and "httpVerb"='GET';
-    delete from "routeRoles" where "routePattern"='/accounts/:id/generateSSHKeys' and "httpVerb"='POST';
-    delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='PUT';
-    delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='DELETE';
+    if exists (select 1 from information_schema.columns where table_name = 'routeRoles') then
+      delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/accounts/:id/dependencies' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/accounts/:id/sync' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/accounts/:id/generateSSHKeys' and "httpVerb"='POST';
+      delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='PUT';
+      delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='DELETE';
+    end if;
 
     -- masterIntegrationFields for Braintree
     if not exists (select 1 from "masterIntegrationFields" where "id" = 137 and "name" = 'braintreeEnvironment') then
