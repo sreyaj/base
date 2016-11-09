@@ -481,7 +481,6 @@
     "apiPort": 50000,
     "defaultPrivateJobQuota": 150,
     "runMode": "dev",
-    "hubspotEnabled": false,
     "noProxy": "",
     "httpsProxy": "",
     "vaultRefreshTimeInSec": 900,

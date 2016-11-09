@@ -2268,6 +2268,11 @@ do $$
       alter table "systemConfigs" drop column "cachingEnabled";
     end if;
 
+    -- Drop hubspotEnabled from systemConfigs
+    if exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'hubspotEnabled') then
+      alter table "systemConfigs" drop column "hubspotEnabled";
+    end if;
+
     -- Adds allowSystemNodes column in systemConfigs table
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'allowSystemNodes') then
       alter table "systemConfigs" add column "allowSystemNodes" BOOLEAN default false;
