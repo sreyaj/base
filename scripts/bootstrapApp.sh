@@ -1,8 +1,9 @@
 #!/bin/bash -e
 
 export SKIP_STEP=false
-export sleep_time=1
-export time_taken=0
+
+local sleep_time=1
+local time_taken=0
 
 _update_install_status() {
   local update=$(cat $STATE_FILE | jq '.installStatus.'"$1"'='true'')
@@ -399,7 +400,7 @@ test_api_endpoint() {
   if [ "$api_timeout" == "null" ]; then
     api_timeout=0
   fi
-  api_timeout=$((api_timeout * 60))
+  api_timeout=$(( $api_timeout * 60 ))
 
   if [ $api_timeout -eq 0 ] || [ $time_taken -lt $api_timeout ]; then
     if [ $sleep_time -eq 64 ]; then
@@ -419,7 +420,7 @@ test_api_endpoint() {
   else
     __process_msg "API not running, retrying in $sleep_time seconds"
     sleep $sleep_time
-    time_taken=$((time_taken + sleep_time))
+    time_taken=$(( $time_taken + $sleep_time ))
     test_api_endpoint
   fi
 }
