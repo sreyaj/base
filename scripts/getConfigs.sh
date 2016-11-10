@@ -102,7 +102,7 @@ bootstrap_state() {
     release_version=$(cat $STATE_FILE \
       | jq '.release="'$RELEASE_VERSION'"')
     update=$(echo $release_version | jq '.' | tee $STATE_FILE)
-    __process_msg "using existing state.json for version $release_version"
+    __process_msg "using existing state.json for version $RELEASE_VERSION"
   fi
 }
 
