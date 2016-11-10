@@ -26,6 +26,7 @@ readonly SSH_USER="root"
 readonly SSH_PRIVATE_KEY=$USR_DIR/machinekey
 readonly SSH_PUBLIC_KEY=$USR_DIR/machinekey.pub
 readonly LOCAL_BRIDGE_IP=172.17.42.1
+readonly API_TIMEOUT=600
 export LC_ALL=C
 export RELEASE_VERSION=""
 export DEPLOY_TAG=""

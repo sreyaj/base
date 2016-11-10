@@ -507,8 +507,7 @@
     "systemNodePublicKey": "",
     "hubspotShipTimeLimit": 10,
     "hubspotListId": 123,
-    "hubspotShouldSimulate": "true",
-    "apiTimeout": 10
+    "hubspotShouldSimulate": "true"
   },
   "machines": [],
   "installStatus": {

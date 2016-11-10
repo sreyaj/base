@@ -2,9 +2,6 @@
 
 export SKIP_STEP=false
 
-local api_test_sleep_time=1
-local api_test_time_taken=0
-
 _update_install_status() {
   local update=$(cat $STATE_FILE | jq '.installStatus.'"$1"'='true'')
   _update_state "$update"
@@ -392,37 +389,9 @@ provision_api_local() {
   __process_msg "Successfully provisioned api"
 }
 
-test_api_endpoint() {
-  __process_msg "Testing API endpoint to determine API status"
-
-  local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
-  local api_timeout=$(cat $STATE_FILE | jq -r '.systemSettings.apiTimeout')
-  if [ "$api_timeout" == "null" ]; then
-    api_timeout=0
-  fi
-  api_timeout=$(( $api_timeout * 60 ))
-
-  if [ $api_timeout -eq 0 ] || [ $api_test_time_taken -lt $api_timeout ]; then
-    if [ $api_test_sleep_time -eq 64 ]; then
-      api_test_sleep_time=2;
-    else
-      api_test_sleep_time=$(( $api_test_sleep_time * 2 ))
-    fi
-  else
-    __process_msg "API timeout exceeded. Unable to connect to API."
-    exit
-  fi
-
-  api_response=$(curl -s -o /dev/null -w "%{http_code}" $api_url) || true
-
-  if [ "$api_response" == "200" ]; then
-    __process_msg "API is up and running proceeding with other steps"
-  else
-    __process_msg "API not running, retrying in $api_test_sleep_time seconds"
-    sleep $api_test_sleep_time
-    api_test_time_taken=$(( $api_test_time_taken + $api_test_sleep_time ))
-    test_api_endpoint
-  fi
+check_api_health() {
+  __process_msg "Checking API health"
+  source "$SCRIPTS_DIR/_checkApiHealth.sh"
 }
 
 run_migrations() {
@@ -566,9 +535,6 @@ restart_api() {
 
   _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
 
-  __process_msg "Waiting 30s before API restart..."
-  sleep 30
-
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
 }
 
@@ -588,8 +554,6 @@ restart_api_local() {
       $image"
 
   local result=$(eval $boot_api_cmd)
-  __process_msg "Waiting 10s before API restart..."
-  sleep 10
 }
 
 update_service_list() {
@@ -608,7 +572,7 @@ main() {
     run_migrations
     generate_api_config
     provision_api
-    test_api_endpoint
+    check_api_health
     run_migrations
     manage_masterIntegrations
     manage_systemIntegrations
@@ -625,7 +589,7 @@ main() {
     generate_api_config
     run_migrations_local
     provision_api_local
-    test_api_endpoint
+    check_api_health
     run_migrations_local
     manage_masterIntegrations
     manage_systemIntegrations
@@ -636,6 +600,8 @@ main() {
     update_service_list
     restart_api_local
   fi
+
+  check_api_health
 }
 
 main
