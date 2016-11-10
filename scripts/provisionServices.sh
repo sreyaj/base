@@ -67,8 +67,8 @@ __map_env_vars() {
   elif [ "$1" == "SETUP_RUN_SH" ]; then
     env_value=true
   elif [ "$1" == "SHIPPABLE_AWS_ACCOUNT_ID" ]; then
-    env_value=null
-  # TODO: Populate this
+    local shippable_aws_account_id=$(cat $STATE_FILE | jq -r '.systemSettings.shippableAwsAccountId')
+    env_value=$shippable_aws_account_id
   elif [ "$1" == "GITHUB_LINK_SYSINT_ID" ]; then
     env_value=null
   # TODO: Populate this
