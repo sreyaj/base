@@ -507,7 +507,8 @@
     "systemNodePublicKey": "",
     "hubspotShipTimeLimit": 10,
     "hubspotListId": 123,
-    "hubspotShouldSimulate": "true"
+    "hubspotShouldSimulate": "true",
+    "shippableAwsAccountId": "123456"
   },
   "machines": [],
   "installStatus": {
