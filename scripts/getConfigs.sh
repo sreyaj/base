@@ -98,6 +98,10 @@ bootstrap_state() {
     local deploy_tag=$(cat $STATE_FILE \
       | jq '.deployTag="'$DEPLOY_TAG'"')
     update=$(echo $deploy_tag | jq '.' | tee $STATE_FILE)
+
+    release_version=$(cat $STATE_FILE \
+      | jq '.release="'$RELEASE_VERSION'"')
+    update=$(echo $release_version | jq '.' | tee $STATE_FILE)
     __process_msg "using existing state.json for version $release_version"
   fi
 }
