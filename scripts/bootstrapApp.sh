@@ -2,8 +2,8 @@
 
 export SKIP_STEP=false
 
-local sleep_time=1
-local time_taken=0
+local api_test_sleep_time=1
+local api_test_time_taken=0
 
 _update_install_status() {
   local update=$(cat $STATE_FILE | jq '.installStatus.'"$1"'='true'')
@@ -402,11 +402,11 @@ test_api_endpoint() {
   fi
   api_timeout=$(( $api_timeout * 60 ))
 
-  if [ $api_timeout -eq 0 ] || [ $time_taken -lt $api_timeout ]; then
-    if [ $sleep_time -eq 64 ]; then
-      sleep_time=2;
+  if [ $api_timeout -eq 0 ] || [ $api_test_time_taken -lt $api_timeout ]; then
+    if [ $api_test_sleep_time -eq 64 ]; then
+      api_test_sleep_time=2;
     else
-      sleep_time=$(( $sleep_time * 2 ))
+      api_test_sleep_time=$(( $api_test_sleep_time * 2 ))
     fi
   else
     __process_msg "API timeout exceeded. Unable to connect to API."
@@ -418,9 +418,9 @@ test_api_endpoint() {
   if [ "$api_response" == "200" ]; then
     __process_msg "API is up and running proceeding with other steps"
   else
-    __process_msg "API not running, retrying in $sleep_time seconds"
-    sleep $sleep_time
-    time_taken=$(( $time_taken + $sleep_time ))
+    __process_msg "API not running, retrying in $api_test_sleep_time seconds"
+    sleep $api_test_sleep_time
+    api_test_time_taken=$(( $api_test_time_taken + $api_test_sleep_time ))
     test_api_endpoint
   fi
 }
