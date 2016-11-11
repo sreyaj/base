@@ -535,6 +535,9 @@ restart_api() {
 
   _exec_remote_cmd "$swarm_manager_host" "$rm_api_cmd"
 
+  __process_msg "Waiting 30s before API restart..."
+  sleep 30
+
   _exec_remote_cmd "$swarm_manager_host" "$boot_api_cmd"
 }
 
