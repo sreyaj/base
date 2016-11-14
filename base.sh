@@ -18,6 +18,7 @@ readonly VERSIONS_DIR="$ROOT_DIR/versions"
 readonly MIGRATIONS_DIR="$ROOT_DIR/migrations"
 readonly SCRIPTS_DIR="$ROOT_DIR/scripts"
 readonly USR_DIR="$ROOT_DIR/usr"
+readonly LOG_FILE="$USR_DIR/logs.txt"
 readonly REMOTE_SCRIPTS_DIR="$ROOT_DIR/scripts/remote"
 readonly LOCAL_SCRIPTS_DIR="$ROOT_DIR/scripts/local"
 readonly STATE_FILE="$USR_DIR/state.json"
@@ -269,40 +270,46 @@ if [[ $# -gt 0 ]]; then
     -v|--version) __show_version
       shift ;;
     -f|--file)
-      shift
-      if [[ ! $# -eq 1 ]]; then
-        __process_msg "Specify the state file to be used for install."
-      else
-        install_file $1
-      fi
+      {
+        shift
+        if [[ ! $# -eq 1 ]]; then
+          __process_msg "Specify the state file to be used for install."
+        else
+          install_file $1
+        fi
+      } 2>&1 | tee $LOG_FILE
       ;;
     -r|--release)
-      shift
-      if [[ ! $# -eq 1 ]]; then
-        __process_msg "Mention the release version to be installed."
-      else
-        __check_dependencies
-        release_version=$(cat $STATE_FILE \
-          | jq -r '.release')
-        export RELEASE_VERSION=$latest_release
-        install_release $1
-      fi
+      {
+        shift
+        if [[ ! $# -eq 1 ]]; then
+          __process_msg "Mention the release version to be installed."
+        else
+          __check_dependencies
+          release_version=$(cat $STATE_FILE \
+            | jq -r '.release')
+          export RELEASE_VERSION=$latest_release
+          install_release $1
+        fi
+      } 2>&1 | tee $LOG_FILE
       ;;
     -i|--install)
-      shift
-      __process_marker "Booting shippable installer"
-      __check_dependencies
-      use_latest_release
-      if [[ $# -eq 1 ]]; then
-        install_mode=$1
-      fi
-      if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
-        export INSTALL_MODE="$install_mode"
-        install
-      else
-        __process_msg "Running installer in default 'local' mode"
-        install
-      fi
+      {
+        shift
+        __process_marker "Booting shippable installer"
+        __check_dependencies
+        use_latest_release
+        if [[ $# -eq 1 ]]; then
+          install_mode=$1
+        fi
+        if [ "$install_mode" == "production" ] || [ "$install_mode" == "local" ]; then
+          export INSTALL_MODE="$install_mode"
+          install
+        else
+          __process_msg "Running installer in default 'local' mode"
+          install
+        fi
+      } 2>&1 | tee $LOG_FILE
       ;;
     -h|--help) __print_help
       shift ;;
