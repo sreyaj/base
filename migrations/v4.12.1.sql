@@ -6276,5 +6276,31 @@ do $$
       roleCode := 6060
     );
 
+    -- set accountTokens routeRoles
+
+    perform set_route_role(
+      routePattern := '/accountTokens',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountTokens/:id',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountTokens',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountTokens/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
   end
 $$;
