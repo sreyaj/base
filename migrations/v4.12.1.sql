@@ -6302,5 +6302,11 @@ do $$
       roleCode := 6060
     );
 
+    perform set_route_role(
+      routePattern := '/accountIntegrations',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
   end
 $$;
