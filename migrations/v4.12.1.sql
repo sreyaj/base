@@ -6075,6 +6075,97 @@ do $$
       roleCode := 6060
     );
 
+    --set accountCards routeRoles
+    perform set_route_role(
+      routePattern := '/accountCards/:id',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards/:id',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards/:id',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards',
+      httpVerb := 'POST',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards/:id/dependencies',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards/:id/dependencies',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/accountCards/:id/dependencies',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set projects routeRoles
     perform set_route_role(
       routePattern := '/projects',
