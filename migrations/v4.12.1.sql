@@ -6106,6 +6106,26 @@ do $$
       roleCode := 6060
     );
 
+    -- set accountProfiles routeRoles
+
+    perform set_route_role(
+      routePattern := '/accountProfiles',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountProfiles',
+      httpVerb := 'POST',
+      roleCode := 6080
+    );
+
+    perform set_route_role(
+      routePattern := '/accountProfiles/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6080
+    );
+
     -- set projects routeRoles
     perform set_route_role(
       routePattern := '/projects',
@@ -6329,26 +6349,6 @@ do $$
 
     perform set_route_role(
       routePattern := '/accountTokens/:id',
-      httpVerb := 'DELETE',
-      roleCode := 6060
-    );
-
-    -- set accountTokens routeRoles
-
-    perform set_route_role(
-      routePattern := '/accountProfiles',
-      httpVerb := 'GET',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/accountProfiles',
-      httpVerb := 'POST',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/accountProfiles/:id',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
