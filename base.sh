@@ -277,7 +277,7 @@ if [[ $# -gt 0 ]]; then
         else
           install_file $1
         fi
-      } 2>&1 | tee $LOG_FILE
+      } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
       ;;
     -r|--release)
       {
@@ -291,7 +291,7 @@ if [[ $# -gt 0 ]]; then
           export RELEASE_VERSION=$latest_release
           install_release $1
         fi
-      } 2>&1 | tee $LOG_FILE
+      } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
       ;;
     -i|--install)
       {
@@ -309,7 +309,7 @@ if [[ $# -gt 0 ]]; then
           __process_msg "Running installer in default 'local' mode"
           install
         fi
-      } 2>&1 | tee $LOG_FILE
+      } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
       ;;
     -h|--help) __print_help
       shift ;;
