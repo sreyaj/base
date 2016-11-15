@@ -6115,8 +6115,38 @@ do $$
     );
 
     perform set_route_role(
+      routePattern := '/accountIntegrations/:id',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountIntegrations/:id/dependencies',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountIntegrations/:id/validateProjectOwnerToken',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/accountIntegrations',
       httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountIntegrations/:id',
+      httpVerb := 'PUT',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountIntegrations/:id',
+      httpVerb := 'DELETE',
       roleCode := 6060
     );
 
