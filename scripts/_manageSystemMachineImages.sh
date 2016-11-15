@@ -1,11 +1,10 @@
 #!/bin/bash -e
 
-export EXISTING_SYSTEM_MACHINE_IMAGE=""
+local EXISTING_SYSTEM_MACHINE_IMAGES=""
 
 get_available_systemMachineImages() {
   __process_msg "GET-ing available system machine images from db"
 
-  local api_url=""
   local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
   local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   local system_machine_images_endpoint="$api_url/systemMachineImages"
@@ -15,13 +14,12 @@ get_available_systemMachineImages() {
     -X GET $system_machine_images_endpoint \
     --silent)
 
-  EXISTING_SYSTEM_MACHINE_IMAGE=$(echo $response | jq '.')
+  EXISTING_SYSTEM_MACHINE_IMAGES=$(echo $response | jq '.')
 }
 
 save_systemMachineImages(){
   __process_msg "Saving available system machine images into db"
 
-  local api_url=""
   local api_token=$(cat $STATE_FILE | jq -r '.systemSettings.serviceUserToken')
   local api_url=$(cat $STATE_FILE | jq -r '.systemSettings.apiUrl')
   local system_machine_images_endpoint="$api_url/systemMachineImages"
@@ -33,7 +31,7 @@ save_systemMachineImages(){
     local system_machine_image=$(echo $system_machine_images | jq '.['"$i-1"']')
     local system_machine_image_name=$(echo $system_machine_image | jq -r '.name')
 
-    local system_machine_image_id=$(echo $EXISTING_SYSTEM_MACHINE_IMAGE | jq -r '.[] | select (.name="$system_machine_image_name") | .id')
+    local system_machine_image_id=$(echo $EXISTING_SYSTEM_MACHINE_IMAGES | jq -r '.[] | select (.name="$system_machine_image_name") | .id')
 
     if [ -z "$system_machine_image_id" ]; then
       local post_call_resp_code=$(curl -H "Content-Type: application/json" \
