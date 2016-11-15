@@ -6106,6 +6106,20 @@ do $$
       roleCode := 6060
     );
 
+    --set accountIntegration routes
+
+    perform set_route_role(
+      routePattern := '/accountIntegrations',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountIntegrations',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
     -- set accountProfiles routeRoles
 
     perform set_route_role(
@@ -6350,12 +6364,6 @@ do $$
     perform set_route_role(
       routePattern := '/accountTokens/:id',
       httpVerb := 'DELETE',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/accountIntegrations',
-      httpVerb := 'POST',
       roleCode := 6060
     );
 
