@@ -6128,18 +6128,6 @@ do $$
       roleCode := 6060
     );
 
-    perform set_route_role(
-      routePattern := '/accountProfiles',
-      httpVerb := 'POST',
-      roleCode := 6080
-    );
-
-    perform set_route_role(
-      routePattern := '/accountProfiles/:id',
-      httpVerb := 'DELETE',
-      roleCode := 6080
-    );
-
     -- set projects routeRoles
     perform set_route_role(
       routePattern := '/projects',
