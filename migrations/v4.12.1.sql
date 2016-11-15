@@ -6158,6 +6158,32 @@ do $$
       roleCode := 6060
     );
 
+    -- set accountTokens routeRoles
+
+    perform set_route_role(
+      routePattern := '/accountTokens',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountTokens/:id',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountTokens',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/accountTokens/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
     -- set projects routeRoles
     perform set_route_role(
       routePattern := '/projects',
@@ -6228,6 +6254,13 @@ do $$
     perform set_route_role(
       routePattern := '/projects/:projectId/disable',
       httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    -- set providers routeRoles
+    perform set_route_role(
+      routePattern := '/providers/:id',
+      httpVerb := 'GET',
       roleCode := 6060
     );
 
@@ -6356,32 +6389,6 @@ do $$
     perform set_route_role(
       routePattern := '/subscriptions/:subscriptionId/state',
       httpVerb := 'GET',
-      roleCode := 6060
-    );
-
-    -- set accountTokens routeRoles
-
-    perform set_route_role(
-      routePattern := '/accountTokens',
-      httpVerb := 'GET',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/accountTokens/:id',
-      httpVerb := 'GET',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/accountTokens',
-      httpVerb := 'POST',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/accountTokens/:id',
-      httpVerb := 'DELETE',
       roleCode := 6060
     );
 
