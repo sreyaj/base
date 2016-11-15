@@ -6106,6 +6106,14 @@ do $$
       roleCode := 6060
     );
 
+    --set accountIntegration routes
+
+    perform set_route_role(
+      routePattern := '/accountIntegrations',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set accountProfiles routeRoles
 
     perform set_route_role(
