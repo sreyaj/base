@@ -6392,5 +6392,19 @@ do $$
       roleCode := 6060
     );
 
+    -- set vortex routeRoles
+
+    perform set_route_role(
+      routePattern := '/vortex',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/vortex',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
   end
 $$;
