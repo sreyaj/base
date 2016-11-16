@@ -6200,6 +6200,13 @@ do $$
       roleCode := 6060
     );
 
+    -- set plans routeRoles
+    perform set_route_role(
+      routePattern := '/plans',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set projects routeRoles
     perform set_route_role(
       routePattern := '/projects',
