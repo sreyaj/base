@@ -6192,6 +6192,14 @@ do $$
       roleCode := 6060
     );
 
+    -- set masterIntegrationFields routeRoles
+
+    perform set_route_role(
+      routePattern := '/masterIntegrationFields',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set projects routeRoles
     perform set_route_role(
       routePattern := '/projects',
