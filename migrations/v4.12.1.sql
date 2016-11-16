@@ -6184,6 +6184,14 @@ do $$
       roleCode := 6060
     );
 
+    -- set clusterNodes routeRoles
+
+    perform set_route_role(
+      routePattern := '/clusterNodes',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set masterIntegrations routeRoles
 
     perform set_route_role(
