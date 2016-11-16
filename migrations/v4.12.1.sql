@@ -6408,6 +6408,55 @@ do $$
       roleCode := 6060
     );
 
+    -- set systemMachineImages routes
+
+    perform set_route_role(
+      routePattern := '/systemMachineImages',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/systemMachineImages',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/systemMachineImages',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/systemMachineImages',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/systemMachineImages/:id',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/systemMachineImages/:id',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/systemMachineImages/:id',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/systemMachineImages/:id',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
     -- set vortex routeRoles
 
     perform set_route_role(
