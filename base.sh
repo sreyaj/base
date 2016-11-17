@@ -80,7 +80,6 @@ __check_dependencies() {
 use_latest_release() {
   __process_msg "Using latest release"
 
-
   local release_major_versions="[]"
   local release_minor_versions=""
   local release_patch_versions=""
@@ -146,7 +145,7 @@ use_latest_release() {
   done
 
   local latest_release="v"$release_file_major_version"."$release_file_minor_version"."$release_file_patch_version
-  __process_msg "Latest release version :: "$latest_release
+  __process_msg "Latest release version: $latest_release"
 
   export RELEASE_VERSION=$latest_release
 }
@@ -261,6 +260,11 @@ __show_version() {
   echo "Installer version $INSTALLER_VERSION"
 }
 
+__set_is_upgrade() {
+  local update=$(cat $STATE_FILE | jq ".isUpgrade=$1")
+  _update_state "$update"
+}
+
 if [[ $# -gt 0 ]]; then
   key="$1"
 
@@ -275,6 +279,8 @@ if [[ $# -gt 0 ]]; then
         if [[ ! $# -eq 1 ]]; then
           __process_msg "Specify the state file to be used for install."
         else
+          __check_dependencies
+          __set_is_upgrade false
           install_file $1
         fi
       } 2>&1 | tee $LOG_FILE ; ( exit ${PIPESTATUS[0]} )
@@ -286,8 +292,8 @@ if [[ $# -gt 0 ]]; then
           __process_msg "Mention the release version to be installed."
         else
           __check_dependencies
-          release_version=$(cat $STATE_FILE \
-            | jq -r '.release')
+          __set_is_upgrade true
+          release_version=$(cat $STATE_FILE | jq -r '.release')
           export RELEASE_VERSION=$latest_release
           install_release $1
         fi
@@ -298,6 +304,7 @@ if [[ $# -gt 0 ]]; then
         shift
         __process_marker "Booting shippable installer"
         __check_dependencies
+        __set_is_upgrade false
         use_latest_release
         if [[ $# -eq 1 ]]; then
           install_mode=$1

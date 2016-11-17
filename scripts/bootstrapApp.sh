@@ -377,6 +377,7 @@ provision_api_local() {
   local image=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .image')
 
   sudo docker rm -f api || true
+
   local boot_api_cmd="sudo docker run -d \
     $port_mapping \
     $env_variables \
@@ -473,6 +474,7 @@ update_dynamic_nodes_integration_id() {
 
 
 restart_api() {
+  __process_msg "Restarting API..."
   local swarm_manager_machine=$(cat $STATE_FILE | jq '.machines[] | select (.group=="core" and .name=="swarm")')
   local swarm_manager_host=$(echo $swarm_manager_machine | jq '.ip')
 
@@ -498,6 +500,7 @@ restart_api() {
 }
 
 restart_api_local() {
+  __process_msg "Restarting API..."
   local port_mapping=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .port')
   local env_variables=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .env')
   local name=$(cat $STATE_FILE | jq -r '.services[] | select (.name=="api") | .name')
@@ -524,15 +527,22 @@ main() {
   __process_marker "Updating system config"
   generate_serviceuser_token
 
+  local is_upgrade=$(cat $STATE_FILE | jq -r '.isUpgrade')
   if [ "$INSTALL_MODE" == "production" ]; then
     update_system_node_keys
     generate_system_config
     create_system_config
-    run_migrations
+    if [ $is_upgrade = true ]; then
+      run_migrations
+    fi
     generate_api_config
     provision_api
     check_api_health
-    run_migrations
+    if [ $is_upgrade = false ]; then
+      run_migrations
+      restart_api
+      check_api_health
+    fi
     manage_masterIntegrations
     manage_systemIntegrations
     manage_systemMachineImages
@@ -545,11 +555,17 @@ main() {
     update_system_node_keys
     generate_system_config
     create_system_config_local
+    if [ $is_upgrade = true ]; then
+      run_migrations_local
+    fi
     generate_api_config
-    run_migrations_local
     provision_api_local
     check_api_health
-    run_migrations_local
+    if [ $is_upgrade = false ]; then
+      run_migrations_local
+      restart_api_local
+      check_api_health
+    fi
     manage_masterIntegrations
     manage_systemIntegrations
     manage_systemMachineImages
