@@ -6208,6 +6208,49 @@ do $$
       roleCode := 6060
     );
 
+    -- set passthrough routeRoles
+    perform set_route_role(
+      routePattern := '/passthrough/discounts/:id',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/passthrough/discounts/:id',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/passthrough/discounts/:id',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/passthrough/discounts/:id',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/passthrough/jobs/:id/reports',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/passthrough/jobs/:id/reports',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/passthrough/jobs/:id/reports',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set plans routeRoles
     perform set_route_role(
       routePattern := '/plans',
