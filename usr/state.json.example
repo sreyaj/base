@@ -454,8 +454,6 @@
       "isDefault": true,
       "region": "us-east-1",
       "keyName": "shippable-beta",
-      "execImage": "shipimg/mexec:v4.11.3-rc.2",
-      "runShImage": "shipimg/runsh:v4.11.3-rc.2",
       "securityGroup": "sg-123456",
       "subnetId": "subnet-123456"
     }

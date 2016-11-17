@@ -17,6 +17,28 @@ get_available_systemMachineImages() {
   EXISTING_SYSTEM_MACHINE_IMAGES=$(echo $response | jq '.')
 }
 
+update_exec_runsh_images() {
+  __process_msg "Updating exec and runsh image tags in system machine images"
+
+  local deploy_tag=$(cat $STATE_FILE | jq -r '.deployTag')
+  local system_machine_images=$(cat $STATE_FILE | jq -r '.systemMachineImages')
+  local system_machine_images_length=$(echo $system_machine_images | jq -r '. | length')
+
+  #TODO: Add fields for execRepo and runshRepo in state files and use it from there
+  local exec_image_repo="shipimg/mexec"
+  local runSh_image_repo="shipimg/runsh"
+
+  local exec_image="$exec_image_repo:$deploy_tag"
+  local runSh_image="$runSh_image_repo:$deploy_tag"
+
+  echo "Updating execImage to $exec_image in state file"
+  echo "Updating runShImage to $runSh_image in state file"
+
+  local updated_system_machine_images=$(cat $STATE_FILE | jq '[ .systemMachineImages | .[] | .execImage="'$exec_image'" | .runShImage="'$runSh_image'" ]')
+  local update=$(cat $STATE_FILE | jq '.systemMachineImages = '"$updated_system_machine_images"'')
+  _update_state "$update"
+}
+
 save_systemMachineImages(){
   __process_msg "Saving available system machine images into db"
 
@@ -62,6 +84,7 @@ save_systemMachineImages(){
 main() {
   __process_marker "Configuring system machine images"
   get_available_systemMachineImages
+  update_exec_runsh_images
   save_systemMachineImages
 }
 
