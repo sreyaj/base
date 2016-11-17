@@ -6210,6 +6210,31 @@ do $$
       roleCode := 6020
     );
 
+    -- set cluster node consoles route roles
+    perform set_route_role(
+      routePattern := '/clusterNodes/:clusterNodeId/clusterNodeConsoles',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes/:clusterNodeId/clusterNodeConsoles',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes/:clusterNodeId/clusterNodeConsoles',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes/:clusterNodeId/clusterNodeConsoles',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
     -- set masterIntegrations routeRoles
 
     perform set_route_role(
