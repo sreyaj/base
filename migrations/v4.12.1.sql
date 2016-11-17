@@ -6280,6 +6280,14 @@ do $$
       roleCode := 6060
     );
 
+    -- set projectAccounts routeRoles
+
+    perform set_route_role(
+      routePattern := '/projectAccounts',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
     -- set providers routeRoles
     perform set_route_role(
       routePattern := '/providers/:id',
