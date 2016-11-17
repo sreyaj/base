@@ -29,9 +29,9 @@ save_systemMachineImages(){
 
   for i in $(seq 1 $system_machine_images_length); do
     local system_machine_image=$(echo $system_machine_images | jq '.['"$i-1"']')
-    local system_machine_image_name=$(echo $system_machine_image | jq -r '.name')
+    local system_machine_image_name=$(echo $system_machine_image | jq '.name')
 
-    local system_machine_image_id=$(echo $EXISTING_SYSTEM_MACHINE_IMAGES | jq -r '.[] | select (.name="$system_machine_image_name") | .id')
+    local system_machine_image_id=$(echo $EXISTING_SYSTEM_MACHINE_IMAGES | jq -r '.[] | select (.name=='"$system_machine_image_name"') | .id')
 
     if [ -z "$system_machine_image_id" ]; then
       local post_call_resp_code=$(curl -H "Content-Type: application/json" \
