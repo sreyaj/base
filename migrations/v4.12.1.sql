@@ -6605,5 +6605,55 @@ do $$
           httpVerb := 'PUT',
           roleCode := 6020
     );
+
+    -- set transactions routeRoles
+
+    perform set_route_role(
+          routePattern := '/transactions/:id',
+          httpVerb := 'GET',
+          roleCode := 6060
+    );
+
+    perform set_route_role(
+          routePattern := '/transactions/:id',
+          httpVerb := 'GET',
+          roleCode := 6020
+    );
+
+    perform set_route_role(
+          routePattern := '/transactions/:id/receipt',
+          httpVerb := 'GET',
+          roleCode := 6060
+    );
+
+    perform set_route_role(
+          routePattern := '/transactions/:id/receipt',
+          httpVerb := 'GET',
+          roleCode := 6020
+    );
+
+    perform set_route_role(
+          routePattern := '/subscriptions/:id/transactions',
+          httpVerb := 'GET',
+          roleCode := 6060
+    );
+
+    perform set_route_role(
+          routePattern := '/subscriptions/:id/transactions',
+          httpVerb := 'GET',
+          roleCode := 6020
+    );
+
+    perform set_route_role(
+          routePattern := '/transactions',
+          httpVerb := 'GET',
+          roleCode := 6060
+    );
+
+    perform set_route_role(
+          routePattern := '/transactions',
+          httpVerb := 'GET',
+          roleCode := 6020
+    );
   end
 $$;
