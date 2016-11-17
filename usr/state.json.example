@@ -2,6 +2,7 @@
   "release": "",
   "deployTag": "",
   "installMode": "local",
+  "isUpgrade": false,
   "masterIntegrations": [
     {
       "name": "S3",
