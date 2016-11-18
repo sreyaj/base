@@ -7139,6 +7139,12 @@ do $$
     );
 
     perform set_route_role(
+       routePattern := '/systemNodes/:id/status',
+       httpVerb := 'POST',
+       roleCode := 6060
+     );
+
+    perform set_route_role(
        routePattern := '/systemNodes/:id/validate',
        httpVerb := 'GET',
        roleCode := 6040
