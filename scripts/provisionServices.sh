@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 readonly release_file="$VERSIONS_DIR/$RELEASE_VERSION".json
-
+local pulled_images="[]"
 export SKIP_STEP=false
 
 load_services() {
@@ -362,6 +362,18 @@ __run_service() {
     _exec_remote_cmd "$swarm_manager_host" "$boot_cmd"
   else
     sudo docker rm -f $service || true
+
+    # Pull image before attempting to run to ensure the image is always updated in
+    # case it was overwritten. Like in case of :latest.
+    # Don't try to pull an image if it was already pulled earlier during the install,
+    # it will slow down provisioning.
+    local is_image_pulled=$(echo $pulled_images | jq -r '.[] | select (.=="'$image'")')
+    if [ -z "$is_image_pulled" ]; then
+      pulled_images=$(echo $pulled_images | jq '. + ["'$image'"]')
+      local pull_service_cmd="sudo docker pull $image"
+      __process_msg "Pulling $image..."
+      local pull_result=$(eval $pull_service_cmd)
+    fi
 
     boot_cmd="sudo docker run -d "
 
