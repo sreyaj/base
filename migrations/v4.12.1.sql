@@ -6890,6 +6890,38 @@ do $$
       roleCode := 6060
     );
 
+    -- set subscriptionIntegrations routeRoles
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrations/:id/dependencies',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrations/:id/dependencies',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrations',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrations',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrations',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
     -- set superUsers routeRoles
 
     perform set_route_role(
@@ -6909,7 +6941,7 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6080
     );
-    
+
     -- set systemMachineImages routes
 
     perform set_route_role(
