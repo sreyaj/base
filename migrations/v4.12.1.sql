@@ -6291,6 +6291,27 @@ do $$
       httpVerb := 'GET',
       roleCode := 6060
     );
+
+    -- set jobTestReports routeRoles
+
+    perform set_route_role(
+      routePattern := '/jobTestReports',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobTestReports',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobTestReports',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
     -- set masterIntegrations routeRoles
 
     perform set_route_role(
