@@ -6236,28 +6236,29 @@ do $$
     );
 
     -- set clusterNodeStats routeRoles
-    perform set_route_permission(
+    perform set_route_role(
       routePattern := '/clusterNodeStats',
       httpVerb := 'GET',
-      roleCode := 6000,
+      roleCode := 6000
     );
 
-    perform set_route_permission(
+    perform set_route_role(
       routePattern := '/clusterNodeStats',
       httpVerb := 'GET',
-      roleCode := 6010,
+      roleCode := 6010
     );
 
-    perform set_route_permission(
+    perform set_route_role(
       routePattern := '/clusterNodeStats',
       httpVerb := 'GET',
       roleCode := 6020
     );
 
-    perform set_route_permission(
+    perform set_route_role(
       routePattern := '/clusterNodeStats',
       httpVerb := 'GET',
       roleCode := 6060
+    );
 
     -- set masterIntegrations routeRoles
 
