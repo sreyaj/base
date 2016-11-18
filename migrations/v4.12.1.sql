@@ -6416,6 +6416,60 @@ do $$
       roleCode := 6060
     );
 
+    perform set_route_role(
+      routePattern := '/clusterNodeStats',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodeStats',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodeStats',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodeStats/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodeStats/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodeStats/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes/:id/clusterNodeStats',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes/:id/clusterNodeStats',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes/:id/clusterNodeStats',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
     -- set jobDependencies Roles
 
     perform set_route_role(
