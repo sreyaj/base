@@ -6763,13 +6763,13 @@ do $$
     );
 
     perform set_route_role(
-          routePattern := '/subscriptions/:id/transactions',
+          routePattern := '/subscriptions/:subscriptionId/transactions',
           httpVerb := 'GET',
           roleCode := 6060
     );
 
     perform set_route_role(
-          routePattern := '/subscriptions/:id/transactions',
+          routePattern := '/subscriptions/:subscriptionId/transactions',
           httpVerb := 'GET',
           roleCode := 6020
     );
