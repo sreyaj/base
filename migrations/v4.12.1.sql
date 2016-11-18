@@ -6334,6 +6334,44 @@ do $$
       roleCode := 6060
     );
 
+    -- set jobCoverageReports routeRoles
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
     -- set jobs routeRoles
 
     perform set_route_role(
