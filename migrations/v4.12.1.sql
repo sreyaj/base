@@ -6260,6 +6260,56 @@ do $$
       roleCode := 6060
     );
 
+    -- set jobDependencies Roles
+
+    perform set_route_role(
+      routePattern := '/jobDependencies',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobDependencies',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/jobDependencies',
+      httpVerb := 'POST',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobDependencies',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/jobDependencies/:id',
+      httpVerb := 'PUT',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobDependencies/:id',
+      httpVerb := 'PUT',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/jobDependencies/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobDependencies/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
     -- set jobs routeRoles
 
     perform set_route_role(
