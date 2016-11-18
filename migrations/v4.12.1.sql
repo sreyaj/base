@@ -6234,6 +6234,36 @@ do $$
       roleCode := 6060
     );
 
+     perform set_route_role(
+       routePattern := '/clusterNodes/:id/validate',
+       httpVerb := 'GET',
+       roleCode := 6000
+     );
+
+     perform set_route_role(
+       routePattern := '/clusterNodes/:id/validate',
+       httpVerb := 'GET',
+       roleCode := 6010
+     );
+
+     perform set_route_role(
+       routePattern := '/clusterNodes/:id/validate',
+       httpVerb := 'GET',
+       roleCode := 6020
+     );
+
+     perform set_route_role(
+       routePattern := '/clusterNodes/:id/validate',
+       httpVerb := 'GET',
+       roleCode := 6040
+     );
+
+     perform set_route_role(
+       routePattern := '/clusterNodes/:id/validate',
+       httpVerb := 'GET',
+       roleCode := 6060
+     );
+
     -- set cluster node consoles route roles
     perform set_route_role(
       routePattern := '/clusterNodes/:clusterNodeId/clusterNodeConsoles',
@@ -6883,21 +6913,21 @@ do $$
 
     -- set systemNodes routeRoles
     perform set_route_role(
-          routePattern := '/systemNodes/:id',
-          httpVerb := 'GET',
-          roleCode := 6060
+      routePattern := '/systemNodes/:id',
+      httpVerb := 'GET',
+      roleCode := 6060
     );
 
     perform set_route_role(
-          routePattern := '/systemNodes/:id',
-          httpVerb := 'PUT',
-          roleCode := 6040
+      routePattern := '/systemNodes/:id',
+      httpVerb := 'PUT',
+      roleCode := 6040
     );
 
     perform set_route_role(
-          routePattern := '/systemNodes/:id',
-          httpVerb := 'PUT',
-          roleCode := 6060
+      routePattern := '/systemNodes/:id',
+      httpVerb := 'PUT',
+      roleCode := 6060
     );
 
     -- set systemNodeStats routeRoles
@@ -6910,51 +6940,51 @@ do $$
     -- set transactions routeRoles
 
     perform set_route_role(
-          routePattern := '/transactions/:id',
-          httpVerb := 'GET',
-          roleCode := 6060
+      routePattern := '/transactions/:id',
+      httpVerb := 'GET',
+      roleCode := 6060
     );
 
     perform set_route_role(
-          routePattern := '/transactions/:id',
-          httpVerb := 'GET',
-          roleCode := 6020
+      routePattern := '/transactions/:id',
+      httpVerb := 'GET',
+      roleCode := 6020
     );
 
     perform set_route_role(
-          routePattern := '/transactions/:id/receipt',
-          httpVerb := 'GET',
-          roleCode := 6060
+      routePattern := '/transactions/:id/receipt',
+      httpVerb := 'GET',
+      roleCode := 6060
     );
 
     perform set_route_role(
-          routePattern := '/transactions/:id/receipt',
-          httpVerb := 'GET',
-          roleCode := 6020
+      routePattern := '/transactions/:id/receipt',
+      httpVerb := 'GET',
+      roleCode := 6020
     );
 
     perform set_route_role(
-          routePattern := '/subscriptions/:subscriptionId/transactions',
-          httpVerb := 'GET',
-          roleCode := 6060
+      routePattern := '/subscriptions/:subscriptionId/transactions',
+      httpVerb := 'GET',
+      roleCode := 6060
     );
 
     perform set_route_role(
-          routePattern := '/subscriptions/:subscriptionId/transactions',
-          httpVerb := 'GET',
-          roleCode := 6020
+      routePattern := '/subscriptions/:subscriptionId/transactions',
+      httpVerb := 'GET',
+      roleCode := 6020
     );
 
     perform set_route_role(
-          routePattern := '/transactions',
-          httpVerb := 'GET',
-          roleCode := 6060
+      routePattern := '/transactions',
+      httpVerb := 'GET',
+      roleCode := 6060
     );
 
     perform set_route_role(
-          routePattern := '/transactions',
-          httpVerb := 'GET',
-          roleCode := 6020
+      routePattern := '/transactions',
+      httpVerb := 'GET',
+      roleCode := 6020
     );
   end
 $$;
