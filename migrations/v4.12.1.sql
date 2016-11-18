@@ -6466,6 +6466,24 @@ do $$
       roleCode := 6060
     );
 
+    perform set_route_role(
+      routePattern := '/projectAccounts',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/projectAccounts',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/projectAccounts',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
     -- set providers routeRoles
     perform set_route_role(
       routePattern := '/providers/:id',
@@ -6658,6 +6676,32 @@ do $$
 
     perform set_route_role(
       routePattern := '/subscriptions/:subscriptionId/state',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    -- set subscriptionsAccounts routeRoles
+
+    perform set_route_role(
+      routePattern := '/subscriptionAccounts',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionAccounts',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionAccounts',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionAccounts',
       httpVerb := 'GET',
       roleCode := 6060
     );
