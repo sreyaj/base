@@ -6848,6 +6848,26 @@ do $$
       roleCode := 6060
     );
 
+    -- set superUsers routeRoles
+
+    perform set_route_role(
+      routePattern := '/superUsers',
+      httpVerb := 'GET',
+      roleCode := 6080
+    );
+
+    perform set_route_role(
+      routePattern := '/superUsers',
+      httpVerb := 'POST',
+      roleCode := 6080
+    );
+
+    perform set_route_role(
+      routePattern := '/superUsers/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6080
+    );
+    
     -- set systemMachineImages routes
 
     perform set_route_role(
