@@ -6330,6 +6330,24 @@ do $$
       roleCode := 6060
     );
 
+    perform set_route_role(
+      routePattern := '/clusterNodes',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/clusterNodes',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
     -- set cluster node consoles route roles
     perform set_route_role(
       routePattern := '/clusterNodes/:clusterNodeId/clusterNodeConsoles',
