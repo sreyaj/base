@@ -7042,6 +7042,18 @@ do $$
       roleCode := 6060
     );
 
+    perform set_route_role(
+       routePattern := '/systemNodes/:id/validate',
+       httpVerb := 'GET',
+       roleCode := 6040
+     );
+
+     perform set_route_role(
+       routePattern := '/systemNodes/:id/validate',
+       httpVerb := 'GET',
+       roleCode := 6060
+     );
+
     -- set systemNodeStats routeRoles
     perform set_route_role(
       routePattern := '/systemNodeStats',
