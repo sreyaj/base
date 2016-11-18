@@ -6705,17 +6705,10 @@ do $$
     );
 
     -- set systemNodes routeRoles
-
     perform set_route_role(
           routePattern := '/systemNodes/:id',
           httpVerb := 'GET',
-          roleCode := 6010
-    );
-
-    perform set_route_role(
-          routePattern := '/systemNodes/:id',
-          httpVerb := 'GET',
-          roleCode := 6020
+          roleCode := 6060
     );
 
     perform set_route_role(
@@ -6727,17 +6720,10 @@ do $$
     perform set_route_role(
           routePattern := '/systemNodes/:id',
           httpVerb := 'PUT',
-          roleCode := 6010
-    );
-
-    perform set_route_role(
-          routePattern := '/systemNodes/:id',
-          httpVerb := 'PUT',
-          roleCode := 6020
+          roleCode := 6060
     );
 
     -- set systemNodeStats routeRoles
-
     perform set_route_role(
       routePattern := '/systemNodeStats',
       httpVerb := 'POST',
