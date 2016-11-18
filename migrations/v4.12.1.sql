@@ -6736,6 +6736,14 @@ do $$
           roleCode := 6020
     );
 
+    -- set systemNodeStats routeRoles
+
+    perform set_route_role(
+      routePattern := '/systemNodeStats',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
     -- set transactions routeRoles
 
     perform set_route_role(
