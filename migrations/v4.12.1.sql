@@ -7530,6 +7530,24 @@ do $$
     -- set versions routeRoles
 
     perform set_route_role(
+      routePattern := '/versions',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/versions',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/versions',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/versions/:versionId',
       httpVerb := 'GET',
       roleCode := 6000
@@ -7554,24 +7572,6 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/versions/:versionId',
-      httpVerb := 'DELETE',
-      roleCode := 6010
-    );
-
-    perform set_route_role(
-      routePattern := '/versions/:versionId',
-      httpVerb := 'DELETE',
-      roleCode := 6020
-    );
-
-    perform set_route_role(
-      routePattern := '/versions/:versionId',
-      httpVerb := 'DELETE',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
       routePattern := '/versions',
       httpVerb := 'POST',
       roleCode := 6010
@@ -7616,6 +7616,30 @@ do $$
     perform set_route_role(
       routePattern := '/v2/versions',
       httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/versions',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/versions/:versionId',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/versions/:versionId',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/versions/:versionId',
+      httpVerb := 'DELETE',
       roleCode := 6060
     );
 
