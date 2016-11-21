@@ -6266,7 +6266,7 @@ do $$
       httpVerb := 'POST',
       roleCode := 6020
     );
-    
+
     perform set_route_role(
       routePattern := '/builds',
       httpVerb := 'POST',
@@ -6284,7 +6284,7 @@ do $$
       httpVerb := 'PUT',
       roleCode := 6020
     );
-    
+
     perform set_route_role(
       routePattern := '/builds/:buildId',
       httpVerb := 'PUT',
@@ -6302,7 +6302,7 @@ do $$
       httpVerb := 'DELETE',
       roleCode := 6020
     );
-    
+
     perform set_route_role(
       routePattern := '/builds/:buildId',
       httpVerb := 'DELETE',
@@ -6802,6 +6802,30 @@ do $$
     );
 
     -- set jobTestReports routeRoles
+
+    perform set_route_role(
+      routePattern := '/jobTestReports',
+      httpverb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobTestReports',
+      httpverb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobTestReports',
+      httpverb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobTestReports',
+      httpverb := 'GET',
+      roleCode := 6060
+    );
 
     perform set_route_role(
       routePattern := '/jobTestReports/:jobTestReportId',
