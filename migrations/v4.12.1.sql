@@ -7036,6 +7036,67 @@ do $$
       roleCode := 6060
     );
 
+    -- set subscriptionintegrationpermissions routeRoles
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptionIntegrationPermissions/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
     -- set superUsers routeRoles
 
     perform set_route_role(
