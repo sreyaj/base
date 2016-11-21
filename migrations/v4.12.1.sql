@@ -6593,6 +6593,24 @@ do $$
     -- set jobTestReports routeRoles
 
     perform set_route_role(
+      routePattern := '/jobTestReports/:id',
+      httpverb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobTestReports/:id',
+      httpverb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobTestReports/:id',
+      httpverb := 'DELETE',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/jobTestReports',
       httpVerb := 'POST',
       roleCode := 6010
