@@ -261,8 +261,10 @@ __show_version() {
 }
 
 __set_is_upgrade() {
-  local update=$(cat $STATE_FILE | jq ".isUpgrade=$1")
-  _update_state "$update"
+  if [ -f $STATE_FILE ]; then
+    local update=$(cat $STATE_FILE | jq ".isUpgrade=$1")
+    _update_state "$update"
+  fi
 }
 
 if [[ $# -gt 0 ]]; then
