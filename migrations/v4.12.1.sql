@@ -6547,24 +6547,6 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodeStats/:clusterNodeStatId',
-      httpVerb := 'DELETE',
-      roleCode := 6010
-    );
-
-    perform set_route_role(
-      routePattern := '/clusterNodeStats/:clusterNodeStatId',
-      httpVerb := 'DELETE',
-      roleCode := 6020
-    );
-
-    perform set_route_role(
-      routePattern := '/clusterNodeStats/:clusterNodeStatId',
-      httpVerb := 'DELETE',
-      roleCode := 6060
-    );
-
-    perform set_route_role(
       routePattern := '/clusterNodes/:clusterNodeId/clusterNodeStats',
       httpVerb := 'DELETE',
       roleCode := 6010
