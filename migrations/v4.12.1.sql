@@ -6184,6 +6184,110 @@ do $$
       roleCode := 6060
     );
 
+    -- set buildJobs routeRoles
+
+    perform set_route_role(
+      routePattern := '/buildJobs',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'PUT',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'PUT',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'PUT',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:id',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
     -- set clusterNodes routeRoles
 
     perform set_route_role(
