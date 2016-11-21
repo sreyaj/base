@@ -6193,6 +6193,122 @@ do $$
       roleCode := 6060
     );
 
+    -- set builds routeRoles
+
+    perform set_route_role(
+      routePattern := '/builds',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/builds',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/builds',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/builds',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptions/:subscriptionId/buildStatus',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptions/:subscriptionId/buildStatus',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/builds',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/builds',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+    
+    perform set_route_role(
+      routePattern := '/builds',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'PUT',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'PUT',
+      roleCode := 6020
+    );
+    
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'PUT',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+    
+    perform set_route_role(
+      routePattern := '/builds/:buildId',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
     -- set buildJobs routeRoles
 
     perform set_route_role(
