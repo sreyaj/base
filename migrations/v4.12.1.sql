@@ -7558,6 +7558,11 @@ do $$
     );
 
     -- set versions routeRoles
+    perform set_route_role(
+      routePattern := '/versions',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
 
     perform set_route_role(
       routePattern := '/versions',
@@ -7647,12 +7652,6 @@ do $$
       routePattern := '/v2/versions',
       httpVerb := 'POST',
       roleCode := 6060
-    );
-
-    perform set_route_role(
-      routePattern := '/versions',
-      httpVerb := 'GET',
-      roleCode := 6000
     );
 
     perform set_route_role(
