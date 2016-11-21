@@ -7435,37 +7435,37 @@ do $$
 
     -- set systemNodes routeRoles
     perform set_route_role(
-      routePattern := '/systemNodes/:id',
+      routePattern := '/systemNodes/:systemNodeId',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/systemNodes/:id',
+      routePattern := '/systemNodes/:systemNodeId',
       httpVerb := 'PUT',
       roleCode := 6040
     );
 
     perform set_route_role(
-      routePattern := '/systemNodes/:id',
+      routePattern := '/systemNodes/:systemNodeId',
       httpVerb := 'PUT',
       roleCode := 6060
     );
 
     perform set_route_role(
-       routePattern := '/systemNodes/:id/status',
+       routePattern := '/systemNodes/:systemNodeId/status',
        httpVerb := 'POST',
        roleCode := 6060
      );
 
     perform set_route_role(
-       routePattern := '/systemNodes/:id/validate',
+       routePattern := '/systemNodes/:systemNodeId/validate',
        httpVerb := 'GET',
        roleCode := 6040
      );
 
      perform set_route_role(
-       routePattern := '/systemNodes/:id/validate',
+       routePattern := '/systemNodes/:systemNodeId/validate',
        httpVerb := 'GET',
        roleCode := 6060
      );
