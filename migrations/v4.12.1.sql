@@ -6086,7 +6086,7 @@ do $$
 
     --set accountCards routeRoles
     perform set_route_role(
-      routePattern := '/accountCards/:id',
+      routePattern := '/accountCards/:accountCardId',
       httpVerb := 'GET',
       roleCode := 6060
     );
@@ -6098,7 +6098,7 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/accountCards/:id',
+      routePattern := '/accountCards/:accountCardId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
@@ -6110,7 +6110,7 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/accountCards/:id/dependencies',
+      routePattern := '/accountCards/:accountCardId/dependencies',
       httpVerb := 'GET',
       roleCode := 6060
     );
