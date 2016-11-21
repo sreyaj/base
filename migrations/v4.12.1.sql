@@ -2381,6 +2381,8 @@ do $$
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id/status' and "httpVerb"='POST';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id/validate' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id/initScript' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/clusterNodeStats/:id' and "httpVerb"='DELETE';
+      delete from "routeRoles" where "routePattern"='/clusterNodes/:id/clusterNodeStats' and "httpVerb"='DELETE';
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -6545,37 +6547,37 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodeStats/:id',
+      routePattern := '/clusterNodeStats/:clusterNodeStatId',
       httpVerb := 'DELETE',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodeStats/:id',
+      routePattern := '/clusterNodeStats/:clusterNodeStatId',
       httpVerb := 'DELETE',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodeStats/:id',
+      routePattern := '/clusterNodeStats/:clusterNodeStatId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/clusterNodeStats',
+      routePattern := '/clusterNodes/:clusterNodeId/clusterNodeStats',
       httpVerb := 'DELETE',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/clusterNodeStats',
+      routePattern := '/clusterNodes/:clusterNodeId/clusterNodeStats',
       httpVerb := 'DELETE',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/clusterNodeStats',
+      routePattern := '/clusterNodes/:clusterNodeId/clusterNodeStats',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
