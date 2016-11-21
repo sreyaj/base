@@ -2375,6 +2375,12 @@ do $$
       delete from "routeRoles" where "routePattern"='/accounts/:id/generateSSHKeys' and "httpVerb"='POST';
       delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='PUT';
       delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='DELETE';
+      delete from "routeRoles" where "routePattern"='/clusterNodes/:id' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/clusterNodes/:id' and "httpVerb"='PUT';
+      delete from "routeRoles" where "routePattern"='/clusterNodes/:id' and "httpVerb"='DELETE';
+      delete from "routeRoles" where "routePattern"='/clusterNodes/:id/status' and "httpVerb"='POST';
+      delete from "routeRoles" where "routePattern"='/clusterNodes/:id/validate' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/clusterNodes/:id/initScript' and "httpVerb"='GET';
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -6211,121 +6217,121 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'GET',
       roleCode := 6000
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'GET',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'GET',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
      perform set_route_role(
-       routePattern := '/clusterNodes/:id/validate',
+       routePattern := '/clusterNodes/:clusterNodeId/validate',
        httpVerb := 'GET',
        roleCode := 6000
      );
 
      perform set_route_role(
-       routePattern := '/clusterNodes/:id/validate',
+       routePattern := '/clusterNodes/:clusterNodeId/validate',
        httpVerb := 'GET',
        roleCode := 6010
      );
 
      perform set_route_role(
-       routePattern := '/clusterNodes/:id/validate',
+       routePattern := '/clusterNodes/:clusterNodeId/validate',
        httpVerb := 'GET',
        roleCode := 6020
      );
 
      perform set_route_role(
-       routePattern := '/clusterNodes/:id/validate',
+       routePattern := '/clusterNodes/:clusterNodeId/validate',
        httpVerb := 'GET',
        roleCode := 6040
      );
 
      perform set_route_role(
-       routePattern := '/clusterNodes/:id/validate',
+       routePattern := '/clusterNodes/:clusterNodeId/validate',
        httpVerb := 'GET',
        roleCode := 6060
      );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/initScript',
+      routePattern := '/clusterNodes/:clusterNodeId/initScript',
       httpVerb := 'GET',
       roleCode := 6000
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/initScript',
+      routePattern := '/clusterNodes/:clusterNodeId/initScript',
       httpVerb := 'GET',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/initScript',
+      routePattern := '/clusterNodes/:clusterNodeId/initScript',
       httpVerb := 'GET',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/initScript',
+      routePattern := '/clusterNodes/:clusterNodeId/initScript',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'DELETE',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'DELETE',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'PUT',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'PUT',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'PUT',
       roleCode := 6040
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id',
+      routePattern := '/clusterNodes/:clusterNodeId',
       httpVerb := 'PUT',
       roleCode := 6060
     );
@@ -6349,19 +6355,19 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/status',
+      routePattern := '/clusterNodes/:clusterNodeId/status',
       httpVerb := 'POST',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/status',
+      routePattern := '/clusterNodes/:clusterNodeId/status',
       httpVerb := 'POST',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/clusterNodes/:id/status',
+      routePattern := '/clusterNodes/:clusterNodeId/status',
       httpVerb := 'POST',
       roleCode := 6060
     );
