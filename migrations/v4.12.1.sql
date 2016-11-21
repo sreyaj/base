@@ -7044,6 +7044,24 @@ do $$
 
     -- set runs routeRoles
     perform set_route_role(
+      routePattern := '/runs/:runId',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/runs/:runId',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/runs/:runId',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/runs',
       httpVerb := 'GET',
       roleCode := 6000
