@@ -2383,6 +2383,7 @@ do $$
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id/initScript' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/clusterNodeStats/:id' and "httpVerb"='DELETE';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id/clusterNodeStats' and "httpVerb"='DELETE';
+      delete from "routeRoles" where "routePattern"='/clusterNodeStats/:clusterNodeStatId' and "httpVerb"='DELETE';
     end if;
 
     -- masterIntegrationFields for Braintree
