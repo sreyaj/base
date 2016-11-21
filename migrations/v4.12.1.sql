@@ -6211,25 +6211,25 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'GET',
       roleCode := 6000
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'GET',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'GET',
       roleCode := 6020
     );
@@ -6253,37 +6253,37 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'PUT',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'PUT',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'PUT',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'DELETE',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/buildJobs/:id',
+      routePattern := '/buildJobs/:buildJobId',
       httpVerb := 'DELETE',
       roleCode := 6020
     );
