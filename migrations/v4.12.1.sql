@@ -6681,6 +6681,50 @@ do $$
       roleCode := 6060
     );
 
+    -- set jobConsoles Roles
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/consoles',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/consoles',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/consoles',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/consoles',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/consoles',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/consoles',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/consoles',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
     -- set jobDependencies Roles
 
     perform set_route_role(
