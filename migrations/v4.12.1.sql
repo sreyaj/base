@@ -6413,6 +6413,50 @@ do $$
       roleCode := 6020
     );
 
+    -- set buildJobConsoles routeRoles
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/consoles',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/consoles',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/consoles',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/consoles',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/consoles',
+      httpVerb := 'DELETE',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/consoles',
+      httpVerb := 'DELETE',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/buildJobs/:buildJobId/consoles',
+      httpVerb := 'DELETE',
+      roleCode := 6060
+    );
+
     -- set clusterNodes routeRoles
 
     perform set_route_role(
