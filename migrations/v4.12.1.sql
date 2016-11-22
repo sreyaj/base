@@ -6049,6 +6049,30 @@ do $$
     );
 
     perform set_route_role(
+      routePattern := '/accounts/:accountId/runStatus',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:accountId/runStatus',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:accountId/runStatus',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/accounts/:accountId/runStatus',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/accounts/:accountId/sync',
       httpVerb := 'GET',
       roleCode := 6060
