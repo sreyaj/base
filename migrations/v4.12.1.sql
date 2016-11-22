@@ -7009,6 +7009,90 @@ do $$
       roleCode := 6060
     );
 
+    perform set_route_role(
+      routePattern := '/projects/:projectId/sync',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/sync',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/sync',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/sync',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/owners',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/owners',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/reset',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/reset',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/enable',
+      httpVerb := 'POST',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/enable',
+      httpVerb := 'POST',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/enable',
+      httpVerb := 'POST',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId',
+      httpVerb := 'PUT',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId',
+      httpVerb := 'PUT',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId',
+      httpVerb := 'PUT',
+      roleCode := 6060
+    );
+
     -- set projectAccounts routeRoles
 
     perform set_route_role(
