@@ -2391,6 +2391,8 @@ do $$
       delete from "routeRoles" where "routePattern"='/clusterNodeStats/:clusterNodeStatId' and "httpVerb"='DELETE';
       delete from "routeRoles" where "routePattern"='/jobCoverageReports/:id' and "httpVerb"='DELETE';
       delete from "routeRoles" where "routePattern"='/subscriptionIntegrations/:id/dependencies' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/accountTokens/:id' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/accountTokens/:id' and "httpVerb"='DELETE';
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -6207,7 +6209,7 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/accountTokens/:id',
+      routePattern := '/accountTokens/:accountTokenId',
       httpVerb := 'GET',
       roleCode := 6060
     );
@@ -6219,7 +6221,7 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/accountTokens/:id',
+      routePattern := '/accountTokens/:accountTokenId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
