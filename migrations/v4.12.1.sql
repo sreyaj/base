@@ -6864,19 +6864,19 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/jobCoverageReports/:id',
+      routePattern := '/jobCoverageReports/:jobCoverageReportId',
       httpVerb := 'DELETE',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/jobCoverageReports/:id',
+      routePattern := '/jobCoverageReports/:jobCoverageReportId',
       httpVerb := 'DELETE',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/jobCoverageReports/:id',
+      routePattern := '/jobCoverageReports/:jobCoverageReportId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
@@ -7870,13 +7870,13 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/subscriptionIntegrations/:id/dependencies',
+      routePattern := '/subscriptionIntegrations/:subscriptionIntegrationId/dependencies',
       httpVerb := 'GET',
       roleCode := 6000
     );
 
     perform set_route_role(
-      routePattern := '/subscriptionIntegrations/:id/dependencies',
+      routePattern := '/subscriptionIntegrations/:subscriptionIntegrationId/dependencies',
       httpVerb := 'GET',
       roleCode := 6060
     );
