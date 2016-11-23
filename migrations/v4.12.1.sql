@@ -2399,6 +2399,7 @@ do $$
       delete from "routeRoles" where "routePattern"='/jobDependencies/:id' and "httpVerb" = 'DELETE';
       delete from "routeRoles" where "routePattern"='/subscriptionIntegrationPermissions/:id' and "httpVerb" = 'DELETE';
       delete from "routeRoles" where "routePattern"='/systemMachineImages/:id' and "httpVerb" = 'GET';
+      delete from "routeRoles" where "routePattern"='/providers/:id' and "httpVerb" = 'GET';
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -7356,7 +7357,7 @@ do $$
 
     -- set providers routeRoles
     perform set_route_role(
-      routePattern := '/providers/:id',
+      routePattern := '/providers/:providerId',
       httpVerb := 'GET',
       roleCode := 6060
     );
