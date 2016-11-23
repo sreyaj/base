@@ -2384,6 +2384,8 @@ do $$
       delete from "routeRoles" where "routePattern"='/clusterNodeStats/:id' and "httpVerb"='DELETE';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id/clusterNodeStats' and "httpVerb"='DELETE';
       delete from "routeRoles" where "routePattern"='/clusterNodeStats/:clusterNodeStatId' and "httpVerb"='DELETE';
+      delete from "routeRoles" where "routePattern"='/jobCoverageReports/:id' and "httpVerb"='DELETE';
+      delete from "routeRoles" where "routePattern"='/subscriptionIntegrations/:id/dependencies' and "httpVerb"='GET';
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -6864,19 +6866,19 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/jobCoverageReports/:id',
+      routePattern := '/jobCoverageReports/:jobCoverageReportId',
       httpVerb := 'DELETE',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/jobCoverageReports/:id',
+      routePattern := '/jobCoverageReports/:jobCoverageReportId',
       httpVerb := 'DELETE',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/jobCoverageReports/:id',
+      routePattern := '/jobCoverageReports/:jobCoverageReportId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
@@ -7870,13 +7872,13 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/subscriptionIntegrations/:id/dependencies',
+      routePattern := '/subscriptionIntegrations/:subscriptionIntegrationId/dependencies',
       httpVerb := 'GET',
       roleCode := 6000
     );
 
     perform set_route_role(
-      routePattern := '/subscriptionIntegrations/:id/dependencies',
+      routePattern := '/subscriptionIntegrations/:subscriptionIntegrationId/dependencies',
       httpVerb := 'GET',
       roleCode := 6060
     );
