@@ -2375,6 +2375,11 @@ do $$
       delete from "routeRoles" where "routePattern"='/accounts/:id/generateSSHKeys' and "httpVerb"='POST';
       delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='PUT';
       delete from "routeRoles" where "routePattern"='/accounts/:id' and "httpVerb"='DELETE';
+      delete from "routeRoles" where "routePattern"='/accountIntegrations/:id' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/accountIntegrations/:id/dependencies' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/accountIntegrations/:id/validateProjectOwnerToken' and "httpVerb"='GET';
+      delete from "routeRoles" where "routePattern"='/accountIntegrations/:id' and "httpVerb"='PUT';
+      delete from "routeRoles" where "routePattern"='/accountIntegrations/:id' and "httpVerb"='DELETE';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id' and "httpVerb"='PUT';
       delete from "routeRoles" where "routePattern"='/clusterNodes/:id' and "httpVerb"='DELETE';
@@ -6150,19 +6155,19 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/accountIntegrations/:id',
+      routePattern := '/accountIntegrations/:accountIntegrationId',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accountIntegrations/:id/dependencies',
+      routePattern := '/accountIntegrations/:accountIntegrationId/dependencies',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accountIntegrations/:id/validateProjectOwnerToken',
+      routePattern := '/accountIntegrations/:accountIntegrationId/validateProjectOwnerToken',
       httpVerb := 'GET',
       roleCode := 6060
     );
@@ -6174,13 +6179,13 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/accountIntegrations/:id',
+      routePattern := '/accountIntegrations/:accountIntegrationId',
       httpVerb := 'PUT',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/accountIntegrations/:id',
+      routePattern := '/accountIntegrations/:accountIntegrationId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
