@@ -2393,6 +2393,8 @@ do $$
       delete from "routeRoles" where "routePattern"='/subscriptionIntegrations/:id/dependencies' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/accountTokens/:id' and "httpVerb"='GET';
       delete from "routeRoles" where "routePattern"='/accountTokens/:id' and "httpVerb"='DELETE';
+      delete from "routeRoles" where "routePattern"='/transactions/:id' and "httpVerb" = 'GET';
+      delete from "routeRoles" where "routePattern"='/transactions/:id/receipt' and "httpVerb" = 'GET';
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -8159,25 +8161,25 @@ do $$
     -- set transactions routeRoles
 
     perform set_route_role(
-      routePattern := '/transactions/:id',
+      routePattern := '/transactions/:transactionId',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/transactions/:id',
+      routePattern := '/transactions/:transactionId',
       httpVerb := 'GET',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/transactions/:id/receipt',
+      routePattern := '/transactions/:transactionId/receipt',
       httpVerb := 'GET',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/transactions/:id/receipt',
+      routePattern := '/transactions/:transactionId/receipt',
       httpVerb := 'GET',
       roleCode := 6020
     );
