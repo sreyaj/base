@@ -6774,6 +6774,12 @@ do $$
     perform set_route_role(
       routePattern := '/jobs/:jobId/consoles',
       httpVerb := 'GET',
+      roleCode := 6040
+    );
+
+    perform set_route_role(
+      routePattern := '/jobs/:jobId/consoles',
+      httpVerb := 'GET',
       roleCode := 6060
     );
 
