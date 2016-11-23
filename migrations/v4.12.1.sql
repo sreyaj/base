@@ -2400,6 +2400,8 @@ do $$
       delete from "routeRoles" where "routePattern"='/subscriptionIntegrationPermissions/:id' and "httpVerb" = 'DELETE';
       delete from "routeRoles" where "routePattern"='/systemMachineImages/:id' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/providers/:id' and "httpVerb" = 'GET';
+      delete from "routeRoles" where "routePattern"='/passthrough/discounts/:id' and "httpVerb" = 'GET';
+
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -7081,25 +7083,25 @@ do $$
 
     -- set passthrough routeRoles
     perform set_route_role(
-      routePattern := '/passthrough/discounts/:id',
+      routePattern := '/passthrough/discounts/:discountId',
       httpVerb := 'GET',
       roleCode := 6000
     );
 
     perform set_route_role(
-      routePattern := '/passthrough/discounts/:id',
+      routePattern := '/passthrough/discounts/:discountId',
       httpVerb := 'GET',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/passthrough/discounts/:id',
+      routePattern := '/passthrough/discounts/:discountId',
       httpVerb := 'GET',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/passthrough/discounts/:id',
+      routePattern := '/passthrough/discounts/:discountId',
       httpVerb := 'GET',
       roleCode := 6060
     );
