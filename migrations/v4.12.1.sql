@@ -2401,6 +2401,7 @@ do $$
       delete from "routeRoles" where "routePattern"='/systemMachineImages/:id' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/providers/:id' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/passthrough/discounts/:id' and "httpVerb" = 'GET';
+      delete from "routeRoles" where "routePattern"='/passthrough/jobs/:id/reports' and "httpVerb" = 'GET';
 
     end if;
 
@@ -7107,19 +7108,19 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/passthrough/jobs/:id/reports',
+      routePattern := '/passthrough/jobs/:jobId/reports',
       httpVerb := 'GET',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/passthrough/jobs/:id/reports',
+      routePattern := '/passthrough/jobs/:jobId/reports',
       httpVerb := 'GET',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/passthrough/jobs/:id/reports',
+      routePattern := '/passthrough/jobs/:jobId/reports',
       httpVerb := 'GET',
       roleCode := 6060
     );
