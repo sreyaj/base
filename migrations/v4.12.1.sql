@@ -6837,25 +6837,25 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/jobDependencies/:id',
+      routePattern := '/jobDependencies/:jobDependencyId',
       httpVerb := 'PUT',
       roleCode := 6000
     );
 
     perform set_route_role(
-      routePattern := '/jobDependencies/:id',
+      routePattern := '/jobDependencies/:jobDependencyId',
       httpVerb := 'PUT',
       roleCode := 6060
     );
 
     perform set_route_role(
-      routePattern := '/jobDependencies/:id',
+      routePattern := '/jobDependencies/:jobDependencyId',
       httpVerb := 'DELETE',
       roleCode := 6000
     );
 
     perform set_route_role(
-      routePattern := '/jobDependencies/:id',
+      routePattern := '/jobDependencies/:jobDependencyId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
@@ -8014,19 +8014,19 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/subscriptionIntegrationPermissions/:id',
+      routePattern := '/subscriptionIntegrationPermissions/:subscriptionIntegrationPermissionId',
       httpVerb := 'DELETE',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/subscriptionIntegrationPermissions/:id',
+      routePattern := '/subscriptionIntegrationPermissions/:subscriptionIntegrationPermissionId',
       httpVerb := 'DELETE',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/subscriptionIntegrationPermissions/:id',
+      routePattern := '/subscriptionIntegrationPermissions/:subscriptionIntegrationPermissionId',
       httpVerb := 'DELETE',
       roleCode := 6060
     );
