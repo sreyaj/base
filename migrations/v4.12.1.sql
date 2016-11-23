@@ -6869,6 +6869,35 @@ do $$
     );
 
     -- set jobCoverageReports routeRoles
+    perform set_route_role(
+      routePattern := '/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6010
+    );
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6020
+    );
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6040
+    );
+
+    perform set_route_role(
+      routePattern := '/jobCoverageReports',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
 
     perform set_route_role(
       routePattern := '/jobCoverageReports',
