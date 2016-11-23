@@ -2395,6 +2395,10 @@ do $$
       delete from "routeRoles" where "routePattern"='/accountTokens/:id' and "httpVerb"='DELETE';
       delete from "routeRoles" where "routePattern"='/transactions/:id' and "httpVerb" = 'GET';
       delete from "routeRoles" where "routePattern"='/transactions/:id/receipt' and "httpVerb" = 'GET';
+      delete from "routeRoles" where "routePattern"='/jobDependencies/:id' and "httpVerb" = 'PUT';
+      delete from "routeRoles" where "routePattern"='/jobDependencies/:id' and "httpVerb" = 'DELETE';
+      delete from "routeRoles" where "routePattern"='/subscriptionIntegrationPermissions/:id' and "httpVerb" = 'DELETE';
+      delete from "routeRoles" where "routePattern"='/systemMachineImages/:id' and "httpVerb" = 'GET';
     end if;
 
     -- masterIntegrationFields for Braintree
@@ -8078,25 +8082,25 @@ do $$
     );
 
     perform set_route_role(
-      routePattern := '/systemMachineImages/:id',
+      routePattern := '/systemMachineImages/:systemMachineImageId',
       httpVerb := 'GET',
       roleCode := 6000
     );
 
     perform set_route_role(
-      routePattern := '/systemMachineImages/:id',
+      routePattern := '/systemMachineImages/:systemMachineImageId',
       httpVerb := 'GET',
       roleCode := 6010
     );
 
     perform set_route_role(
-      routePattern := '/systemMachineImages/:id',
+      routePattern := '/systemMachineImages/:systemMachineImageId',
       httpVerb := 'GET',
       roleCode := 6020
     );
 
     perform set_route_role(
-      routePattern := '/systemMachineImages/:id',
+      routePattern := '/systemMachineImages/:systemMachineImageId',
       httpVerb := 'GET',
       roleCode := 6060
     );
