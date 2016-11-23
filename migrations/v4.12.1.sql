@@ -7780,6 +7780,12 @@ do $$
     perform set_route_role(
       routePattern := '/subscriptions/:subscriptionId/encrypt',
       httpVerb := 'POST',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/subscriptions/:subscriptionId/encrypt',
+      httpVerb := 'POST',
       roleCode := 6060
     );
 
