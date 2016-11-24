@@ -1851,11 +1851,6 @@ do $$
        values ('540e55445e5bad6f98764522', 'serviceUser', '540e55445e5bad6f98764522', (select "serviceUserToken" from "systemConfigs" where id=1), true, '540e55445e5bad6f98764522', '540e55445e5bad6f98764522', '2016-02-29T00:00:00Z', '2016-02-29T00:00:00Z');
      end if;
 
-  -- Update routePermissions.routePattern to use 255 characters
-    if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'routePattern') then
-      alter table "routePermissions" alter column "routePattern" type varchar(255);
-    end if;
-
   -- Update mailChimpId columns in accounts table to use 80 characters
     if exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'mailChimpId' and character_maximum_length = 24) then
       alter table "accounts" alter column "mailChimpId" type varchar(80);
@@ -2175,26 +2170,6 @@ do $$
       alter table "builds" add column "externalBuildId" varchar(255);
     end if;
 
-    -- Adds roleCode column in routePermissions table
-    if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'roleCode') then
-      alter table "routePermissions" add column "roleCode" integer;
-    end if;
-    if exists (select 1 from pg_constraint where conname = 'routePermissions_systemCode_fkey') then
-      alter table "routePermissions" drop constraint "routePermissions_systemCode_fkey";
-    end if;
-    if not exists (select 1 from pg_constraint where conname = 'routePermissions_roleCode_fkey') then
-      alter table "routePermissions" add constraint "routePermissions_roleCode_fkey" foreign key ("roleCode") references "systemCodes"(code) on update restrict on delete restrict;
-    end if;
-
-    -- Adds isPublic column in routePermissions table
-    if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'isPublic') then
-      alter table "routePermissions" add column "isPublic" BOOLEAN NOT NULL DEFAULT false;
-    end if;
-
-    -- Reindex routePermissionRoutePatternHttpVerbU to routePermissionRoutePatternHttpVerbRoleCodeU in routePermissions table
-    drop index if exists "routePermissionRoutePatternHttpVerbU";
-    create unique index if not exists "routePermissionRoutePatternHttpVerbRoleCodeU" on "routePermissions" using btree("routePattern", "httpVerb", "roleCode");
-
     -- Reindex projAccAccIdProjIdU to projAccAccIdProjIdRoleCodeU in projectAccounts table
     drop index if exists "projAccAccIdProjIdU";
     create unique index if not exists "projAccAccIdProjIdRoleCodeU" on "projectAccounts" using btree("accountId", "projectId", "roleCode");
@@ -2202,11 +2177,6 @@ do $$
     -- Reindex subsAccSubsIdAccIdU to subsAccSubsIdAccIdRoleCodeU in subscriptionAccounts table
     drop index if exists "subsAccSubsIdAccIdU";
     create unique index if not exists "subsAccSubsIdAccIdRoleCodeU" on "subscriptionAccounts" using btree("accountId", "subscriptionId", "roleCode");
-
-    -- add constraint to isPublic column to set not null in routePermissions table
-    if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'isPublic' and column_default is null) then
-      alter table "routePermissions" alter column "isPublic" set not null;
-    end if;
 
     -- drop coloumn isShippableNode from clusterNodes table
     if exists (select 1 from information_schema.columns where table_name = 'clusterNodes' and column_name = 'isShippableNode') then
@@ -2231,31 +2201,6 @@ do $$
     -- Adds systemNodePublicKey column in systemConfigs table
     if not exists (select 1 from information_schema.columns where table_name = 'systemConfigs' and column_name = 'systemNodePublicKey') then
       alter table "systemConfigs" add column "systemNodePublicKey" varchar(1020) ;
-    end if;
-
-    -- Adds isSuperUser column in routePermissions table
-    if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'isSuperUser') then
-      alter table "routePermissions" add column "isSuperUser" BOOLEAN default false not null;
-    end if;
-
-    -- Adds isFreeUser column in routePermissions table
-    if not exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'isFreeUser') then
-      alter table "routePermissions" add column "isFreeUser" BOOLEAN default false not null;
-    end if;
-
-    -- Deletes entry for duplicate routePattern for /projects/postScm in routePermissions
-    if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'allowedRoles') then
-      delete from "routePermissions" where "httpVerb" = 'POST' and "routePattern" = '/projects/postScm' and "allowedRoles" = '["superUser","owner"]' and "roleCode" = 6020;
-    end if;
-
-    -- Removes type column from routePermissions table
-    if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'type') then
-      alter table "routePermissions" drop column "type";
-    end if;
-
-    -- Drop allowedRoles column from routePermissions table
-    if exists (select 1 from information_schema.columns where table_name = 'routePermissions' and column_name = 'allowedRoles') then
-      alter table "routePermissions" drop column "allowedRoles";
     end if;
 
     -- Drop systemIntegrationId from systemMachineImages
@@ -2303,69 +2248,6 @@ do $$
 
     -- Drop subscriptionPermissions
     drop table if exists "subscriptionPermissions";
-
-    -- Remove unused route permissions
-    delete from "routePermissions" where "routePattern" = '/projectPermissions';
-    delete from "routePermissions" where "routePattern" = '/subscriptionPermissions';
-    delete from "routePermissions" where "routePattern" = '/accountIntegrations/:id/validateOwnerToken';
-    delete from "routePermissions" where "routePattern"='/buildJobs'                              and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/buildJobs/:id'                          and "httpVerb"='PUT'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/buildJobs/:id'                          and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/buildJobConsoles'                       and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/buildJobConsoles/:buildJobId'           and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/builds'                                 and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/builds/:id'                             and "httpVerb"='PUT'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/builds/:id'                             and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/clusterNodes'                           and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/clusterNodes/:id/status'                and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/clusterNodes/:id/triggerDelete'         and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/clusterNodes/:id'                       and "httpVerb"='PUT'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/clusterNodes/:id'                       and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/clusterNodes/:id/clusterNodeConsoles'   and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/clusterNodeStats'                       and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/clusterNodeStats/:id'                   and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/clusterNodes/:id/clusterNodeStats'      and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/jobs/:id/postConsoles'                  and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/jobs/:jobId/consoles'                   and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/jobCoverageReports/:id'                 and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/jobCoverageReports'                     and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/jobs/:jobId'                            and "httpVerb"='PUT'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/jobs/:jobId'                            and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/jobTestReports'                         and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/jobTestReports/:id'                     and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/projects/:id/owners'              and "httpVerb"='GET'   and "roleCode"=6020;
-    delete from "routePermissions" where "routePattern"='/projects/:projectId/reset'              and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/projects/:projectId/disable'            and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/projects/:projectId/enable'             and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/projects/:projectId'                    and "httpVerb"='PUT'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/projects/:projectId/newBuild'           and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/resources/:id'                          and "httpVerb"='PUT'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/resources/:id'                          and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/resources'                              and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/resources/syncRepo'                     and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/resources/:id/files'                    and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/runs'                                   and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/runs/:runId'                            and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/runs/:runId/cancel'                     and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptions/:id/reset'                and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptions/:subscriptionId/billing'  and "httpVerb"='GET'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptions/:subscriptionId'          and "httpVerb"='PUT'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptions/:id/encrypt'              and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptions/:id/decrypt'              and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptionIntegrations/:id'           and "httpVerb"='PUT'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptionIntegrations'               and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptionIntegrations/:id'           and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptionIntegrationPermissions'     and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/subscriptionIntegrationPermissions/:id' and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/transactions/:id'                       and "httpVerb"='GET'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/transactions/:id/receipt'               and "httpVerb"='GET'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/transactions'                           and "httpVerb"='GET'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/versions'                               and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/versions/:id'                           and "httpVerb"='DELETE' and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='POST'   and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='POST'   and "roleCode"=6020;
-    delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6000;
-    delete from "routePermissions" where "routePattern"='/vortex'                                 and "httpVerb"='GET'    and "roleCode"=6020;
 
     -- remove outdated routeRoles
     if exists (select 1 from information_schema.columns where table_name = 'routeRoles') then
@@ -2460,38 +2342,6 @@ do $$
     end if;
   end
 $$;
-
-create or replace function set_route_permission(
-  httpVerb varchar, routePattern varchar,
-  roleCode int, isPublic boolean, isSuperUser boolean, isFreeUser boolean)
-
-  returns void as $$
-  begin
-
-    -- insert if not exists
-    if not exists (select 1 from "routePermissions"
-      where "httpVerb" = httpVerb and
-        "routePattern" = routePattern and
-        -- temp fix to avoid multiple entries for null roleCode (true-> update, false->insert)
-        ("roleCode" = roleCode OR "roleCode" IS NULL)
-    ) then
-      insert into "routePermissions" ("httpVerb", "routePattern",
-        "roleCode", "isPublic", "isSuperUser", "isFreeUser", "createdAt", "updatedAt")
-      values (httpVerb, routePattern,
-        roleCode, isPublic, isSuperUser, isFreeUser, now(), now());
-      return;
-    end if;
-
-  -- update
-    update "routePermissions"
-    set "roleCode" = roleCode, "isPublic" = isPublic, "isSuperUser" = isSuperUser, "isFreeUser" = isFreeUser
-    where "httpVerb" = httpVerb and
-    "routePattern" = routePattern and
-    ("roleCode" = roleCode OR "roleCode" IS NULL);
-
-    return;
-  end
-$$ LANGUAGE plpgsql;
 
 -- Add route Roles
 create or replace function set_route_role(
@@ -4895,5 +4745,13 @@ do $$
       roleCode := 6060
     );
 
+  end
+$$;
+
+do $$
+  begin
+    if exists (select 1 from information_schema.columns where table_name = 'routePermissions') then
+      drop table "routePermissions";
+    end if;
   end
 $$;
