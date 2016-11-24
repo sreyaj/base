@@ -1,8 +1,6 @@
 #!/bin/bash -e
 
 cleanup() {
-  local system_images_registry=$(cat $STATE_FILE \
-    | jq -r '.systemSettings.systemImagesRegistry')
   local deploy_version=$(cat $STATE_FILE \
     | jq -r '.deployTag')
 
@@ -29,10 +27,14 @@ cleanup() {
         | jq '.['"$j-1"']')
       local running_service_name=$(echo $running_service \
         | jq -r '.name')
+      local running_service_image=$(echo $running_service \
+        | jq -r '.image')
+      running_service_image=$(echo $running_service_image \
+        | tr ":" " " \
+        | awk '{print $1}')
 
-      local service_repository="$system_images_registry/$running_service_name"
-      __process_msg "Cleaning up images for: $service_repository"
-      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/cleanup.sh $service_repository $deploy_tag"
+      __process_msg "Cleaning up tags for: $running_service_image"
+      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/cleanup.sh $running_service_image $deploy_tag"
     done
   done
 }
