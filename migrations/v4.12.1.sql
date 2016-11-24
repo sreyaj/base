@@ -7056,6 +7056,12 @@ do $$
     perform set_route_role(
       routePattern := '/jobTestReports',
       httpverb := 'GET',
+      roleCode := 6040
+    );
+
+    perform set_route_role(
+      routePattern := '/jobTestReports',
+      httpverb := 'GET',
       roleCode := 6060
     );
 
@@ -7250,6 +7256,12 @@ do $$
     perform set_route_role(
       routePattern := '/projects/:projectId/branchRunStatus',
       httpVerb := 'GET',
+      roleCode := 6040
+    );
+
+    perform set_route_role(
+      routePattern := '/projects/:projectId/branchRunStatus',
+      httpVerb := 'GET',
       roleCode := 6060
     );
 
@@ -7406,6 +7418,12 @@ do $$
     );
 
     -- set providers routeRoles
+    perform set_route_role(
+      routePattern := '/providers/:providerId',
+      httpVerb := 'GET',
+      roleCode := 6040
+    );
+
     perform set_route_role(
       routePattern := '/providers/:providerId',
       httpVerb := 'GET',
@@ -8189,6 +8207,13 @@ do $$
       routePattern := '/vortex',
       httpVerb := 'GET',
       roleCode := 6060
+    );
+
+    -- set systemCodes routeRoles
+    perform set_route_role(
+      routePattern := '/systemCodes',
+      httpVerb := 'GET',
+      roleCode := 6040
     );
 
     -- set systemNodes routeRoles
