@@ -254,6 +254,7 @@
     {
       "name": "api",
       "repository": "api",
+      "isGlobal": true,
       "envs": [
         "DBNAME",
         "DBUSERNAME",
@@ -267,6 +268,7 @@
     {
       "name": "www",
       "repository": "www",
+      "isGlobal": true,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_VORTEX_URL",
@@ -286,7 +288,6 @@
     {
       "name": "nexec",
       "repository": "nexec",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_VORTEX_URL",
@@ -299,7 +300,6 @@
     {
       "name": "braintree",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -312,7 +312,6 @@
     {
       "name": "certgen",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -325,7 +324,6 @@
     {
       "name": "charon",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -338,7 +336,6 @@
     {
       "name": "cron",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -352,7 +349,6 @@
     {
       "name": "ec2",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -372,7 +368,6 @@
     {
       "name": "email",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -386,7 +381,6 @@
     {
       "name": "hipchat",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -400,7 +394,6 @@
     {
       "name": "hubspotSync",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -416,7 +409,6 @@
     {
       "name": "ini",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -429,7 +421,6 @@
     {
       "name": "irc",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_ROOT_AMQP_URL",
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
@@ -445,7 +436,6 @@
     {
       "name": "jobRequest",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -459,7 +449,6 @@
     {
       "name": "jobTrigger",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -474,7 +463,6 @@
     {
       "name": "jSync",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -487,7 +475,6 @@
     {
       "name": "marshaller",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -502,7 +489,6 @@
     {
       "name": "nf",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -516,7 +502,6 @@
     {
       "name": "slack",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -530,7 +515,6 @@
     {
       "name": "deploy",
       "repository": "micro",
-      "replicas": 3,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -544,7 +528,6 @@
     {
       "name": "manifest",
       "repository": "micro",
-      "replicas": 2,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -558,7 +541,6 @@
     {
       "name": "release",
       "repository": "micro",
-      "replicas": 2,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -572,7 +554,6 @@
     {
       "name": "rSync",
       "repository": "micro",
-      "replicas": 2,
       "envs": [
         "SHIPPABLE_API_TOKEN",
         "SHIPPABLE_API_URL",
@@ -586,7 +567,6 @@
     {
       "name": "sync",
       "repository": "micro",
-      "replicas": 2,
       "envs": [
         "SHIPPABLE_ROOT_AMQP_URL",
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
@@ -599,7 +579,6 @@
     {
       "name": "timeTrigger",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_ROOT_AMQP_URL",
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
@@ -612,7 +591,6 @@
     {
       "name": "versionTrigger",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_ROOT_AMQP_URL",
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",
@@ -625,7 +603,6 @@
     {
       "name": "webhook",
       "repository": "micro",
-      "replicas": 1,
       "envs": [
         "SHIPPABLE_ROOT_AMQP_URL",
         "SHIPPABLE_AMQP_DEFAULT_EXCHANGE",

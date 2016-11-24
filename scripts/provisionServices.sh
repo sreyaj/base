@@ -207,26 +207,6 @@ __save_service_config() {
   )
   update=$(echo $state_env | jq '.' | tee $STATE_FILE)
 
-  __process_msg "Generating $service replicas"
-  local replicas=$(cat $release_file | jq --arg service "$service" '
-    .serviceConfigs[] |
-    select (.name==$service) | .replicas')
-
-  if [ $replicas != "null" ]; then
-    __process_msg "Found $replicas for $service"
-    local replicas_update=$(cat $STATE_FILE | jq --arg service "$service" '
-      .services  |=
-      map(if .name == $service then
-          .replicas = "'$replicas'"
-        else
-          .
-        end
-      )'
-    )
-    update=$(echo $replicas_update | jq '.' | tee $STATE_FILE)
-    __process_msg "Successfully updated $service replicas"
-  fi
-
   local volumes=$(cat $release_file | jq --arg service "$service" '
     .serviceConfigs[] |
     select (.name==$service) | .volumes')
@@ -401,7 +381,7 @@ __run_service() {
 
 provision_www() {
   local sleep_time=30
-  __save_service_config www " --publish 50001:50001/tcp" " --name www --network ingress --with-registry-auth --endpoint-mode vip"
+  __save_service_config www " --publish 50001:50001/tcp" "--mode global --name www --network ingress --with-registry-auth --endpoint-mode vip"
   __run_service "www" $sleep_time
 }
 

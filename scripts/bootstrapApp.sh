@@ -284,15 +284,33 @@ generate_api_config() {
 
   __process_msg "Successfully generated api environment variables : $api_env_values"
 
+  local api_service=$(cat $STATE_FILE \
+    | jq '.services[] | select (.name == "api")')
 
-  local api_service=$(cat $STATE_FILE |  \
-    jq '.services=[
-          {
-            "name": "api",
-            "image": "'$api_service_image'"
-          }
-        ]')
-  update=$(echo $api_service | jq '.' | tee $STATE_FILE)
+  if [ -z "$api_service" ]; then
+    __process_msg "no api service configuration in state file, creating all service configs from scratch"
+    local api_service=$(cat $STATE_FILE |  \
+      jq '.services=[
+            {
+              "name": "api",
+              "image": "'$api_service_image'"
+            }
+          ]')
+    update=$(echo $api_service | jq '.' | tee $STATE_FILE)
+  else
+    __process_msg "updating api service image"
+    local api_image=$(cat $STATE_FILE | jq '
+      .services |=
+      map(if .name == "api" then
+          .image= "'$api_service_image'"
+        else
+          .
+        end
+      )'
+    )
+    update=$(echo $api_image | jq '.' | tee $STATE_FILE)
+  fi
+  __process_msg "Successfully update api image variables"
 
   local api_state_env=$(cat $STATE_FILE | jq '
     .services  |=

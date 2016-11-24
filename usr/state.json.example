@@ -512,6 +512,7 @@
   "machines": [],
   "installStatus": {
     "machinesSSHSuccessful": false,
+    "replicasConfigured": false,
     "machinesBootstrapped": false,
     "databaseInstalled": false,
     "databaseInitialized": false,
