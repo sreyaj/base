@@ -32,7 +32,7 @@ cleanup() {
 
       local service_repository="$system_images_registry/$running_service_name"
       __process_msg "Cleaning up images for: $service_repository"
-      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/cleanup.sh" "$service_repository" "$deploy_tag"
+      _exec_remote_cmd "$host" "$SCRIPT_DIR_REMOTE/cleanup.sh $service_repository $deploy_tag"
     done
   done
 }
