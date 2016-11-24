@@ -166,6 +166,7 @@ install() {
   source "$SCRIPTS_DIR/installCore.sh"
   source "$SCRIPTS_DIR/bootstrapApp.sh"
   source "$SCRIPTS_DIR/provisionServices.sh"
+  source "$SCRIPTS_DIR/cleanup.sh"
 }
 
 install_release() {
