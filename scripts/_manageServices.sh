@@ -17,6 +17,7 @@ __add_service() {
       __process_msg "no $service_name service in state.json, creating new one"
       local is_service_global=$(echo $service \
         | jq -r '.isGlobal')
+
       if [ "$is_service_global" == true ]; then
         __process_msg "service $service_name is global, not setting default replica count"
         service_state=$(cat $STATE_FILE |  \
