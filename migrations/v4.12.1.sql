@@ -3153,6 +3153,18 @@ do $$
     );
 
     perform set_route_role(
+      routePattern := '/jobDependencies/:jobDependencyId',
+      httpVerb := 'GET',
+      roleCode := 6000
+    );
+
+    perform set_route_role(
+      routePattern := '/jobDependencies/:jobDependencyId',
+      httpVerb := 'GET',
+      roleCode := 6060
+    );
+
+    perform set_route_role(
       routePattern := '/jobDependencies',
       httpVerb := 'POST',
       roleCode := 6000
