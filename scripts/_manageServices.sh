@@ -78,7 +78,7 @@ configure_replicas() {
   else
     __process_msg "Service replicas configuration required"
     __process_msg "Please set the desired replica count in 'services[]' array in 'usr/state.json' file"
-    __process_msg "Once completed, set 'installStatus.replicasConfigure=true' and re-run installer"
+    __process_msg "Once completed, set 'installStatus.replicasConfigured=true' and re-run installer"
     exit 1
   fi
 }
