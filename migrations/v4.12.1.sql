@@ -4767,3 +4767,128 @@ do $$
     end if;
   end
 $$;
+
+
+do $$
+  begin
+    -- Remove csWindowBuiltProjects in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'csWindowBuiltProjects') then
+      alter table "dailyAggs" drop column "csWindowBuiltProjects";
+    end if;
+
+    -- Remove csWindowGreenProjects in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'csWindowGreenProjects') then
+      alter table "dailyAggs" drop column "csWindowGreenProjects";
+    end if;
+
+    -- Remove csWindowEnabledProjects in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'csWindowEnabledProjects') then
+      alter table "dailyAggs" drop column "csWindowEnabledProjects";
+    end if;
+
+    -- Remove projectsTodayStg06 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsTodayStg06') then
+      alter table "dailyAggs" drop column "projectsTodayStg06";
+    end if;
+
+    -- Remove projectsTodayStg05 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsTodayStg05') then
+      alter table "dailyAggs" drop column "projectsTodayStg05";
+    end if;
+
+    -- Remove projectsTodayStg04 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsTodayStg04') then
+      alter table "dailyAggs" drop column "projectsTodayStg04";
+    end if;
+
+    -- Remove projectsTodayStg03 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsTodayStg03') then
+      alter table "dailyAggs" drop column "projectsTodayStg03";
+    end if;
+
+    -- Remove projectsTodayStg02 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsTodayStg02') then
+      alter table "dailyAggs" drop column "projectsTodayStg02";
+    end if;
+
+    -- Remove projectsTodayStg01 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsTodayStg01') then
+      alter table "dailyAggs" drop column "projectsTodayStg01";
+    end if;
+
+    -- Remove projectsTodayStg00 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsTodayStg00') then
+      alter table "dailyAggs" drop column "projectsTodayStg00";
+    end if;
+
+    -- Remove projectsRedTodayStg06 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsRedTodayStg06') then
+      alter table "dailyAggs" drop column "projectsRedTodayStg06";
+    end if;
+
+    -- Remove projectsRedTodayStg05 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsRedTodayStg05') then
+      alter table "dailyAggs" drop column "projectsRedTodayStg05";
+    end if;
+
+    -- Remove projectsRedTodayStg04 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsRedTodayStg04') then
+      alter table "dailyAggs" drop column "projectsRedTodayStg04";
+    end if;
+
+    -- Remove projectsRedTodayStg03 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsRedTodayStg03') then
+      alter table "dailyAggs" drop column "projectsRedTodayStg03";
+    end if;
+
+    -- Remove projectsRedTodayStg02 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsRedTodayStg02') then
+      alter table "dailyAggs" drop column "projectsRedTodayStg02";
+    end if;
+
+    -- Remove projectsRedTodayStg01 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsRedTodayStg01') then
+      alter table "dailyAggs" drop column "projectsRedTodayStg01";
+    end if;
+
+    -- Remove projectsRedTodayStg00 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'projectsRedTodayStg00') then
+      alter table "dailyAggs" drop column "projectsRedTodayStg00";
+    end if;
+
+    -- Remove jobGreenRateStg06 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'jobGreenRateStg06') then
+      alter table "dailyAggs" drop column "jobGreenRateStg06";
+    end if;
+
+    -- Remove jobGreenRateStg05 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'jobGreenRateStg05') then
+      alter table "dailyAggs" drop column "jobGreenRateStg05";
+    end if;
+
+    -- Remove jobGreenRateStg04 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'jobGreenRateStg04') then
+      alter table "dailyAggs" drop column "jobGreenRateStg04";
+    end if;
+
+    -- Remove jobGreenRateStg03 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'jobGreenRateStg03') then
+      alter table "dailyAggs" drop column "jobGreenRateStg03";
+    end if;
+
+    -- Remove jobGreenRateStg02 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'jobGreenRateStg02') then
+      alter table "dailyAggs" drop column "jobGreenRateStg02";
+    end if;
+
+    -- Remove jobGreenRateStg01 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'jobGreenRateStg01') then
+      alter table "dailyAggs" drop column "jobGreenRateStg01";
+    end if;
+
+    -- Remove jobGreenRateStg00 in dailyAggs
+    if exists (select 1 from information_schema.columns where table_name = 'dailyAggs' and column_name = 'jobGreenRateStg00') then
+      alter table "dailyAggs" drop column "jobGreenRateStg00";
+    end if;
+  end
+$$;
