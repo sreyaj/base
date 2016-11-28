@@ -2340,6 +2340,15 @@ do $$
     if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isOpsUser') then
       alter table "accounts" add column "isOpsUser" boolean NOT NULL DEFAULT false;
     end if;
+
+    -- Add lastVersionId and lastVersionName columns to resources
+    if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'lastVersionId') then
+      alter table "resources" add column "lastVersionId" INTEGER;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'lastVersionName') then
+      alter table "resources" add column "lastVersionName" varchar(255);
+    end if;
   end
 $$;
 
