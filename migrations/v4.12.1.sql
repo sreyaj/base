@@ -1584,6 +1584,11 @@ do $$
       UPDATE "resources" SET "sourceName" = "name";
     end if;
 
+    -- Update lastVersionId and lastVersionName in resources
+    if not exists (select 1 from pg_constraint where conname = 'resources_lastVersionId_fkey') then
+      update resources as r set "lastVersionId"=(select id from versions where "versionNumber"=r."lastVersionNumber" and "resourceId"=r.id order by id DESC), "lastVersionName"=(select "versionName" from versions where "versionNumber"=r."lastVersionNumber" and "resourceId"=r.id order by id DESC);
+    end if;
+
     -- Add sysIntegrationName to systemProperties
     if not exists (select 1 from "systemProperties" where "fieldName" = 'sysIntegrationName') then
       insert into "systemProperties" ("fieldName", "createdBy", "updatedBy", "createdAt", "updatedAt")
@@ -1961,6 +1966,10 @@ do $$
 
     if not exists (select 1 from pg_constraint where conname = 'resources_typeCode_fkey') then
       alter table "resources" add constraint "resources_typeCode_fkey" foreign key ("typeCode") references "systemCodes"(code) on update restrict on delete restrict;
+    end if;
+
+    if not exists (select 1 from pg_constraint where conname = 'resources_lastVersionId_fkey') then
+      alter table "resources" add constraint "resources_lastVersionId_fkey" foreign key ("lastVersionId") references "versions"(id) on update restrict on delete restrict;
     end if;
 
   -- Adds foreign key relationships for versions
