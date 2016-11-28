@@ -2343,11 +2343,11 @@ do $$
 
     -- Add lastVersionId and lastVersionName columns to resources
     if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'lastVersionId') then
-      alter table "resources" add column "lastVersionId" INTEGER ;
+      alter table "resources" add column "lastVersionId" INTEGER;
     end if;
 
     if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'lastVersionName') then
-      alter table "resources" add column "lastVersionName" varchar(255) ;
+      alter table "resources" add column "lastVersionName" varchar(255);
     end if;
   end
 $$;
