@@ -2349,12 +2349,6 @@ do $$
     if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'lastVersionName') then
       alter table "resources" add column "lastVersionName" varchar(255) ;
     end if;
-
-    -- Adds foreign key relationships for resources
-    if not exists (select 1 from pg_constraint where conname = 'resources_lastVersionId_fkey') then
-      alter table "resources" add constraint "resources_lastVersionId_fkey" foreign key ("lastVersionId") references "versions"(id) on update restrict on delete restrict;
-    end if;
-
   end
 $$;
 
