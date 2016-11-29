@@ -1584,6 +1584,15 @@ do $$
       UPDATE "resources" SET "sourceName" = "name";
     end if;
 
+    -- Add lastVersionId and lastVersionName columns to resources
+    if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'lastVersionId') then
+      alter table "resources" add column "lastVersionId" INTEGER;
+    end if;
+
+    if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'lastVersionName') then
+      alter table "resources" add column "lastVersionName" varchar(255);
+    end if;
+
     -- Update lastVersionId and lastVersionName in resources
     if not exists (select 1 from pg_constraint where conname = 'resources_lastVersionId_fkey') then
       update resources as r set "lastVersionId"=(select id from versions where "versionNumber"=r."lastVersionNumber" and "resourceId"=r.id), "lastVersionName"=(select "versionName" from versions where "versionNumber"=r."lastVersionNumber" and "resourceId"=r.id);
@@ -1969,7 +1978,7 @@ do $$
     end if;
 
     if not exists (select 1 from pg_constraint where conname = 'resources_lastVersionId_fkey') then
-      alter table "resources" add constraint "resources_lastVersionId_fkey" foreign key("lastVersionId") references "versions"(id) on update cascade on delete set null;
+      alter table "resources" add constraint "resources_lastVersionId_fkey" foreign key("lastVersionId") references "versions"(id) on update restrict on delete set null;
     end if;
 
   -- Adds foreign key relationships for versions
@@ -2348,15 +2357,6 @@ do $$
     -- Add isOpsUser column to accounts
     if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isOpsUser') then
       alter table "accounts" add column "isOpsUser" boolean NOT NULL DEFAULT false;
-    end if;
-
-    -- Add lastVersionId and lastVersionName columns to resources
-    if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'lastVersionId') then
-      alter table "resources" add column "lastVersionId" INTEGER;
-    end if;
-
-    if not exists (select 1 from information_schema.columns where table_name = 'resources' and column_name = 'lastVersionName') then
-      alter table "resources" add column "lastVersionName" varchar(255);
     end if;
   end
 $$;
