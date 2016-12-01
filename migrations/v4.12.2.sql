@@ -33,6 +33,12 @@ do $$
     -- Remove old masterIntegrationFields from github enterprise auth
     delete from "masterIntegrationFields" where id in (104, 105, 106);
 
+
+    -- Add subscriptionId field in clusterNodeConsoles
+    if not exists (select 1 from information_schema.columns where table_name = 'clusterNodeConsoles' and column_name = 'subscriptionId') then
+      alter table "clusterNodeConsoles" add column "subscriptionId" varchar(24);
+    end if;
+
     -- Remove systemCodes.id and set code as primary key
     if exists (select 1 from information_schema.columns where table_name = 'systemCodes' and column_name = 'id') then
       alter table "systemCodes" drop column id;
