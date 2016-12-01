@@ -2358,6 +2358,14 @@ do $$
     if not exists (select 1 from information_schema.columns where table_name = 'accounts' and column_name = 'isOpsUser') then
       alter table "accounts" add column "isOpsUser" boolean NOT NULL DEFAULT false;
     end if;
+
+    -- Adds addOnMinionCount and addOnMinionCountOverridden columns to subscriptions
+    if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'addOnMinionCount') then
+      alter table "subscriptions" add column "addOnMinionCount" INTEGER NOT NULL DEFAULT 0;
+    end if;
+    if not exists (select 1 from information_schema.columns where table_name = 'subscriptions' and column_name = 'addOnMinionCountOverridden') then
+      alter table "subscriptions" add column "addOnMinionCountOverridden" BOOLEAN NOT NULL DEFAULT false;
+    end if;
   end
 $$;
 
